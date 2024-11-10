@@ -18,7 +18,7 @@ include 'libs/load.php';
 
     <? Session::loadTemplate('_signinheader'); ?>
 
-    <? Session::loadTemplate('_signup'); ?>
+    <? Session::loadTemplate('_welcome'); ?>
     <!-- load dashboard -->
 
     <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
