@@ -6,12 +6,12 @@ use MongoDB\Collection;
 
 require 'libs/load.php';
 
-$email = 'yuheswariv22cs@psnacet.edu.in';
-$username = explode("@", $email)[0];
-$password = 'password';
+// $email = 'test@ex.com';
+// $username = explode("@", $email)[0];
+// $password = 'password';
 
 
-$db = Database::getConnection();
+// $db = Database::getConnection();
 
 // $collection = $db->Auth;
 
@@ -52,18 +52,18 @@ $db = Database::getConnection();
 //     echo "User creation failed";
 // }
 
-$result = UserSession::authenticate($username, $password, "samplefingerprint");
+// $result = UserSession::authenticate($username, $password, "samplefingerprint");
 
-if($result){
-    echo "Logged in";
-} else {
-    echo "Login failed";
-}
-
-
-// $user = new User($username);
+// if($result){
+//     echo "Logged in";
+// } else {
+//     echo "Login failed";
+// }
 
 
+// // $user = new User($username);
+
+// Session::loadTemplate('_signup');
 
 ?>
 
