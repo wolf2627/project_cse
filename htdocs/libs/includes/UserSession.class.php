@@ -104,7 +104,7 @@ class UserSession
         try {
             $result = $this->collection->findOne(['token' => $token]);
             if ($result) {
-                $row = $result->Database::getArray();
+                $row = Database::getArray($result);
                 $this->data = $row;
                 //print_r($row);
                 $this->username = $row['username'];
