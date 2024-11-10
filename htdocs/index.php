@@ -1,1 +1,4 @@
-Hey there you are getting started
+<?php
+include 'libs/load.php';
+
+Session::renderPage();

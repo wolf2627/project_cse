@@ -1,7 +1,6 @@
 <head>
-    <script src="assets/js/color-modes.js"></script>
-    <script src="js/app.min.js"></script>
-
+    <script src="<?= get_config("base_path")?>assets/js/color-modes.js"></script>
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -18,7 +17,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <!-- load css -->
-    <link href="css/style.min.css" rel="stylesheet">
-    <link href="css/app.min.css" rel="stylesheet">
+    <link href="<?= get_config("base_path")?>css/style.min.css" rel="stylesheet">
+    <link href="<?= get_config("base_path")?>css/app.min.css" rel="stylesheet">
 
 </head>

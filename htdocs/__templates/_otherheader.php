@@ -8,7 +8,15 @@
         </a>
 
         <ul class="nav nav-pills">
-            <li class="nav-item"><a href="/signin.php" class="nav-link active" aria-current="page">Login</a></li>
+            <?
+            if (Session::currentScript() == "index") {
+            ?>
+                <li class="nav-item"><span class="fs-4">Welcome</span></li>
+            <?
+            } else {
+            ?>
+                <li class="nav-item"><span class="fs-4"><?= Session::currentScript(); ?></span></li>
+            <? } ?>
         </ul>
     </header>
 </div>

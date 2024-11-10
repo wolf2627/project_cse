@@ -1,7 +1,7 @@
 <main class="form-signin w-100 m-auto">
     <div class="signup-box">
         <form>
-            <img class="mb-4 img-fluid" id="psna-logo" src="images/logos/psna-logo-white.png" alt="" width="" height="">
+            <img class="mb-4 img-fluid" id="psna-logo" src="" alt="" width="" height="">
             <h1 class="h3 mb-3 fw-normal">Welcome, Log in</h1>
 
             <div class="form-floating">
