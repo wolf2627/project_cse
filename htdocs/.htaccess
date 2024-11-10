@@ -1,0 +1,22 @@
+# Custom 404 Error Document
+ErrorDocument 404 /error.php
+
+# Enable Rewrite Engine
+RewriteEngine On
+RewriteBase /
+
+# Rewrite rules for specific URL structures
+RewriteRule ^/?files/([^/]+)?$ files.php?name=$1 [L,QSA,NC]
+RewriteRule ^/?api/([^/]+)?$ api.php?rquest=$1 [L,QSA,NC]
+RewriteRule ^/?api/([^/]+)/(.+)?$ api.php?rquest=$2&namespace=$1 [L,QSA,NC]
+
+# Rewrite rule for URLs without .php extension
+# Only rewrite if the request does not already end in .php
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteCond %{THE_REQUEST} !\s/+[^.\s]+\.php [NC]
+RewriteRule ^([^/.]+)$ $1.php [L]
+
+# Optional: Block direct access to .php files
+# This will return a 404 for direct requests to .php files
+RewriteCond %{THE_REQUEST} "\.php"
+RewriteRule ^ - [R=404,L]
