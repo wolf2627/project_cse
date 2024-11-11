@@ -38,7 +38,6 @@ class User
             $this->username = $result->username;
             
         } catch (Exception $e) {
-            // echo "Error: " . $e->getMessage();
             throw new Exception("User::__construct() -> Username not found.");
         }
     }

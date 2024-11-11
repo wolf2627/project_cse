@@ -11,9 +11,7 @@
 
     <?
     //load svg for using icons 
-    if (is_file($_SERVER["DOCUMENT_ROOT"] . get_config("base_path") . 'required/icons/svg')) {
-        include $_SERVER["DOCUMENT_ROOT"] . get_config("base_path") . 'required/icons/svg';
-    }
+    Session::loadTemplate('svg'); // load svg
     ?>
 
     <?

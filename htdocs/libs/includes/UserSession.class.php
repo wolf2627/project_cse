@@ -13,7 +13,6 @@ class UserSession
      */
     public static function authenticate($user, $pass, $fingerprint = null)
     {
-        //echo "authenticate called..";
         if ($fingerprint == null) {
             $fingerprint = $fingerprint = $_COOKIE['fingerprint'];
         }
@@ -66,9 +65,9 @@ class UserSession
     {
         try {
             $session = new UserSession($token);
-            if (isset($_SERVER['REMOTE_ADDR']) and isset($_SERVER["HTTP_USER_AGENT"])) {
+            if (isset($_SERVER['HTTP_X_REAL_IP']) and isset($_SERVER["HTTP_USER_AGENT"])) {
                 if ($session->isValid() and $session->isActive()) {
-                    if ($_SERVER['REMOTE_ADDR'] == $session->getIp()) {
+                    if ($_SERVER['HTTP_X_REAL_IP'] == $session->getIp()) {
                         if ($_SERVER['HTTP_USER_AGENT'] == $session->getUserAgent()) {
                             if ($session->getFingerprint() == $_COOKIE['fingerprint']) { //TODO: This is always True, fix it.
                                 Session::$user = $session->getUser();
@@ -106,11 +105,8 @@ class UserSession
             if ($result) {
                 $row = Database::getArray($result);
                 $this->data = $row;
-                //print_r($row);
                 $this->username = $row['username'];
-                // echo "user Object Constructed for id: $this->id";
             } else {
-                //echo "Session Expired.";
                 throw new Exception("UserSession::__construct -> Session is invalid.");
             }
         } catch (Exception $e) {

@@ -6,9 +6,14 @@ use MongoDB\Collection;
 
 require 'libs/load.php';
 
+
 // $email = 'test@ex.com';
 // $username = explode("@", $email)[0];
-// $password = 'password';
+$password = 'jerry';
+
+$username = 'jerry';
+
+echo "<br> Username: $username";
 
 
 // $db = Database::getConnection();
@@ -55,15 +60,26 @@ require 'libs/load.php';
 // $result = UserSession::authenticate($username, $password, "samplefingerprint");
 
 // if($result){
-//     echo "Logged in";
+//     echo $result;
+//     echo "<br> Logged in";
 // } else {
 //     echo "Login failed";
 // }
 
+// UserSession::authorize('13332b33ac447dc79cabfd03db247290');
 
-// // $user = new User($username);
 
-// Session::loadTemplate('_signup');
+
+// if(Session::isAuthenticated()){
+//     echo "<br> Authenticated";
+// } else {
+//     echo "<br> Not Authenticated";
+// }
+// // // $user = new User($username);
+
+// // Session::loadTemplate('_signup');
+// echo "<br> Success ";
+
 
 ?>
 
