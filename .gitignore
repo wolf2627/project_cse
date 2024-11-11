@@ -1,4 +1,4 @@
 # Ignore all JSON files
-*.json
+env.json
 work/
 old/
