@@ -4,7 +4,7 @@
 <? Session::loadTemplate('_head'); // load head 
 ?>
 
-<body class="d-flex flex-column min-vh-100">
+<body>
 
     <? Session::loadTemplate('_modetoggle'); // load mode toggle
     ?>
@@ -23,7 +23,7 @@
     ?>
 
     <div class="container-fluid">
-        <div class="row main-row">
+        <div class="row">
             <?
             // load script dynamically based on the current script
             if (Session::$isError) {
@@ -34,11 +34,12 @@
                 }
                 Session::loadTemplate(Session::currentScript());
             }
+            Session::loadTemplate('_footer'); // load footer
             ?>
         </div>
     </div>
 
-    <? Session::loadTemplate('_footer'); // load footer
+    <? //Session::loadTemplate('_footer'); // load footer
     ?>
 
     <? Session::loadTemplate('_modal'); //load modal template 

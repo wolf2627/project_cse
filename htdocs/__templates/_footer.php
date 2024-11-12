@@ -1,4 +1,4 @@
-<footer class="footer mt-auto py-3 col-md-9 ms-sm-auto col-lg-10 px-md-4">
+<footer class="footer mt-auto py-3 col-md-9 ms-sm-auto col-lg-10 px-md-4 position-relative bottom-0">
     <div class="footer-container center">
         <span class="text-body-secondary">Management system by duo @cse, psnacet</span>
     </div>
