@@ -20,3 +20,7 @@ RewriteRule ^([^/.]+)$ $1.php [L]
 # This will return a 404 for direct requests to .php files
 RewriteCond %{THE_REQUEST} "\.php"
 RewriteRule ^ - [R=404,L]
+
+
+RewriteRule ^/?api/([^/]+)?$ api.php?rquest=$1 [L,QSA,NC]
+RewriteRule ^/?api/([^/]+)/(.+)?$ api.php?rquest=$2&namespace=$1 [L,QSA,NC]

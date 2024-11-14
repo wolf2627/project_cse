@@ -7,13 +7,13 @@ use MongoDB\Collection;
 require 'libs/load.php';
 
 
-// $email = 'test@ex.com';
+// $email = 'bhuvana.beula@psnacet.edu.in';
 // $username = explode("@", $email)[0];
-$password = 'jerry';
+// $password = 'bhuvana@123';
 
-$username = 'jerry';
+// // $username = 'jerry';
 
-echo "<br> Username: $username";
+// // echo "<br> Username: $username";
 
 
 // $db = Database::getConnection();
