@@ -1,86 +1,101 @@
-<pre>
-
 <?php
+// include 'libs/load.php';
 
-use MongoDB\Collection;
+// function createUserProfile($profileData, $username, $password) {
+//     // Connect to MongoDB
+//     $conn = Database::getConnection();
+//     $userCollection = $conn->testuser;
+//     $authCollection = $conn->testauth;
 
-require 'libs/load.php';
+//     try {
+//         // Insert profile data into the User collection
+//         $userResult = $userCollection->insertOne($profileData);
+//         $userId = $userResult->getInsertedId();
 
+//         // Hash the password securely
+//         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-// $email = 'bhuvana.beula@psnacet.edu.in';
-// $username = explode("@", $email)[0];
-// $password = 'bhuvana@123';
+//         // Prepare auth data
+//         $authData = [
+//             'user_id' => $userId,
+//             'username' => $username,
+//             'password' => $hashedPassword,
+//         ];
 
-// // $username = 'jerry';
+//         // Insert auth data into the Auth collection
+//         $authCollection->insertOne($authData);
 
-// // echo "<br> Username: $username";
+//         echo "User profile and authentication details created successfully.";
 
-
-// $db = Database::getConnection();
-
-// $collection = $db->Auth;
-
-// try {
-//     $search_data = [
-//         '$or' => [  // Use $or here instead of "or"
-//             ['username' => $username],
-//             ['email' => $username]  // If you want to search for either username or email
-//         ]
-//     ];
-
-//     $result = $collection->findOne($search_data);
-
-//     if ($result) {
-//         echo "User found: {$result->username}";
-//         print_r($result);
-//     } else {
-//         echo "User not found";
+//     } catch (Exception $e) {
+//         echo "Failed to create user profile: ", $e->getMessage();
 //     }
-
-// } catch (Exception $e) {
-//     echo "<br> Error: {$e->getMessage()}";
 // }
 
 
-// $db = Database::getConnection();
+// // Example Usage:
+// $profileData = [
+//     'name' => 'John Doe',
+//     'email' => 'john@example.com',
+//     // other profile fields
+// ];
+// $username = 'john_doe';
+// $password = 'securePassword123';
 
-
-// $result = $collection->findOne(['username' => $username]);
-
-// $result = Database::getArray($result);
-
-// print_r($result);
-
-// if(User::createUserLogin($username, $email, $password)){
-//     echo "User created";
-// } else {
-//     echo "User creation failed";
-// }
-
-// $result = UserSession::authenticate($username, $password, "samplefingerprint");
-
-// if($result){
-//     echo $result;
-//     echo "<br> Logged in";
-// } else {
-//     echo "Login failed";
-// }
-
-// UserSession::authorize('13332b33ac447dc79cabfd03db247290');
-
-
-
-// if(Session::isAuthenticated()){
-//     echo "<br> Authenticated";
-// } else {
-//     echo "<br> Not Authenticated";
-// }
-// // // $user = new User($username);
-
-// // Session::loadTemplate('_signup');
-// echo "<br> Success ";
-
-
+// createUserProfile($profileData, $username, $password);
 ?>
 
-</pre>
+<?php
+// include 'libs/load.php';
+
+// function fetchUserProfile($username) {
+//     // Connect to MongoDB
+//     $conn = Database::getConnection();
+//     $userCollection = $conn->testuser;
+//     $authCollection = $conn->testauth;
+
+//     try {
+//         // Find the auth data using the username
+//         $authData = $authCollection->findOne(['username' => $username]);
+
+//         if ($authData === null) {
+//             throw new Exception("User not found.");
+//         }
+
+//         // Get the user_id from the auth data
+//         $userId = $authData['user_id'];
+
+//         // Fetch the user profile using the user_id
+//         $userProfile = $userCollection->findOne(['_id' => $userId]);
+
+//         if ($userProfile === null) {
+//             throw new Exception("User profile not found.");
+//         }
+
+//         // Combine user profile and authentication details
+//         $userData = [
+//             'profile' => $userProfile,
+//             'auth' => $authData
+//         ];
+
+//         return $userData;  // Return both profile and auth data
+
+//     } catch (Exception $e) {
+//         echo "Failed to fetch user profile: ", $e->getMessage();
+//     }
+// }
+
+// // Example Usage:
+// $username = 'john_doe';
+// $userData = fetchUserProfile($username);
+
+// if ($userData) {
+//     // Access user profile data and authentication data
+//     $profile = $userData['profile'];
+//     $auth = $userData['auth'];
+
+//     echo "User Name: " . $profile['name'] . "\n";
+//     echo "User Email: " . $profile['email'] . "\n";
+//     echo "Username: " . $auth['username'] . "\n";
+// }
+?>
