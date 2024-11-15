@@ -99,3 +99,22 @@
 //     echo "Username: " . $auth['username'] . "\n";
 // }
 ?>
+
+<?
+
+echo "Loading...";
+
+if (1731600863) {
+    $login_time = DateTime::createFromFormat('Y-m-d H:i:s', 1731600863);
+    if (300 > time() - $login_time->getTimestamp()) {
+        echo "true";
+        //return true;
+    } else {
+        echo "false";
+        //return false;
+    }
+} else {
+    throw new Exception("UserSession::isValid -> login time is null");
+}
+
+?>

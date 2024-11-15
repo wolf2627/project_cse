@@ -1,5 +1,8 @@
 <?php
 
+include 'vendor/autoload.php';
+use MongoDB\BSON\UTCDateTime;
+
 include_once 'includes/WebAPI.class.php';
 include_once 'includes/Session.class.php';
 include_once 'includes/Database.class.php';
@@ -7,7 +10,6 @@ include_once 'includes/User.class.php';
 include_once 'includes/UserSession.class.php';
 include_once 'includes/REST.class.php';
 include_once 'includes/API.class.php';
-
 
 global $__site_config;
 

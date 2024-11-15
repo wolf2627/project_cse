@@ -11,7 +11,7 @@ Session::set('mode', 'web');
 if (isset($_POST['email']) and isset($_POST['password'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
-    echo $email;
+    // echo $email;
     $result = UserSession::authenticate($email, $password);
     $login_page = false;
 }

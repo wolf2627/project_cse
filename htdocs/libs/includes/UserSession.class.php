@@ -1,4 +1,9 @@
 <?php
+
+include 'vendor/autoload.php';
+
+use MongoDB\BSON\UTCDateTime;
+
 class UserSession
 {
     private $conn;
@@ -33,9 +38,12 @@ class UserSession
 
             $token = md5(rand(0, 9999999) . $ip . $agent . time());
             //TODO: Check new MongoDate() is correct or not.
-
+            $now = new DateTime();
+            $now = $now->format('Y-m-d H:i:s');
+            $IST_time = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
+            $IST_time = $IST_time->format('Y-m-d H:i:s');
             try {
-                $result = $collection->insertOne(['username' => $username, 'token' => $token, 'login_time' => time(), 'ip' => $ip, 'user_agent' => $agent, 'active' => 1, 'fingerprint' => $fingerprint]);
+                $result = $collection->insertOne(['username' => $username, 'token' => $token, 'login_time' => $now, 'login_time_in' => $IST_time ,'ip' => $ip, 'user_agent' => $agent, 'active' => 1, 'fingerprint' => $fingerprint]);
                 if ($result) {
                     Session::set('session_token', $token);
                     return $token;
@@ -48,6 +56,10 @@ class UserSession
         } else {
             return false;
         }
+    }
+
+    public static function verify_login($password){
+        
     }
 
 
@@ -105,6 +117,7 @@ class UserSession
             if ($result) {
                 $row = Database::getArray($result);
                 $this->data = $row;
+                // print_r($row);
                 $this->username = $row['username'];
             } else {
                 throw new Exception("UserSession::__construct -> Session is invalid.");
@@ -124,25 +137,39 @@ class UserSession
      * @return Boolean
      */
 
-    public function isValid()
-    {
-        if ($_COOKIE['fingerprint'] == $this->getFingerprint()) {
-            return true;
-        } else {
-            return false;
-        }
-
-        if (isset($this->data['login_time'])) {
-            $login_time = DateTime::createFromFormat('Y-m-d H:i:s', $this->data['login_time']);
-            if (3600 > time() - $login_time->getTimestamp()) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            throw new Exception("UserSession::isValid -> login time is null");
-        }
-    }
+     public function isValid()
+     {
+         // Check if the fingerprint matches
+         if ($_COOKIE['fingerprint'] != $this->getFingerprint()) {
+             return false;
+         }
+     
+         // Check if login_time exists
+         if (isset($this->data['login_time'])) {
+             // MongoDB stores Date objects, so ensure you handle it properly
+             if ($this->data['login_time'] instanceof MongoDB\BSON\UTCDateTime) {
+                 // Convert MongoDB UTCDateTime to PHP DateTime
+                 $login_time = $this->data['login_time']->toDateTime();
+             } else {
+                 // If it's stored as a string, create DateTime from string
+                 $login_time = DateTime::createFromFormat('Y-m-d H:i:s', $this->data['login_time']);
+             }
+     
+             // Check if the session is still valid (3600 seconds, i.e., 1 hour)
+             if ($login_time && (time() - $login_time->getTimestamp()) < 3600) {
+                 // echo "Session is valid";
+                 return true;
+             } else {
+                 // Session has expired, deactivate
+                 $this->deactivate();
+                 return false;
+             }
+         } else {
+             // Handle the case where login_time is not set
+             throw new Exception("UserSession::isValid -> login time is null");
+         }
+     }
+     
 
     public function isActive()
     {
@@ -163,13 +190,14 @@ class UserSession
 
     public function deactivate()
     {
-        if (isset($this->data['username'])) {
-            $id = $this->data['username'];
+        if (isset($this->data['token'])) {
+            $id = $this->data['token'];
             if (!$this->conn) {
                 $this->conn = Database::getConnection();
             }
             try {
-                $result = $this->collection->findOneAndUpdate(['username' => $this->username], ['$set' => ['active' => 0]]);
+                $result = $this->collection->findOneAndUpdate(['token' => $this->data['token']], ['$set' => ['active' => 0]]);
+                echo "Session deactivated";
                 return $result ? true : false;
             } catch (Exception $e) {
                 return false;
