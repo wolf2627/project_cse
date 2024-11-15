@@ -7,26 +7,26 @@
         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                    <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/dashboard">
                         <svg class="bi">
                             <use xlink:href="#house-fill" />
                         </svg>
                         Dashboard
                     </a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link d-flex align-items-center gap-2" href="#">
                         <svg class="bi">
                             <use xlink:href="#home-door" />
                         </svg>
                         Home
                     </a>
-                </li>
+                </li> -->
 
             </ul>
 
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
-                <span>Saved reports</span>
+                <span>Reports</span>
                 <a class="link-secondary" href="#" aria-label="Add a new report">
                     <svg class="bi">
                         <use xlink:href="#plus-circle" />
@@ -39,36 +39,13 @@
                         <svg class="bi">
                             <use xlink:href="#file-earmark-text" />
                         </svg>
-                        Current month
+                        Serial Test 1
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="#">
-                        <svg class="bi">
-                            <use xlink:href="#file-earmark-text" />
-                        </svg>
-                        Last quarter
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="#">
-                        <svg class="bi">
-                            <use xlink:href="#file-earmark-text" />
-                        </svg>
-                        Social engagement
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="#">
-                        <svg class="bi">
-                            <use xlink:href="#file-earmark-text" />
-                        </svg>
-                        Year-end sale
-                    </a>
-                </li>
+                
 
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
-                <span>Saved reports</span>
+                <span>Admin</span>
                 <a class="link-secondary" href="#" aria-label="Add a new report">
                     <!-- <svg class="bi">
                         <use xlink:href="#plus-circle" />
@@ -81,7 +58,7 @@
                         <svg class="bi">
                             <use xlink:href="#speedometer2"></use>
                         </svg>
-                        Dashboard
+                        Create
                         <svg class="bi arrow-mov ">
                             <use xlink:href="#plus-circle"></use>
                         </svg>
@@ -89,19 +66,19 @@
                     <div class="collapse" id="dashboard-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="#">
+                                <a class="nav-link d-flex align-items-center gap-2" href="/createuser">
                                     <svg class="bi">
                                         <use xlink:href="#file-earmark-text" />
                                     </svg>
-                                    Social engagement
+                                    User
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="#">
+                                <a class="nav-link d-flex align-items-center gap-2" href="/createsubject">
                                     <svg class="bi">
                                         <use xlink:href="#file-earmark-text" />
                                     </svg>
-                                    Year-end sale
+                                    Subject
                                 </a>
                             </li>
                         </ul>
@@ -114,16 +91,16 @@
             <hr class="my-3">
 
             <ul class="nav flex-column mb-auto">
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link d-flex align-items-center gap-2" href="#">
                         <svg class="bi">
                             <use xlink:href="#gear-wide-connected" />
                         </svg>
                         Settings
                     </a>
-                </li>
+                </li> -->
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="#">
+                    <a class="nav-link d-flex align-items-center gap-2" id="signOutBtn" href="?logout">
                         <svg class="bi">
                             <use xlink:href="#door-closed" />
                         </svg>

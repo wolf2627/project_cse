@@ -146,15 +146,15 @@ include 'libs/load.php';
 // // echo "Data successfully imported to MongoDB!";
 // echo "Operation Completed!";
 
-$conn = Database::getConnection();
-$collection = $conn->Auth;
-$result = AppUser::createUserLogin("jerry", "jerry@admin", null);
+// $conn = Database::getConnection();
+// $collection = $conn->Auth;
+// $result = AppUser::createUserLogin("jerry", "jerry@admin", null);
 
-if ($result) {
-    echo "User Created Successfully";
-} else {
-    echo "Failed to create user";
-}
+// if ($result) {
+//     echo "User Created Successfully";
+// } else {
+//     echo "Failed to create user";
+// }
 
 
 
