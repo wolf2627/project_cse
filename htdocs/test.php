@@ -1,5 +1,5 @@
 <?php
-// include 'libs/load.php';
+include 'libs/load.php';
 
 // function createUserProfile($profileData, $username, $password) {
 //     // Connect to MongoDB
@@ -99,22 +99,64 @@
 //     echo "Username: " . $auth['username'] . "\n";
 // }
 ?>
-
+<pre>
 <?
 
-echo "Loading...";
+// require 'vendor/autoload.php';
+// include 'libs/load.php';
 
-if (1731600863) {
-    $login_time = DateTime::createFromFormat('Y-m-d H:i:s', 1731600863);
-    if (300 > time() - $login_time->getTimestamp()) {
-        echo "true";
-        //return true;
-    } else {
-        echo "false";
-        //return false;
-    }
+// use PhpOffice\PhpSpreadsheet\IOFactory;
+// use MongoDB\Client;
+
+// // MongoDB connection
+// $db = Database::getConnection();
+// $collection = $db->exceltest;
+
+// // Path to the XLSX file
+// $inputFileName = 'Test_data_sheet.xlsx';
+
+// // Load the Excel file
+// $spreadsheet = IOFactory::load($inputFileName);
+// echo "Loaded Excel file successfully\n";
+
+// // Get the active sheet
+// $sheet = $spreadsheet->getActiveSheet();
+// echo "Loaded active sheet successfully: " . $sheet->getTitle() . "\n";
+// // Convert the data from the sheet into an array
+// $data = $sheet->toArray();
+// print_r($data);
+// // Optionally, handle the header row (if your Excel file has headers)
+// $headers = array_shift($data);  // Remove the first row and treat it as the header
+// echo "headers: <br>";
+
+// $headers[3] = "newheader";
+
+// print_r($headers);
+
+// echo "$headers[3]"."<br>";
+// // Loop through each row and insert it into MongoDB
+// foreach ($data as $row) {
+//     // Combine row values with the headers
+//     $document = array_combine($headers, $row);
+//     print_r($document);
+//     // Insert the document into MongoDB
+//    // $collection->insertOne($document);
+// }
+
+// // echo "Data successfully imported to MongoDB!";
+// echo "Operation Completed!";
+
+$conn = Database::getConnection();
+$collection = $conn->Auth;
+$result = AppUser::createUserLogin("jerry", "jerry@admin", null);
+
+if ($result) {
+    echo "User Created Successfully";
 } else {
-    throw new Exception("UserSession::isValid -> login time is null");
+    echo "Failed to create user";
 }
 
+
+
 ?>
+</pre>

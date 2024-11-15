@@ -43,34 +43,7 @@ class User
     }
 
 
-    public static function createUserLogin($username, $email, $password)
-    {
-        $conn = Database::getConnection();
-
-        $collection = $conn->Auth;
-
-        $options = [
-            'cost' => 9,
-        ];
-
-        $password = password_hash($password, PASSWORD_BCRYPT, $options); //most secure and prefered way for password saving, suggested by official php
-
-        $data = [
-            'username' => $username,
-            'email' => $email,
-            'password' => $password,
-
-        ];
-        try {
-            $result = $collection->insertOne($data);
-            return true;
-        } catch (Exception $e) {
-            // echo "Error: " . $e->getMessage();
-            return false;
-        }
-    }
-
-
+    
 
     public static function login($username, $pass)
     {

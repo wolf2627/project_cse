@@ -197,7 +197,7 @@ class UserSession
             }
             try {
                 $result = $this->collection->findOneAndUpdate(['token' => $this->data['token']], ['$set' => ['active' => 0]]);
-                echo "Session deactivated";
+                // echo "Session deactivated";
                 return $result ? true : false;
             } catch (Exception $e) {
                 return false;
