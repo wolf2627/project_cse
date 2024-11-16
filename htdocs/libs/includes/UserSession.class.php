@@ -9,8 +9,9 @@ class UserSession
     private $conn;
     private $token;
     private $data;
-    private $username;
+    private $user_id;
     private $collection;
+    private $user;
 
     /*
      * This function will return a session ID if username and password is correct.
@@ -18,6 +19,7 @@ class UserSession
      */
     public static function authenticate($user, $pass, $fingerprint = null)
     {
+        echo "Authenticating user $user"."<br>";
         if ($fingerprint == null) {
             $fingerprint = $fingerprint = $_COOKIE['fingerprint'];
         }
@@ -26,9 +28,12 @@ class UserSession
             throw new Exception("Fingerprint is null");
         }
 
-        $username = User::login($user, $pass);
-        if ($username) {
-            $user = new User($username);
+        $user_logged = User::login($user, $pass);
+        // print_r($user);
+        if ($user_logged['user_id']) {
+            echo "User ID : ".$user_logged['user_id']."<br>";
+            $user = new User($user_logged['user_id'], $user_logged['role']);
+            // echo "User Found "."<br>";
             $conn = Database::getConnection();
 
             $collection = $conn->session;
@@ -42,9 +47,10 @@ class UserSession
             $now = $now->format('Y-m-d H:i:s');
             $IST_time = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
             $IST_time = $IST_time->format('Y-m-d H:i:s');
-            try {
-                $result = $collection->insertOne(['username' => $username, 'token' => $token, 'login_time' => $now, 'login_time_in' => $IST_time ,'ip' => $ip, 'user_agent' => $agent, 'active' => 1, 'fingerprint' => $fingerprint]);
+            try { //TODO : Try to add username in the session doc.
+                $result = $collection->insertOne(['user_id' => $user_logged['user_id'],'role' => $user_logged['role']  ,'token' => $token, 'login_time' => $now, 'login_time_in' => $IST_time ,'ip' => $ip, 'user_agent' => $agent, 'active' => 1, 'fingerprint' => $fingerprint]);
                 if ($result) {
+                    echo "Session Created"."<br>";
                     Session::set('session_token', $token);
                     return $token;
                 } else {
@@ -118,7 +124,12 @@ class UserSession
                 $row = Database::getArray($result);
                 $this->data = $row;
                 // print_r($row);
-                $this->username = $row['username'];
+                $this->user_id = $row['user_id'];
+
+                $result = $this->collection->findOne(['user_id' => $this->user_id]);
+
+                $this->user = Database::getArray($result);
+
             } else {
                 throw new Exception("UserSession::__construct -> Session is invalid.");
             }
@@ -129,7 +140,7 @@ class UserSession
 
     public function getUser()
     {
-        return new User($this->username);
+        return new User($this->user['user_id'], $this->user['role']);
     }
 
     /**
@@ -214,13 +225,13 @@ class UserSession
 
     public function removeSession()
     {
-        if (isset($this->data['username'])) {
-            $username = $this->data['username'];
+        if (isset($this->data['token'])) {
+            $token = $this->data['token'];
             if (!$this->conn) {
                 $this->conn = Database::getConnection();
             }
             try {
-                $result = $this->collection->findOneAndDelete(['username' => $username]);
+                $result = $this->collection->findOneAndDelete(['token' => $token]);
                 return $result ? true : false;
             } catch (Exception $e) {
                 return false;

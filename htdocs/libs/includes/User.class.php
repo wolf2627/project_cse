@@ -13,37 +13,41 @@ class User
     * User Object can be constructed with Username.
     */
 
-    public function __construct($username)
+    public function __construct($user_id, $role)
     {
-
-        // echo "User Object Constructed with username: $username";
         $this->conn = Database::getConnection();
-        
-        $this->collection = $this->conn->Auth;
+
+        if ($role == 'student') {
+            $this->collection = $this->conn->students;
+        } else if ($role == 'faculty') {
+            $this->collection = $this->conn->faculties;
+        }
+        // else
+        //     $this->collection = $this->conn->auth;
 
         $search_data = [
             '$or' => [  // Use $or here instead of "or"
-                ['username' => $username],
-                ['email' => $username]  // If you want to search for either username or email
+                ['_id' => new MongoDB\BSON\ObjectId($user_id)],  // If you want to search for user_id
+                ['user' => $user_id],
+                ['email' => $user_id]  // If you want to search for either username or email
             ]
         ];
 
         try {
             $result = $this->collection->findOne($search_data);
-
-            if(!$result){
+            if (!$result) {
                 throw new Exception("User::__construct() -> Username not found.");
             }
-            
-            $this->username = $result->username;
-            
+
+            // $this->username = $result->username;
+            // echo "Username: " . $result['username'] . "<br>";
         } catch (Exception $e) {
-            throw new Exception("User::__construct() -> Username not found.");
+            throw new Exception("User::__construct() -> $e.");
         }
     }
 
 
-    
+
 
     public static function login($username, $pass)
     {
@@ -64,7 +68,8 @@ class User
                 */
                 //echo $row['username'];
                 //echo $row['password'];
-                return $row['username']; //returning username on successful login.
+                $row = Database::getArray($result);
+                return ['user_id' => $row['user_id']['$oid'], 'role' => $row['role'], 'username' => $row['username']]; //returning username on successful login.
             } else {
                 return false;
             }

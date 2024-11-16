@@ -87,7 +87,7 @@ class AppUser
             $inserted_id = $result->getInsertedId();
 
             // Create the user login
-            if (!AppUser::createUserLogin($document['name'], $document['email'], $inserted_id)) {
+            if (!AppUser::createUserLogin($document['name'], $document['email'], $inserted_id, $document['role'])) {
                 throw new Exception("Error creating user login");
             }
 
@@ -98,7 +98,7 @@ class AppUser
         }
     }
 
-    public static function createUserLogin($username, $email, $user_id)
+    public static function createUserLogin($username, $email, $user_id, $role)
     {
         try {
             $conn = Database::getConnection();
@@ -112,6 +112,7 @@ class AppUser
                 'username' => $username,
                 'user_id' => $user_id,
                 'password' => $password,
+                'role' => $role
             ];
 
             // Insert login details into the database
