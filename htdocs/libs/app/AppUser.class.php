@@ -35,7 +35,7 @@ class AppUser
             if ($role == 'student') {
                 $this->role = 'student';
                 $this->collection = $this->conn->students;
-                $this->headers = ['name', 'reg_no', 'email', 'roll_no', 'batch_start', 'batch_end', 'semester', 'section', 'department'];
+                $this->headers = ['name', 'reg_no', 'email', 'roll_no', 'batch', 'semester', 'section', 'department'];
             } else if ($role == 'faculty') {
                 $this->role = 'faculty';
                 $this->collection = $this->conn->faculties;
@@ -53,8 +53,9 @@ class AppUser
 
             foreach ($data as $row) {
                 // Combine row with headers
+                // print_r($row);
                 $document = array_combine($this->headers, $row);
-
+                // print_r($document);
                 // Try creating a user profile
                 $result = $this->createUserProfile($document);
 

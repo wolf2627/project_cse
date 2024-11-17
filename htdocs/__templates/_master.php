@@ -34,7 +34,7 @@
                 }
                 Session::loadTemplate(Session::currentScript());
             }
-            Session::loadTemplate('_footer'); // load footer
+            // Session::loadTemplate('_footer'); // load footer
             ?>
         </div>
     </div>
@@ -54,6 +54,14 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js"></script>
 
+    <!-- Include Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Include jQuery (required for Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
 
     <script src="<?= get_config("base_path") ?>js/app.min.js"></script>

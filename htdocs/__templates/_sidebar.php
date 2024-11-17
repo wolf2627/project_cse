@@ -84,6 +84,14 @@
                             </ul>
                         </div>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="/enrollsubjects">
+                            <svg class="bi">
+                                <use xlink:href="#file-earmark-text" />
+                            </svg>
+                            Enroll Students
+                        </a>
+                    </li>
                 <?php endif; ?>
 
             </ul>
