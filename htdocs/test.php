@@ -1,5 +1,5 @@
 <pre>
-<?php 
+<?php
 
 require_once 'libs/load.php';
 
@@ -14,6 +14,12 @@ require_once 'libs/load.php';
 // print_r($classes);
 
 print_r($_POST);
+
+// $faculty = new Faculty();
+
+// $result = $faculty->getAssignedStudents('1011', 'GE2C25');
+
+// print_r($result);
 
 ?>
 </pre>
