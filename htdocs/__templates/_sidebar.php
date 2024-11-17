@@ -1,3 +1,6 @@
+<? 
+$role = Session::get('role');
+?>
 <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
     <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
         <div class="offcanvas-header">
@@ -43,13 +46,26 @@
                     </a>
                 </li>
 
-                <?php if (Session::getUser()->getRole() == "admin"): ?>
+                <?php if ($role == "faculty" || $role == "admin"): ?>
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
+                        <span>Faculty</span>
+                    </h6>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="/markentry">
+                            <svg class="bi">
+                                <use xlink:href="#file-earmark-text" />
+                            </svg>
+                           Enter Marks
+                        </a>
+                    </li>
+
+                <?php endif; ?>
+
+                <?php if ($role == "admin"): ?>
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
                         <span>Admin</span>
                         <a class="link-secondary" href="#" aria-label="Add a new report">
-                            <!-- <svg class="bi">
-                        <use xlink:href="#plus-circle" />
-                    </svg> -->
+
                         </a>
                     </h6>
 

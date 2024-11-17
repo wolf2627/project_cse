@@ -179,6 +179,21 @@ class Session
         }
     }
 
+    /**
+     * This function is used to ensure that the user has the required role.
+     *
+     * @param String $role
+     * @return void
+     */
+    public static function ensureRole($role)
+    {
+        if (!Session::isAuthenticated() || Session::getUser()->getRole() != $role || Session::get('role') != $role) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     //TODO: fix this function
     /**
      * Takes an email as input and return true if the current session user is same email.
