@@ -12,6 +12,7 @@ include_once 'includes/REST.class.php';
 include_once 'includes/API.class.php';
 include_once 'app/AppUser.class.php';
 include_once 'app/essentials.class.php';
+include_once 'app/Admin.class.php';
 
 global $__site_config;
 

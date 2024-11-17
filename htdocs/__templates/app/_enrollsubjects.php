@@ -9,7 +9,7 @@
         $year = $_POST['year'];
         $students = $_POST['students'];
 
-        $enroll_result = essentials::enrollStudent($students, $semester, $batch, $section, $year);
+        $enroll_result = Admin::enrollStudent($students, $semester, $batch, $section, $year);
 
         if ($enroll_result) { ?>
             <h2>Subject Selection Results</h2>

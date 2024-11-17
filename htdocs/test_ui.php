@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Class Information Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-  <div class="container mt-5">
-    <h2 class="mb-4">Create New Class Collection</h2>
-    <form id="classForm">
+  <main class="container mt-5">
+    <h2>Create New Test Record</h2>
+    <form id="classTestForm" method="POST">
       <!-- Faculty ID -->
       <div class="mb-3">
-        <label for="facultyId" class="form-label">Faculty ID</label>
+        <label for="facultyId" class="form-label">Faculty</label>
         <select class="form-select" id="facultyId" name="faculty_id" required>
-          <option value="">Select Faculty ID</option>
-          <option value="F123">F123</option>
-          <option value="F124">F124</option>
-          <option value="F125">F125</option>
+          <option value="">Select Faculty</option>
+          <!-- Dynamically populate -->
         </select>
       </div>
 
@@ -25,10 +25,8 @@
       <div class="mb-3">
         <label for="subjectCode" class="form-label">Subject Code</label>
         <select class="form-select" id="subjectCode" name="subject_code" required>
-          <option value="">Select Subject Code</option>
-          <option value="GE2C25">GE2C25</option>
-          <option value="CS101">CS101</option>
-          <option value="MA102">MA102</option>
+          <option value="">Select Subject</option>
+          <!-- Dynamically populate -->
         </select>
       </div>
 
@@ -37,9 +35,7 @@
         <label for="batch" class="form-label">Batch</label>
         <select class="form-select" id="batch" name="batch" required>
           <option value="">Select Batch</option>
-          <option value="2022-2026">2022-2026</option>
-          <option value="2021-2025">2021-2025</option>
-          <option value="2020-2024">2020-2024</option>
+          <!-- Dynamically populate -->
         </select>
       </div>
 
@@ -48,14 +44,7 @@
         <label for="semester" class="form-label">Semester</label>
         <select class="form-select" id="semester" name="semester" required>
           <option value="">Select Semester</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
+          <!-- Dynamically populate -->
         </select>
       </div>
 
@@ -64,41 +53,70 @@
         <label for="section" class="form-label">Section</label>
         <select class="form-select" id="section" name="section" required>
           <option value="">Select Section</option>
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-          <option value="D">D</option>
+          <!-- Dynamically populate -->
         </select>
       </div>
 
-      <!-- Student Sections -->
+      <!-- Test Name -->
       <div class="mb-3">
-        <label for="studentSections" class="form-label">Student Sections</label>
-        <select class="form-select" id="studentSections" name="student_sections" multiple required>
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-          <option value="D">D</option>
-        </select>
-        <small class="form-text text-muted">Hold Ctrl (or Command on Mac) to select multiple sections.</small>
+        <label for="testName" class="form-label">Test Name</label>
+        <input type="text" class="form-control" id="testName" name="test_name" placeholder="e.g., Midterm Exam" required>
       </div>
 
-      <!-- Year -->
+      <!-- Date -->
       <div class="mb-3">
-        <label for="year" class="form-label">Year</label>
-        <select class="form-select" id="year" name="year" required>
-          <option value="">Select Year</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
-          <option value="2026">2026</option>
-        </select>
+        <label for="date" class="form-label">Date</label>
+        <input type="date" class="form-control" id="date" name="date" required>
+      </div>
+
+      <!-- Student Marks -->
+      <div class="mb-3">
+        <label for="studentMarks" class="form-label">Student Marks</label>
+        <div id="studentMarks">
+          <div class="input-group mb-2 student-mark-row">
+            <input type="text" class="form-control" name="student_marks[0][student_reg]" placeholder="Student Registration Number" required>
+            <input type="number" class="form-control" name="student_marks[0][score]" placeholder="Score" min="0" max="100" required>
+            <button type="button" class="btn btn-danger remove-mark-row">Remove</button>
+          </div>
+          <div class="input-group mb-2 student-mark-row">
+            <input type="text" class="form-control" name="student_marks[0][student_reg]" placeholder="Student Registration Number" required>
+            <input type="number" class="form-control" name="student_marks[0][score]" placeholder="Score" min="0" max="100" required>
+            <button type="button" class="btn btn-danger remove-mark-row">Remove</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" id="addStudentRow">Add Student</button>
       </div>
 
       <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary">Create Collection</button>
+      <button type="submit" class="btn btn-success">Submit</button>
     </form>
-  </div>
+  </main>
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      let studentCount = 1;
+
+      // Add new student mark row
+      $('#addStudentRow').click(function() {
+        const newRow = `
+            <div class="input-group mb-2 student-mark-row">
+                <input type="text" class="form-control" name="student_marks[${studentCount}][student_reg]" placeholder="Student Registration Number" required>
+                <input type="number" class="form-control" name="student_marks[${studentCount}][score]" placeholder="Score" min="0" max="100" required>
+                <button type="button" class="btn btn-danger remove-mark-row">Remove</button>
+            </div>`;
+        $('#studentMarks').append(newRow);
+        studentCount++;
+      });
+
+      // Remove student mark row
+      $(document).on('click', '.remove-mark-row', function() {
+        $(this).closest('.student-mark-row').remove();
+      });
+    });
+  </script>
+
 </body>
+
 </html>
