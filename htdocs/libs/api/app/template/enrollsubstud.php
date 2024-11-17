@@ -17,15 +17,19 @@ ${basename(__FILE__, '.php')} = function () {
 
         if ($result) { ?>
 
-            <div>
+            <div class="mb4">
+                <hr>
+                <h6 class="mb4"> Selected Subjects : </h6>
                 <ul class="list-inline">
                     <?
                     $count = 1;
                     foreach ($subjects as $subject) {
                     ?>
 
-                        <li class="list-inline-item">
+                        <li class="list-inline-item"> 
+                            <strong>
                             <?= $count . " - " . $subject . "" ?>
+                            </strong>
                         </li>
                     <?
                         $count++;
@@ -37,17 +41,18 @@ ${basename(__FILE__, '.php')} = function () {
             <div>
                 <!-- Display Students Table -->
                 <h3 class="mt-5">Students List</h3>
+                <h6> Note : Subjects are defaulty selected for each student.<strong> Uncheck the subjects </strong> to remove them from the student's selection. </h6>
                 <form method="POST" action="/enrollsubjects?enrolling_students" id="enroll-students-form">
                     <!-- Include hidden inputs for common data -->
                     <input type="hidden" name="semester" value="<?= $semester ?>">
                     <input type="hidden" name="section" value="<?= $section ?>">
                     <input type="hidden" name="batch" value="<?= $batch ?>">
                     <input type="hidden" name="year" value="<?= Date('Y') ?>">
-
-                    <table class="table table-striped table-hover">
+                    <div class="table-responsive small">
+                    <table class="table table-striped table-hover table-sm">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>S.No</th>
                                 <th>Registration No</th>
                                 <th>Student Name</th>
                                 <th>Select Subjects</th>
@@ -88,6 +93,7 @@ ${basename(__FILE__, '.php')} = function () {
                             } ?>
                         </tbody>
                     </table>
+                    </div>
                     <button type="submit" id="enroll-students-btn" class="btn btn-success">Enroll Selected Subjects</button>
                 </form>
             </div>

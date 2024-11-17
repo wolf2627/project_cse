@@ -308,6 +308,98 @@ class Essentials
             return []; // Return an empty array in case of error
         }
     }
+
+
+    public static function loadFaculties()
+    {
+        try {
+            // Get database connection
+            $conn = Database::getConnection();
+
+            // Access the faculties collection
+            $collection = $conn->faculties;
+
+            // Perform the query to find faculties matching the criteria
+            // and sort by 'faculty_id' in ascending order (1 for ascending)
+            $facultiesCursor = $collection->find();
+
+            // Convert the cursor to an array and return it
+            $facultiesCursorArray = iterator_to_array($facultiesCursor);
+
+            // Convert BSONDocument objects to plain arrays
+            $faculties = [];
+            foreach ($facultiesCursorArray as $faculty) {
+                $faculties[] = $faculty->getArrayCopy();  // Convert BSONDocument to array
+            }
+
+            // Return the array of faculties
+            return $faculties;
+        } catch (Exception $e) {
+            // Handle error - log it or rethrow depending on your needs
+            error_log($e->getMessage());
+            return []; // Return an empty array in case of error
+        }
+    }
+
+
+    public static function assignFaculty(
+        string $faculty_id,
+        string $subject_code,
+        string $batch,
+        string $department,
+        string $semester,
+        string $section,
+        array $student_sections,
+        string $year
+    ) {
+        try {
+
+            $conn = Database::getConnection();
+
+            $collection = $conn->classes;
+
+            // Validate required fields
+            if (empty($faculty_id) || empty($subject_code) || empty($batch) || empty($department) || empty($semester) || empty($section) || empty($student_sections) || empty($year)) {
+                throw new Exception("All fields are required.");
+            }
+
+            // Check if the same subject with the same class and students is already assigned
+            $existing = $collection->findOne([
+                'subject_code' => $subject_code,
+                'batch' => $batch,
+                'department' => $department,
+                'semester' => $semester,
+                'section' => $section,
+                'student_sections' => $student_sections,
+                'year' => $year
+            ]);
+
+            if ($existing) {
+                return "The subject '$subject_code' for class '$section' with the same students is already assigned to faculty '$existing->faculty_id'.";
+            }
+
+            // Prepare data for insertion
+            $insertData = [
+                'faculty_id' => $faculty_id,
+                'subject_code' => $subject_code,
+                'batch' => $batch,
+                'department' => $department,
+                'semester' => $semester,
+                'section' => $section,
+                'student_sections' => $student_sections,
+                'year' => $year,
+                'created_at' => new MongoDB\BSON\UTCDateTime()
+            ];
+
+            // Insert data into the collection
+            $result = $collection->insertOne($insertData);
+
+            return "Faculty Assigned successfully";
+        } catch (Exception $e) {
+             error_log("Error uploading Assigning Faculty: " . $e->getMessage());
+             return false;
+        }
+    }
 }
 
 

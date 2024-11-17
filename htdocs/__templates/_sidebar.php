@@ -92,6 +92,15 @@
                             Enroll Students
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="/assignfaculty">
+                            <svg class="bi">
+                                <use xlink:href="#file-earmark-text" />
+                            </svg>
+                            Assign Faculty
+                        </a>
+                    </li>
                 <?php endif; ?>
 
             </ul>
