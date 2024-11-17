@@ -10,6 +10,7 @@ class AppUser
     private $headers = [];
     private $conn = null;
     private $file = null;
+    private $role = null;
 
     public function __construct()
     {
@@ -32,9 +33,11 @@ class AppUser
 
             // Set headers based on role
             if ($role == 'student') {
+                $this->role = 'student';
                 $this->collection = $this->conn->students;
                 $this->headers = ['name', 'reg_no', 'email', 'roll_no', 'batch_start', 'batch_end', 'semester', 'section', 'department'];
             } else if ($role == 'faculty') {
+                $this->role = 'faculty';
                 $this->collection = $this->conn->faculties;
                 $this->headers = ['name', 'email', 'department', 'designation', 'faculty_id'];
             } else {
@@ -81,6 +84,7 @@ class AppUser
             $now = new DateTime();
             $now = $now->format('Y-m-d H:i:s');
             $document['created_at'] = $now;
+            $document['role'] = $this->role;
 
             // Insert the document into MongoDB
             $result = $this->collection->insertOne($document);

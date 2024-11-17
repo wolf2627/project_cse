@@ -2,128 +2,129 @@
 
 class User
 {
-    // use SQLGetterSetter;
     private $conn;
-    private $username;
+    private $user_id;
     private $collection;
 
-    /*
-    * Constructor gets username and stores it to $username variable.
-    * This stored $username can be used to do other stuffs. 
-    * User Object can be constructed with Username.
-    */
-
+    /**
+     * Constructor gets user_id and role, initializes the MongoDB collection.
+     */
     public function __construct($user_id, $role)
     {
         $this->conn = Database::getConnection();
 
-        if ($role == 'student') {
-            $this->collection = $this->conn->students;
-        } else if ($role == 'faculty') {
-            $this->collection = $this->conn->faculties;
+        // Choose the collection based on the user role
+        switch ($role) {
+            case 'student':
+                $this->collection = $this->conn->students;
+                break;
+            case 'faculty':
+                $this->collection = $this->conn->faculties;
+                break;
+            case 'admin':
+                $this->collection = $this->conn->admins;
+                break;
+            default:
+                throw new Exception("User::__construct() -> Role not found.");
         }
-        // else
-        //     $this->collection = $this->conn->auth;
 
+        // Search data to match user by user_id, username, or email
         $search_data = [
-            '$or' => [  // Use $or here instead of "or"
-                ['_id' => new MongoDB\BSON\ObjectId($user_id)],  // If you want to search for user_id
+            '$or' => [
+                ['_id' => new MongoDB\BSON\ObjectId($user_id)],
                 ['user' => $user_id],
-                ['email' => $user_id]  // If you want to search for either username or email
+                ['email' => $user_id]
             ]
         ];
 
         try {
             $result = $this->collection->findOne($search_data);
             if (!$result) {
-                throw new Exception("User::__construct() -> Username not found.");
+                throw new Exception("User::__construct() -> User not found.");
             }
-
-            // $this->username = $result->username;
-            // echo "Username: " . $result['username'] . "<br>";
+            $this->user_id = (string)$result->_id;  // Store user ID for further operations
         } catch (Exception $e) {
-            throw new Exception("User::__construct() -> $e.");
+            throw new Exception("User::__construct() -> " . $e->getMessage());
         }
     }
 
-
-
-
+    /**
+     * Handles user login by verifying password.
+     */
     public static function login($username, $pass)
     {
-        //echo "checklogin called..";
-        // $query = "SELECT * FROM `auth` WHERE `username` = '$username' or `email` = '$username'";
         $conn = Database::getConnection();
-
         $collection = $conn->Auth;
         $result = $collection->findOne(['username' => $username]);
-        //echo $query;
+
         if ($result) {
             $row = Database::getArray($result);
-            if (password_verify($pass, $row['password'])) { //most secure and prefered way for password saving, suggested by official php
-                /* TODO
-                1. Generate Session Token.
-                2. Insert Session Token
-                3. Build Session and session to user.
-                */
-                //echo $row['username'];
-                //echo $row['password'];
-                $row = Database::getArray($result);
-                return ['user_id' => $row['user_id']['$oid'], 'role' => $row['role'], 'username' => $row['username']]; //returning username on successful login.
-            } else {
-                return false;
+            if (password_verify($pass, $row['password'])) {
+                return [
+                    'user_id' => (string)$row['user_id']['$oid'], 
+                    'role' => $row['role'], 
+                    'username' => $row['username']
+                ];
             }
+        }
+        return false;  // Return false if login fails
+    }
+
+    /**
+     * Magic method to dynamically handle getter and setter calls.
+     */
+    public function __call($name, $arguments)
+    {
+        $property = preg_replace("/[^0-9a-zA-Z]/", "", substr($name, 3)); // Extract property name
+        $property = strtolower(preg_replace('/\B([A-Z])/', '_$1', $property)); // Convert to snake_case
+
+        // Handle getters
+        if (substr($name, 0, 3) == "get") {
+            return $this->_get_data($property);
+        } 
+        // Handle setters
+        else if (substr($name, 0, 3) == "set") {
+            if (isset($arguments[0])) {
+                return $this->_set_data($property, $arguments[0]);
+            } else {
+                throw new Exception("User::__call() -> Missing value for setter method.");
+            }
+        }
+        // Handle invalid method calls
+        else {
+            throw new Exception("User::__call() -> $name function unavailable.");
+        }
+    }
+
+    /**
+     * Updates data in the database (used by magic setter).
+     */
+    public function _set_data($key, $value)
+    {
+        $result = $this->collection->updateOne(
+            ['_id' => new MongoDB\BSON\ObjectId($this->user_id)],
+            ['$set' => [$key => $value]]
+        );
+
+        // Return true if exactly one document was modified
+        return $result->getModifiedCount() === 1;
+    }
+
+    /**
+     * Retrieves data from the database (used by magic getter).
+     */
+    public function _get_data($key)
+    {
+        $result = $this->collection->findOne(['_id' => new MongoDB\BSON\ObjectId($this->user_id)]);
+        // print_r($result);
+        // Check if the result exists and return the requested field
+        if ($result) {
+            return isset($result->$key) ? $result->$key : "not found";
         } else {
+            echo "User::_get_data() -> User not found. <br>";
             return false;
         }
     }
-
-    // Testing Functions.
-    // private function _get_data($property)
-    // {
-    //     return isset($this->properties[$property]) ? $this->properties[$property] : null;
-    // }
-
-    // private function _set_data($property, $value)
-    // {
-    //     $this->properties[$property] = $value;
-    //     return $this;
-    // }
-
-
-    //Updates data to database. (invoked by __call method).
-
-    // public function _set_data($key, $value)
-    // {
-    //     if (!$this->conn) {
-    //         $this->conn = Database::getConnection();
-    //     }
-    //     $query = "UPDATE `auth` SET `$key` = '$value' WHERE `id` = '$this->id';";
-    //     if ($this->conn->query($query) === TRUE) {
-    //         return True;
-    //     } else {
-    //         //echo "Error updating record: " . $this->conn->error;
-    //         return False;
-    //     }
-    // }
-
-    // //Retrives data from database. (invoked by __call method).
-    // public function _get_data($key)
-    // {
-    //     if (!$this->conn) {
-    //         $this->conn = Database::getConnection();
-    //     }
-    //     $query = "SELECT `$key` FROM `auth` WHERE `id` = '$this->id'";
-    //     //echo $query;
-    //     $result = $this->conn->query($query);
-    //     if ($result->num_rows == 1) {
-    //         $row = $result->fetch_assoc();
-    //         $result = $row[$key];
-    //         return $result;
-    //     } else {
-    //         return false;
-    //     }
-    // }
 
     /* 
     * Since Date of Birth has special format, a override method is written for updating Dob. 
