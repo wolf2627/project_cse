@@ -89,6 +89,7 @@ class UserSession
                         if ($_SERVER['HTTP_USER_AGENT'] == $session->getUserAgent()) {
                             if ($session->getFingerprint() == $_COOKIE['fingerprint']) { //TODO: This is always True, fix it.
                                 Session::$user = $session->getUser();
+                                Session::set('role', $session->getUser()->getRole());
                                 return $session;
                             } else {
                                 throw new Exception("Fingerprint doesn't match");

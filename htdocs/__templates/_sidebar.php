@@ -28,9 +28,9 @@
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
                 <span>Reports</span>
                 <a class="link-secondary" href="#" aria-label="Add a new report">
-                    <svg class="bi">
+                    <!-- <svg class="bi">
                         <use xlink:href="#plus-circle" />
-                    </svg>
+                    </svg> -->
                 </a>
             </h6>
             <ul class="nav flex-column mb-auto">
@@ -56,11 +56,11 @@
                     <li class="nav-item">
                         <button class="nav-link d-flex align-items-center gap-2 btn-toggle" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
                             <svg class="bi">
-                                <use xlink:href="#speedometer2"></use>
+                                <use xlink:href="#new-folder"></use>
                             </svg>
                             Create
                             <svg class="bi arrow-mov ">
-                                <use xlink:href="#plus-circle"></use>
+                                <use xlink:href="#plus"></use>
                             </svg>
                         </button>
                         <div class="collapse" id="dashboard-collapse">
@@ -68,7 +68,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link d-flex align-items-center gap-2" href="/createuser">
                                         <svg class="bi">
-                                            <use xlink:href="#file-earmark-text" />
+                                            <use xlink:href="#person-fill" />
                                         </svg>
                                         User
                                     </a>
@@ -76,7 +76,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link d-flex align-items-center gap-2" href="/createsubject">
                                         <svg class="bi">
-                                            <use xlink:href="#file-earmark-text" />
+                                            <use xlink:href="#journal-plus" />
                                         </svg>
                                         Subject
                                     </a>
