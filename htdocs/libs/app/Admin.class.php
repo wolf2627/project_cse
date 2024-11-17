@@ -5,7 +5,8 @@ require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-class Admin {
+class Admin
+{
 
     private $conn = null;
 
@@ -270,9 +271,80 @@ class Admin {
 
             return "Faculty Assigned successfully";
         } catch (Exception $e) {
-             error_log("Error uploading Assigning Faculty: " . $e->getMessage());
-             return false;
+            error_log("Error uploading Assigning Faculty: " . $e->getMessage());
+            return false;
         }
     }
-    
+
+    public static function createTest($testname, $month, $batch, $semester, $year, $department, $subjects, $duration, $totalmarks, $passmarks, $instructions)
+    {
+        try {
+            // Get MongoDB connection
+            $conn = Database::getConnection();
+            $collection = $conn->tests;
+
+            // Validate required fields
+            if (empty($testname) || empty($month) || empty($batch) || empty($semester) || empty($year) || empty($department) || empty($subjects) || empty($duration) || empty($totalmarks) || empty($passmarks) || empty($instructions)) {
+                throw new Exception("All fields are required.");
+            }
+
+            // Validate subjects array
+            // if (!is_array($subjects) || empty($subjects)) {
+            //     throw new Exception("Subjects must be an array and cannot be empty.");
+            // }
+
+            // // Check if each subject contains a valid subject code and date
+            // foreach ($subjects as $subject) {
+            //     if (empty($subject['subject_code']) || empty($subject['date'])) {
+            //         throw new Exception("Each subject must have a code and a date.");
+            //     }
+            // }
+
+            // Check if test already exists
+            $old = $collection->findOne([
+                'testname' => $testname,
+                'month' => $month,
+                'batch' => $batch,
+                'semester' => $semester,
+                'year' => $year,
+                'department' => $department
+            ]);
+
+            if ($old) {
+                return "duplicate";
+            }
+            $date = new DateTime();
+            $date = $date->format('Y-m-d H:i:s');
+            // Create the test document
+            $test = [
+                'testname' => $testname,
+                'month' => $month,
+                'batch' => $batch,
+                'semester' => $semester,
+                'year' => $year,
+                'department' => $department,
+                'subjects' => $subjects, // Array of subject codes and dates
+                'duration' => $duration,
+                'totalmarks' => $totalmarks,
+                'passmarks' => $passmarks,
+                'instructions' => $instructions,
+                'status' => 'active', // Set the initial status
+                'created_at' => $date// Store the current timestamp
+            ];
+
+            // Insert the document into the collection
+            $result = $collection->insertOne($test);
+
+            // Check the insertion result
+            if ($result->getInsertedCount() === 1) {
+                return true;
+            } else {
+                throw new Exception("Test creation failed.");
+            }
+        } catch (Exception $e) {
+            // error_log("Error creating test: " . $e->getMessage());
+            // return false; // Return the error message for debugging
+            throw new Exception($e->getMessage());
+        }
+    }
 }

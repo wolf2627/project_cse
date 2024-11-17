@@ -28,7 +28,7 @@ class Database
                 if (Database::$conn == null) {
                     throw new Exception("Connection to the database failed");
                 }
-                
+
                 return Database::$conn;
             } catch (Exception $e) {
                 die("Error Occurred: " . $e->getMessage());
