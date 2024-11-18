@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <? //Session::loadTemplate('_footer'); // load footer
+    <? Session::loadTemplate('_footer'); // load footer
     ?>
 
     <? Session::loadTemplate('_modal'); //load modal template 
