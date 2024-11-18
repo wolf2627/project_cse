@@ -4,7 +4,7 @@
             <svg class="bi me-2" width="40" height="32">
                 <use xlink:href="#bootstrap"></use>
             </svg>
-            <span class="fs-4">Department of Computer Science and Engineering</span>
+            <span class="fs-4">Department of Computer Science and Engineering <span class="badge text-bg-info">Beta</span> </span>
         </a>
 
         <ul class="nav nav-pills">
