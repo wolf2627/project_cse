@@ -37,6 +37,24 @@ class Faculty
         }
     }
 
+    public function getClass($subject_code){
+        $collection = $this->conn->classes;
+
+        try {
+            $cursor = $collection->findOne(
+                ['faculty_id' => $this->faculty_id, 'subject_code' => $subject_code],
+                ['projection' => ['_id' => 0]]
+            );
+
+            $result = iterator_to_array($cursor);
+
+            return $result ?: false;
+        } catch (Exception $e) {
+            error_log('Error fetching classes: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     /**
      * Fetch subjects assigned to the faculty.
      */
@@ -106,7 +124,7 @@ class Faculty
     /**
      * Insert marks for a test if not already present.
      */
-    public function enterMark($batch, $semester, $subject_code, $marks, $testname, $section)
+    public function enterMark($batch, $semester, $subject_code, $testname, $section, $marks)
     {
         $collection = $this->conn->marks;
 
@@ -129,16 +147,18 @@ class Faculty
                 'batch' => $batch,
                 'semester' => $semester,
                 'subject_code' => $subject_code,
-                'marks' => $marks,
                 'test_name' => $testname,
                 'section' => $section,
+                'marks' => $marks,
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
             $collection->insertOne($data);
             return true;
         } catch (Exception $e) {
-            return ['error' => 'Error entering marks: ' . $e->getMessage()];
+            error_log('error => Error entering marks:' . $e->getMessage());
+            return false;
+            
         }
     }
 

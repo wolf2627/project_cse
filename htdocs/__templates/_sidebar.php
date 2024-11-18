@@ -69,8 +69,10 @@ $role = Session::get('role');
                                 if (!empty($tests)) {
                                     foreach ($tests as $testName => $testCodes) {
                                         foreach ($testCodes as $testCode) {
+                                            $encodedTestName = base64_encode($testName);
+                                            $encodedTestCode = base64_encode($testCode);
                                             echo "<li class='nav-item'>
-                                                    <a class='nav-link d-flex align-items-center gap-2' href='/markentry?code={$testCode}&testname={$testName}'>
+                                                    <a class='nav-link d-flex align-items-center gap-2' href='/markentry?code={$encodedTestCode}&testname={$encodedTestName}'>
                                                         <svg class='bi'>
                                                             <use xlink:href='#journal-plus' />
                                                         </svg>

@@ -4,7 +4,7 @@ $faculty = new Faculty();
 
 $faculty_id = $faculty->getFacultyId();
 
-$code = $_GET['code'];
-$testname = $_GET['testname'];
+$code = base64_decode($_GET['code']);
+$testname = base64_decode($_GET['testname']);
 
 Session::loadTemplate('/app/_entermarks', [$faculty_id, $code, $testname]);
