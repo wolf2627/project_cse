@@ -17,7 +17,7 @@
                     // Create a new Faculty object
                     $faculty = new Faculty();
                     // Fetch student data from the database
-                    $students = $faculty->getAssignedStudents($data[0], $data[1]);
+                    $students = $faculty->getAssignedStudents($data[1]);
 
                     if (!empty($students)) {
                         $index = 1;

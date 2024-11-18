@@ -263,7 +263,7 @@ class Admin
                 'section' => $section,
                 'student_sections' => $student_sections,
                 'year' => $year,
-                'created_at' => new MongoDB\BSON\UTCDateTime()
+                'created_at' => Date('Y-m-d H:i:s')
             ];
 
             // Insert data into the collection

@@ -17,94 +17,164 @@ class Faculty
         return $this->faculty_id;
     }
 
+    /**
+     * Fetch classes handled by the faculty.
+     */
     public function getClasses()
     {
         $collection = $this->conn->classes;
 
-        $cursor = $collection->find(
-            ['faculty_id' => $this->faculty_id],
-            ['projection' => ['_id' => 0]]
-        );
+        try {
+            $cursor = $collection->find(
+                ['faculty_id' => $this->faculty_id],
+                ['projection' => ['_id' => 0]]
+            );
 
-        $result = $cursor->toArray();
-
-        return $result;
-    }
-
-    public function enterMark($batch, $semester, $subject_code, $marks, $testname, $section)
-    {
-
-        $conn = Database::getConnection();
-        $collection = $conn->marks;
-
-        $date = date('Y-m-d H:i:s');
-        $data = [
-            'faculty_id' => $this->faculty_id,
-            'batch' => $batch,
-            'semester' => $semester,
-            'subject_code' => $subject_code,
-            'marks' => $marks,
-            'test_name' => $testname,
-            'section' => $section,
-            'created_at' => $date
-        ];
-
-        $existing = $collection->findOne([
-            'faculty_id' => $this->faculty_id,
-            'batch' => $batch,
-            'semester' => $semester,
-            'subject_code' => $subject_code,
-            'test_name' => $testname,
-            'section' => $section
-        ]);
-
-        if ($existing) {
-            return 'duplicate';
-        } else {
-            $collection->insertOne($data);
-            return  true;
+            return $cursor->toArray();
+        } catch (Exception $e) {
+            error_log('Error fetching classes: ' . $e->getMessage());
+            return false;
         }
     }
 
-    public function getAssignedStudents($facultyId, $subjectCode)
+    /**
+     * Fetch subjects assigned to the faculty.
+     */
+    public function getSubjects()
     {
-        // Fetch the Class collection
+        $collection = $this->conn->classes;
+
+        try {
+            $cursor = $collection->find(
+                ['faculty_id' => $this->faculty_id],
+                ['projection' => ['subject_code' => 1, '_id' => 0]]
+            );
+
+            $result = $cursor->toArray();
+            $subjectCodes = array_map(fn($item) => $item['subject_code'], $result);
+
+            return $subjectCodes ?: false;
+        } catch (Exception $e) {
+            error_log('Error fetching subjects: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Fetch tests assigned to the faculty's subjects.
+     */
+    public function getFacultyAssignedTests()
+    {
+        $testCollection = $this->conn->tests;
+
+        try {
+            $subjectCodes = $this->getSubjects();
+            if (isset($subjectCodes['error'])) {
+                throw new Exception($subjectCodes['error']);
+            }
+
+            $cursor = $testCollection->find([
+                'status' => 'active',
+                'subjects.subject_code' => ['$in' => $subjectCodes]
+            ]);
+
+            $result = [];
+            foreach ($cursor as $test) {
+                $testName = $test['testname'];
+
+                // Convert BSONArray to a PHP array
+                $subjectsArray = (array) $test['subjects'];
+
+                // Filter and map the subjects
+                $testSubjects = array_column(array_filter(
+                    $subjectsArray,
+                    fn($subject) => in_array($subject['subject_code'], $subjectCodes)
+                ), 'subject_code');
+
+                // Merge the subjects into the result
+                $result[$testName] = array_merge($result[$testName] ?? [], $testSubjects);
+            }
+
+            return $result ?: throw new Exception('No tests found.');
+        } catch (Exception $e) {
+            error_log('Error fetching tests: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+
+    /**
+     * Insert marks for a test if not already present.
+     */
+    public function enterMark($batch, $semester, $subject_code, $marks, $testname, $section)
+    {
+        $collection = $this->conn->marks;
+
+        try {
+            $existing = $collection->findOne([
+                'faculty_id' => $this->faculty_id,
+                'batch' => $batch,
+                'semester' => $semester,
+                'subject_code' => $subject_code,
+                'test_name' => $testname,
+                'section' => $section
+            ]);
+
+            if ($existing) {
+                return 'duplicate';
+            }
+
+            $data = [
+                'faculty_id' => $this->faculty_id,
+                'batch' => $batch,
+                'semester' => $semester,
+                'subject_code' => $subject_code,
+                'marks' => $marks,
+                'test_name' => $testname,
+                'section' => $section,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            $collection->insertOne($data);
+            return true;
+        } catch (Exception $e) {
+            return ['error' => 'Error entering marks: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Fetch students assigned to a faculty and subject.
+     */
+    public function getAssignedStudents($subjectCode)
+    {
         $classCollection = $this->conn->classes;
         $enrollmentCollection = $this->conn->enrollments;
         $studentCollection = $this->conn->students;
 
+        $facultyId = $this->faculty_id;
+
         try {
-            // Step 1: Find the class details for the given faculty ID and subject code
             $class = $classCollection->findOne([
                 'faculty_id' => $facultyId,
                 'subject_code' => $subjectCode
             ]);
 
-
             if (!$class) {
-                return ['error' => 'No class found for the given faculty ID and subject code.'];
+                throw new Exception('Class not found.');
             }
 
-            // Step 2: Fetch student enrollments based on the class details
             $enrollments = $enrollmentCollection->find([
                 'batch' => $class['batch'],
                 'semester' => $class['semester'],
                 'subject_code' => $class['subject_code'],
                 'section' => ['$in' => $class['student_sections']],
                 'year' => $class['year']
+            ], [
+                'sort' => ['student_id' => 1]
             ]);
 
-            if ($enrollments->isDead()) {
-                return ['error' => 'No students found in enrollment for the specified class.'];
-            }
+            $studentIds = array_map(fn($enrollment) => $enrollment['student_id'], iterator_to_array($enrollments));
 
-            // Collect student IDs from the enrollment results
-            $studentIds = [];
-            foreach ($enrollments as $enrollment) {
-                $studentIds[] = $enrollment['student_id'];
-            }
-
-            // Step 3: Find student details in the Student collection
             $studentsCursor = $studentCollection->find([
                 'reg_no' => ['$in' => $studentIds]
             ]);
@@ -117,13 +187,10 @@ class Faculty
                 ];
             }
 
-            if (empty($students)) {
-                return ['error' => 'No student details found.'];
-            }
-
-            return $students;
+            return $students ?: throw new Exception('No students found.');
         } catch (Exception $e) {
-            return ['error' => 'An error occurred: ' . $e->getMessage()];
+            error_log('Error fetching students: ' . $e->getMessage());
+            return false;
         }
     }
 }

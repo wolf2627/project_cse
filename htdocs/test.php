@@ -3,23 +3,13 @@
 
 require_once 'libs/load.php';
 
-// $email = Session::getUser()->getName();
+$faculty = new Faculty();
 
-// echo $email;
+// print_r($faculty->getClasses());
 
-// $faculty = new Faculty();
+print_r($faculty->getSubjects());
 
-// $classes = $faculty->getClasses();
-
-// print_r($classes);
-
-print_r($_POST);
-
-// $faculty = new Faculty();
-
-// $result = $faculty->getAssignedStudents('1011', 'GE2C25');
-
-// print_r($result);
+print_r($faculty->getFacultyAssignedTests());
 
 ?>
 </pre>

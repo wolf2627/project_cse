@@ -1,4 +1,4 @@
-<? 
+<?
 $role = Session::get('role');
 ?>
 <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
@@ -51,12 +51,39 @@ $role = Session::get('role');
                         <span>Faculty</span>
                     </h6>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-2" href="/markentry">
+                        <button class="nav-link d-flex align-items-center gap-2 btn-toggle" data-bs-toggle="collapse" data-bs-target="#mark-enter-collapse" aria-expanded="false">
                             <svg class="bi">
-                                <use xlink:href="#file-earmark-text" />
+                                <use xlink:href="#new-folder"></use>
                             </svg>
-                           Enter Marks
-                        </a>
+                            Enter Test Marks
+                            <svg class="bi arrow-mov ">
+                                <use xlink:href="#plus"></use>
+                            </svg>
+                        </button>
+                        <div class="collapse" id="mark-enter-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                <?php
+                                $faculty = new Faculty();
+                                $tests = $faculty->getFacultyAssignedTests();
+
+                                if (!empty($tests)) {
+                                    foreach ($tests as $testName => $testCodes) {
+                                        foreach ($testCodes as $testCode) {
+                                            echo "<li class='nav-item'>
+                                                    <a class='nav-link d-flex align-items-center gap-2' href='/markentry?code={$testCode}&testname={$testName}'>
+                                                        <svg class='bi'>
+                                                            <use xlink:href='#journal-plus' />
+                                                        </svg>
+                                                        {$testName} ({$testCode})
+                                                    </a>
+                                                  </li>";
+                                        }
+                                    }
+                                }
+                                
+                                ?>
+                            </ul>
+                        </div>
                     </li>
 
                 <?php endif; ?>
