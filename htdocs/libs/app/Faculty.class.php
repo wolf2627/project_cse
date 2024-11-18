@@ -159,47 +159,50 @@ class Faculty
 
     /**
      * Insert marks for a test if not already present.
+     * deprecated
      */
-    public function enterMark($batch, $semester, $subject_code, $testname, $section, $marks)
-    {
-        $collection = $this->conn->marks;
+    // public function enterMark($batch, $semester, $subject_code, $testname, $section, $marks)
+    // {
+    //     $collection = $this->conn->marks;
 
-        // echo "Enter Marks : ". $batch . " " . $semester . " " . $subject_code . " " . $testname . " " . $section . " " . $marks;
+    //     foreach($marks as &$mark){
+    //         $mark['marks'] = (int)$mark['marks'];
+    //     }
 
-        try {
-            $existing = $collection->findOne([
-                'faculty_id' => $this->faculty_id,
-                'batch' => $batch,
-                'semester' => $semester,
-                'subject_code' => $subject_code,
-                'test_name' => $testname,
-                'section' => $section
-            ]);
+    //     try {
+    //         $existing = $collection->findOne([
+    //             'faculty_id' => $this->faculty_id,
+    //             'batch' => $batch,
+    //             'semester' => $semester,
+    //             'subject_code' => $subject_code,
+    //             'test_name' => $testname,
+    //             'section' => $section
+    //         ]);
 
-            if ($existing) {
-                return 'duplicate';
-            }
+    //         if ($existing) {
+    //             return 'duplicate';
+    //         }
 
-            $data = [
-                'faculty_id' => $this->faculty_id,
-                'batch' => $batch,
-                'semester' => $semester,
-                'subject_code' => $subject_code,
-                'test_name' => $testname,
-                'section' => $section,
-                'marks' => $marks,
-                'created_at' => date('Y-m-d H:i:s')
-            ];
+    //         $data = [
+    //             'faculty_id' => $this->faculty_id,
+    //             'batch' => $batch,
+    //             'semester' => $semester,
+    //             'subject_code' => $subject_code,
+    //             'test_name' => $testname,
+    //             'section' => $section,
+    //             'marks' => $marks,
+    //             'created_at' => date('Y-m-d H:i:s')
+    //         ];
 
-            $collection->insertOne($data);
-            return true;
-        } catch (Exception $e) {
-            error_log('error => Error entering marks:' . $e->getMessage());
-            return false;
-        }
-    }
+    //         $collection->insertOne($data);
+    //         return true;
+    //     } catch (Exception $e) {
+    //         error_log('error => Error entering marks:' . $e->getMessage());
+    //         return false;
+    //     }
+    // }
 
-    public function getMarks($batch, $semester, $subject_code, $testname, $section)
+    public function getMarks($batch, $semester, $subject_code, $testname, $section, $department)
     {
         $collection = $this->conn->marks;
         $faculty_id = $this->faculty_id;
@@ -213,6 +216,7 @@ class Faculty
                     'faculty_id' => $this->faculty_id,
                     'batch' => $batch,
                     'semester' => $semester,
+                    'department' => $department,
                     'subject_code' => $subject_code,
                     'test_name' => $testname,
                     'section' => $section
@@ -239,6 +243,114 @@ class Faculty
             return false;
         }
     }
+
+    public function updateMarks($reg_no, $new_mark, $batch, $semester, $subject_code, $testname, $section, $department)
+    {
+        $collection = $this->conn->marks;
+
+        try {
+            // Find the document with the given criteria
+            $existing = $collection->findOne([
+                'faculty_id' => $this->faculty_id,
+                'batch' => $batch,
+                'semester' => $semester,
+                'department' => $department,
+                'subject_code' => $subject_code,
+                'test_name' => $testname,
+                'section' => $section
+            ]);
+
+            if (!$existing) {
+                throw new Exception('Marks record not found.');
+            }
+
+            // Use the positional operator to update the student's mark
+            $result = $collection->updateOne(
+                [
+                    'faculty_id' => $this->faculty_id,
+                    'batch' => $batch,
+                    'semester' => $semester,
+                    'subject_code' => $subject_code,
+                    'department' => $department,
+                    'test_name' => $testname,
+                    'section' => $section,
+                    'marks.reg_no' => $reg_no  // Match student by reg_no inside the marks array
+                ],
+                [
+                    '$set' => [
+                        'marks.$.marks' => $new_mark  // Update the specific student's marks
+                    ]
+                ]
+            );
+
+            // Return true if one document was modified
+            return $result->getModifiedCount() > 0;
+        } catch (Exception $e) {
+            // Log and throw the error
+            error_log('Error updating marks: ' . $e->getMessage());
+            throw new Exception('Error updating marks: ' . $e->getMessage());
+        }
+    }
+
+
+
+    public function enterMark($batch, $semester, $subject_code, $testname, $section, $marks, $department)
+    {
+        $collection = $this->conn->marks;
+
+        foreach($marks as &$mark){
+            $mark['marks'] = (int)$mark['marks'];
+        }
+
+        try {
+            // Check if a record for this test already exists
+            $existing = $collection->findOne([
+                'faculty_id' => $this->faculty_id,
+                'batch' => $batch,
+                'department' => $department,
+                'semester' => $semester,
+                'subject_code' => $subject_code,
+                'test_name' => $testname,
+                'section' => $section
+            ]);
+
+            if ($existing) {
+                return 'duplicate';
+            }
+
+            // Transform marks into an array of structured objects
+            $structuredMarks = [];
+            foreach ($marks as $key => $student) {
+                $structuredMarks[] = [
+                    'reg_no' => $student['reg_no'],
+                    'studentname' => $student['studentname'],
+                    'marks' => $student['marks']
+                ];
+            }
+
+            // Prepare the document
+            $data = [
+                'faculty_id' => $this->faculty_id,
+                'batch' => $batch,
+                'semester' => $semester,
+                'subject_code' => $subject_code,
+                'department' => $department,
+                'test_name' => $testname,
+                'section' => $section,
+                'marks' => $structuredMarks, // Structured array for easier querying
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            // Insert the document into the collection
+            $collection->insertOne($data);
+
+            return true;
+        } catch (Exception $e) {
+            error_log('Error entering marks: ' . $e->getMessage());
+            return false;
+        }
+    }
+
 
 
 

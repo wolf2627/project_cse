@@ -10,3 +10,9 @@
         </div>
     </div>
 </section>
+
+<footer class="footer mt-auto py-3 position-fixed bottom-0" >
+    <div class="container">
+        <span class="text-body-secondary">Developed by Yuheswari, Aswin & Mentored by Dr.M.Buvana @CSE, PSNA </span>
+    </div>
+</footer> 
