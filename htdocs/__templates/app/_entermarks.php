@@ -98,7 +98,7 @@
             } else {
                 echo "<h2>Enter Marks for {$testname} ({$code})</h2>";
             ?>
-            
+
                 <form id="studentMarksForm" method="POST" action="/markentry?code=<?= base64_encode($data['1']) ?>&testname=<?= base64_encode($data['0']) ?>">
                     <div class="table-responsive small">
                         <table class="table table-hover table-bordered mt-3">
@@ -114,7 +114,7 @@
                                 <?php
                                 // print_r($data);
                                 // Fetch student data from the database
-                                $students = $faculty->getAssignedStudents($data[1]);
+                                $students = $faculty->getAssignedStudents($data[1], $data[2], $data[3]);
 
                                 if (!empty($students)) {
                                     $index = 1;
@@ -146,7 +146,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary" id="markentry-btn">Submit</button>
                 </form>
     </div>
 

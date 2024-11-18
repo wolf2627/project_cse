@@ -67,22 +67,40 @@ $role = Session::get('role');
                                 $tests = $faculty->getFacultyAssignedTests();
 
                                 if (!empty($tests)) {
-                                    foreach ($tests as $testName => $testCodes) {
-                                        foreach ($testCodes as $testCode) {
-                                            $encodedTestName = base64_encode($testName);
-                                            $encodedTestCode = base64_encode($testCode);
+                                    foreach ($tests as $testName => $details) {
+                                        $encodedTestName = base64_encode($testName);
+
+                                        foreach ($details['subjects'] as $subjectCode) {
+                                            $encodedSubjectCode = base64_encode($subjectCode);
+                                            $encodedBatch = base64_encode(implode(", ", $details['batches']));
+                                            $encodedSemester = base64_encode(implode(", ", $details['semesters']));
+
                                             echo "<li class='nav-item'>
-                                                    <a class='nav-link d-flex align-items-center gap-2' href='/markentry?code={$encodedTestCode}&testname={$encodedTestName}'>
+                                                    <a class='nav-link d-flex align-items-center gap-2' 
+                                                       href='/markentry?code={$encodedSubjectCode}&testname={$encodedTestName}&batch={$encodedBatch}&semester={$encodedSemester}'>
                                                         <svg class='bi'>
-                                                            <use xlink:href='#journal-plus' />
+                                                            <use xlink:href='#journal-plus'></use>
                                                         </svg>
-                                                        {$testName} ({$testCode})
+                                                        {$testName}
+                                                        <small class='text-muted'>
+                                                            Subject: {$subjectCode}| 
+
+                                                            Semester: " . implode(", ", $details['semesters']) . "
+                                                        </small>
                                                     </a>
                                                   </li>";
                                         }
                                     }
+                                } else {
+                                    echo "<li class='nav-item'>
+                                            <a class='nav-link d-flex align-items-center gap-2' href='#'>
+                                                <svg class='bi'>
+                                                    <use xlink:href='#journal-plus'></use>
+                                                </svg>
+                                                No tests found
+                                            </a>
+                                          </li>";
                                 }
-                                
                                 ?>
                             </ul>
                         </div>

@@ -56,6 +56,23 @@ class Faculty
         }
     }
 
+    public function getBatches()
+    {
+        $collection = $this->conn->classes;
+
+        try {
+            $cursor = $collection->distinct('batch', ['faculty_id' => $this->faculty_id]);
+
+            $cursor = $cursor;
+
+            $batches = array_map(fn($batch) => ['batch' => $batch], $cursor);
+            return $cursor ?: false;
+        } catch (Exception $e) {
+            error_log('Error fetching batches: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     /**
      * Fetch subjects assigned to the faculty.
      */
@@ -66,11 +83,12 @@ class Faculty
         try {
             $cursor = $collection->find(
                 ['faculty_id' => $this->faculty_id],
-                ['projection' => ['subject_code' => 1, '_id' => 0]]
+                ['projection' => ['subject_code' => 1, 'batch' => 1, '_id' => 0]]
             );
 
             $result = $cursor->toArray();
             $subjectCodes = array_map(fn($item) => $item['subject_code'], $result);
+
 
             return $subjectCodes ?: false;
         } catch (Exception $e) {
@@ -92,8 +110,14 @@ class Faculty
                 throw new Exception($subjectCodes['error']);
             }
 
+            $batches = $this->getBatches();
+            if (isset($batches['error'])) {
+                throw new Exception($batches['error']);
+            }
+
             $cursor = $testCollection->find([
                 'status' => 'active',
+                'batch' => ['$in' => $batches],
                 'subjects.subject_code' => ['$in' => $subjectCodes]
             ]);
 
@@ -102,16 +126,25 @@ class Faculty
                 $testName = $test['testname'];
 
                 // Convert BSONArray to a PHP array
-                $subjectsArray = (array) $test['subjects'];
+                $subjectsArray = isset($test['subjects']) ? (array)$test['subjects'] : [];
 
-                // Filter and map the subjects
-                $testSubjects = array_column(array_filter(
-                    $subjectsArray,
-                    fn($subject) => in_array($subject['subject_code'], $subjectCodes)
-                ), 'subject_code');
+                // Ensure $subjectsArray is a PHP array before applying array_filter
+                if (is_array($subjectsArray)) {
+                    $testSubjects = array_column(
+                        array_filter(
+                            $subjectsArray,
+                            fn($subject) => in_array($subject['subject_code'], $subjectCodes)
+                        ),
+                        'subject_code'
+                    );
 
-                // Merge the subjects into the result
-                $result[$testName] = array_merge($result[$testName] ?? [], $testSubjects);
+                    // Add batch and semester details
+                    $result[$testName] = [
+                        'subjects' => $testSubjects,
+                        'batches' => [$test['batch']],
+                        'semesters' => [$test['semester'] ?? 'Unknown'] // Add semester if available
+                    ];
+                }
             }
 
             return $result ?: throw new Exception('No tests found.');
@@ -120,6 +153,8 @@ class Faculty
             return false;
         }
     }
+
+
 
 
     /**
@@ -210,7 +245,7 @@ class Faculty
     /**
      * Fetch students assigned to a faculty and subject.
      */
-    public function getAssignedStudents($subjectCode)
+    public function getAssignedStudents($subjectCode, $batch, $semester)
     {
         $classCollection = $this->conn->classes;
         $enrollmentCollection = $this->conn->enrollments;
@@ -218,10 +253,13 @@ class Faculty
 
         $facultyId = $this->faculty_id;
 
+
         try {
             $class = $classCollection->findOne([
                 'faculty_id' => $facultyId,
-                'subject_code' => $subjectCode
+                'subject_code' => $subjectCode,
+                'batch' => $batch,
+                'semester' => $semester
             ]);
 
             if (!$class) {
