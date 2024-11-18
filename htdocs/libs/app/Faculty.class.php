@@ -37,7 +37,8 @@ class Faculty
         }
     }
 
-    public function getClass($subject_code){
+    public function getClass($subject_code)
+    {
         $collection = $this->conn->classes;
 
         try {
@@ -128,6 +129,8 @@ class Faculty
     {
         $collection = $this->conn->marks;
 
+        // echo "Enter Marks : ". $batch . " " . $semester . " " . $subject_code . " " . $testname . " " . $section . " " . $marks;
+
         try {
             $existing = $collection->findOne([
                 'faculty_id' => $this->faculty_id,
@@ -158,9 +161,51 @@ class Faculty
         } catch (Exception $e) {
             error_log('error => Error entering marks:' . $e->getMessage());
             return false;
-            
         }
     }
+
+    public function getMarks($batch, $semester, $subject_code, $testname, $section)
+    {
+        $collection = $this->conn->marks;
+        $faculty_id = $this->faculty_id;
+
+        // echo "Get Marks " . $faculty_id . " " . $batch . " " . $semester . " " . $subject_code . " " . $testname . " " . $section;
+
+        try {
+            // Query the collection to fetch marks based on the criteria
+            $result = $collection->findOne(
+                [
+                    'faculty_id' => $this->faculty_id,
+                    'batch' => $batch,
+                    'semester' => $semester,
+                    'subject_code' => $subject_code,
+                    'test_name' => $testname,
+                    'section' => $section
+                ],
+                [
+                    'projection' => ['_id' => 0, 'marks' => 1, 'reg_no' => 1, 'student_name' => 1]
+                ]
+            );
+
+            // Log the results for debugging (remove or disable in production)
+            if ($result) {
+                error_log('Marks retrieved successfully');
+            } else {
+                $result = [];
+                error_log('No marks found for the specified criteria.');
+            }
+
+            // Return the result or false if no data is found
+            return $result;
+        } catch (Exception $e) {
+            // Log the error with more details for troubleshooting
+            error_log('Error fetching marks: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+
 
     /**
      * Fetch students assigned to a faculty and subject.
