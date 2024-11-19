@@ -66,6 +66,7 @@ $role = Session::get('role');
                                 if (!empty($tests)) {
                                     foreach ($tests as $testName => $details) {
                                         $encodedTestName = base64_encode($testName);
+                                        $department = $details['department'];
 
                                         foreach ($details['subjects'] as $subjectCode) {
                                             $encodedSubjectCode = base64_encode($subjectCode);
@@ -74,15 +75,15 @@ $role = Session::get('role');
 
                                             echo "<li class='nav-item'>
                                                     <a class='nav-link d-flex align-items-center gap-2' 
-                                                       href='/markentry?code={$encodedSubjectCode}&testname={$encodedTestName}&batch={$encodedBatch}&semester={$encodedSemester}'>
+                                                       href='/markentry?code={$encodedSubjectCode}&testname={$encodedTestName}&batch={$encodedBatch}&semester={$encodedSemester}&maxmark={$details['maxmark']}'>
                                                         <svg class='bi'>
                                                             <use xlink:href='#journal-plus'></use>
                                                         </svg>
                                                         {$testName}
                                                         <small class='text-muted'>
-                                                            Subject: {$subjectCode}| 
-
-                                                            Semester: " . implode(", ", $details['semesters']) . "
+                                                            {$subjectCode} | 
+                                                            Dept : {$department} |
+                                                            Sem: " . implode(", ", $details['semesters']) . "
                                                         </small>
                                                     </a>
                                                   </li>";

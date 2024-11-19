@@ -142,6 +142,9 @@ class Faculty
                     $result[$testName] = [
                         'subjects' => $testSubjects,
                         'batches' => [$test['batch']],
+                        'department' => $test['department'],
+                        'maxmark' => $test['totalmarks'],
+                        'passmark' => $test['passmarks'],
                         'semesters' => [$test['semester'] ?? 'Unknown'] // Add semester if available
                     ];
                 }

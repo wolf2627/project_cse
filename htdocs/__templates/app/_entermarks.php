@@ -20,7 +20,7 @@
 
         if ($register_marks) {
             if (isset($_GET['edit'])) {
-                echo "<h2>Edit Marks for {$testname} ({$code})</h2>";
+                echo "<h2>Edit Marks for {$testname} ({$code}) - {$department} (Sem: {$semester}) </h2>";
             ?>
                 <div class="container mt-5">
                     <!-- Dropdown for Students -->
@@ -74,7 +74,7 @@
                     </div>
 
                 <? } else {
-                echo "<h2>Marks already entered for {$testname} ({$code})</h2>";
+                echo "<h2>Marks already entered for {$testname} ({$code}) - {$department} (Sem: {$semester})</h2>";
 
                 ?>
 
@@ -124,17 +124,19 @@
                                 ?>
                             </tbody>
                         </table>
-                        <button class="btn btn-warning" onclick="window.location.href='/markentry?edit&code=<?= base64_encode($data['1']) ?>&testname=<?= base64_encode($data['0']) ?>'">Edit Marks</button>
+                        <button class="btn btn-warning" onclick="window.location.href='/markentry?edit&code=<?= base64_encode($data['1']) ?>&testname=<?= base64_encode($data['0'])?>&maxmark=<?=$data['4']?>'">Edit Marks</button>
                     </div>
                 <?php
             }
         } else {
             if (isset($_POST['student_marks'])) {
-                echo "<h2>Entered Marks</h2>";
+                echo "<h2>Entered Marks for {$testname} ({$code}) - {$department} (Sem: {$semester})</h2>";
                 // print_r($_POST['student_marks']); 
                 $student_marks = $_POST['student_marks'];
-
-                echo "<h6>Note : Refresh the page to generate Excel File if needed. You can also generate the excel fil later.<h6>";
+                $_POST = array(); //clearing the values of the form
+                echo "<h6>Note : Refresh the page to generate Excel File if needed. You can also generate the excel file later.<h6>";
+                // to refresh the page
+                echo "<button class='btn btn-primary' onclick='window.location.href=\"/markentry?code=" . base64_encode($data['1']) . "&testname=" . base64_encode($data['0']) . "\"'>Refresh</button>";
 
                 $result = $faculty->enterMark($batch, $semester, $subject_code, $testname, $section, $student_marks, $department);
                 ?>
@@ -168,7 +170,7 @@
 
                 <?php
             } else {
-                echo "<h2>Enter Marks for {$testname} ({$code})</h2>";
+                echo "<h2>Enter Marks for {$testname} ({$code}) - {$department} (Sem: {$semester})</h2>";
                 ?>
 
                     <form id="studentMarksForm" method="POST" action="/markentry?code=<?= base64_encode($data['1']) ?>&testname=<?= base64_encode($data['0']) ?>">
@@ -202,7 +204,7 @@
                                         {$student['name']}
                                     </td>
                                     <td>
-                                        <input type='number' name='student_marks[{$index}][marks]' class='form-control' placeholder='Enter Marks' required>
+                                        <input type='number' min='1' max='{$data['4']}' name='student_marks[{$index}][marks]' class='form-control' placeholder='Enter Marks' required>
                                     </td>
                                   </tr>";
                                             $index++;
