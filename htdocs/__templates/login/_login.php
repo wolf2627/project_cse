@@ -53,7 +53,7 @@ if (!$login_page) {
 
                 <div class="form-floating">
                     <input name="email" type="text" class="form-control" id="floatingInput" placeholder="name@example.com">
-                    <label for="floatingInput">Email address or Username</label>
+                    <label for="floatingInput">Username</label>
                 </div>
                 <div class="form-floating">
                     <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
