@@ -1,6 +1,6 @@
 <?php
 
-if(Session::isAuthenticated()){
+if (Session::isAuthenticated()) {
     header("Location: /dashboard");
     die();
 }
@@ -26,7 +26,7 @@ if (!$login_page) {
         }
 ?>
         <script>
-            window.location.href = "<?=$redirect_to ?>";
+            window.location.href = "<?= $redirect_to ?>";
         </script>
     <?
     } else {
@@ -64,5 +64,11 @@ if (!$login_page) {
             </form>
         </div>
     </main>
+
+    <footer class="footer mt-auto py-3 position-fixed bottom-0">
+        <div class="container">
+            <span class="text-body-secondary">Developed by Yuheswari, Aswin & Mentored by Dr.M.Buvana @CSE, PSNA </span>
+        </div>
+    </footer>
 
 <? } ?>

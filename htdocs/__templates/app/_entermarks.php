@@ -19,13 +19,13 @@
         $register_marks = $faculty->getMarks($batch, $semester, $subject_code, $testname, $section, $department);
 
         if ($register_marks) {
-
             if (isset($_GET['edit'])) {
                 echo "<h2>Edit Marks for {$testname} ({$code})</h2>";
-        ?>
+            ?>
                 <div class="container mt-5">
-                    <!-- Searchable Dropdown for Students -->
+                    <!-- Dropdown for Students -->
                     <div class="mb-4">
+
                         <label for="student-select" class="form-label">Select Student</label>
                         <select id="student-select" class="form-select" aria-label="Student Selection">
                             <option value="" disabled selected>Select Student</option>
@@ -77,7 +77,18 @@
                 echo "<h2>Marks already entered for {$testname} ({$code})</h2>";
 
                 ?>
+
+                    <form id="excelForm">
+                        <input type="text" id="batch" name="batch" value="<?= $batch ?>" hidden>
+                        <input type="text" id="semester" name="semester" value="<?= $semester ?>" hidden>
+                        <input type="text" id="subject_code" name="subject_code" value="<?= $subject_code ?>" hidden>
+                        <input type="text" id="test_name" name="test_name" value="<?= $testname ?>" hidden>
+                        <input type="text" id="section" name="section" value="<?= $section ?>" hidden>
+                        <input type="text" id="department" name="department" value="<?= $department ?>" hidden>
+                        <button type="button" class="btn btn-warning" id="generateExcel-btn">Generate Excel</button>
+                    </form>
                     <div class="table-responsive small">
+
                         <table class="table table-hover table-bordered mt-3">
                             <thead class="table-dark">
                                 <tr>
@@ -123,7 +134,7 @@
                 // print_r($_POST['student_marks']); 
                 $student_marks = $_POST['student_marks'];
 
-                // echo "Form : " . $batch . " " . $semester . " " . $subject_code . " " . $testname . " " . $section . " " . $student_marks;
+                echo "<h6>Note : Refresh the page to generate Excel File if needed. You can also generate the excel fil later.<h6>";
 
                 $result = $faculty->enterMark($batch, $semester, $subject_code, $testname, $section, $student_marks, $department);
                 ?>
@@ -153,6 +164,8 @@
                             </tbody>
                         </table>
                     </div>
+
+
                 <?php
             } else {
                 echo "<h2>Enter Marks for {$testname} ({$code})</h2>";
