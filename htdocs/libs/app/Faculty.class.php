@@ -169,8 +169,10 @@ class Faculty
 
         try {
             // Query the collection to fetch marks based on the criteria
-            
-            $result = $collection->findOne(
+
+            // TODO: Try to optimize this query to reduce the number of queries (use aggregation)
+
+            $findClass = $classCollection->findOne(
                 [
                     'faculty_id' => $faculty_id,
                     'batch' => $batch,
@@ -180,32 +182,31 @@ class Faculty
                     'section' => $section
                 ],
                 [
-                    'projection' => ['_id' => 0, 'marks' => 1, 'reg_no' => 1, 'student_name' => 1]
+                    'projection' => ['_id' => 1]
                 ]
             );
 
-            $result = $collection->findOne(
-                [
-                    'faculty_id' => $faculty_id,
-                    'batch' => $batch,
-                    'semester' => $semester,
-                    'department' => $department,
-                    'subject_code' => $subject_code,
-                    'test_name' => $testname,
-                    'section' => $section
-                ],
-                [
-                    'projection' => ['_id' => 0, 'marks' => 1, 'reg_no' => 1, 'student_name' => 1]
-                ]
-            );
+            if ($findClass) {
+                // Access the _id of the found class
+                $classId = $findClass->_id;
 
-            // Log the results for debugging (remove or disable in production)
-            if ($result) {
-                error_log('Marks retrieved successfully');
+                // Find marks associated with the class_id
+                $result = $collection->findOne(
+                    ['class_id' => $classId, 'test_name' => $testname],
+                );
+
+                // Log the results for debugging (remove or disable in production)
+                if ($result) {
+                    error_log('Marks retrieved successfully');
+                } else {
+                    $result = [];
+                    error_log('No marks found for the specified criteria.');
+                }
             } else {
                 $result = [];
-                error_log('No marks found for the specified criteria.');
+                error_log('No class found for the specified criteria.');
             }
+
 
             // Return the result or false if no data is found
             return $result;
