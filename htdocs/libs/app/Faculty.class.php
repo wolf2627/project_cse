@@ -158,53 +158,6 @@ class Faculty
     }
 
 
-
-
-    /**
-     * Insert marks for a test if not already present.
-     * deprecated
-     */
-    // public function enterMark($batch, $semester, $subject_code, $testname, $section, $marks)
-    // {
-    //     $collection = $this->conn->marks;
-
-    //     foreach($marks as &$mark){
-    //         $mark['marks'] = (int)$mark['marks'];
-    //     }
-
-    //     try {
-    //         $existing = $collection->findOne([
-    //             'faculty_id' => $this->faculty_id,
-    //             'batch' => $batch,
-    //             'semester' => $semester,
-    //             'subject_code' => $subject_code,
-    //             'test_name' => $testname,
-    //             'section' => $section
-    //         ]);
-
-    //         if ($existing) {
-    //             return 'duplicate';
-    //         }
-
-    //         $data = [
-    //             'faculty_id' => $this->faculty_id,
-    //             'batch' => $batch,
-    //             'semester' => $semester,
-    //             'subject_code' => $subject_code,
-    //             'test_name' => $testname,
-    //             'section' => $section,
-    //             'marks' => $marks,
-    //             'created_at' => date('Y-m-d H:i:s')
-    //         ];
-
-    //         $collection->insertOne($data);
-    //         return true;
-    //     } catch (Exception $e) {
-    //         error_log('error => Error entering marks:' . $e->getMessage());
-    //         return false;
-    //     }
-    // }
-
     public function getMarks($batch, $semester, $subject_code, $testname, $section, $department)
     {
         $collection = $this->conn->marks;
@@ -212,11 +165,28 @@ class Faculty
 
         // echo "Get Marks " . $faculty_id . " " . $batch . " " . $semester . " " . $subject_code . " " . $testname . " " . $section;
 
+        $classCollection = $this->conn->classes;
+
         try {
             // Query the collection to fetch marks based on the criteria
+            
             $result = $collection->findOne(
                 [
-                    'faculty_id' => $this->faculty_id,
+                    'faculty_id' => $faculty_id,
+                    'batch' => $batch,
+                    'semester' => $semester,
+                    'department' => $department,
+                    'subject_code' => $subject_code,
+                    'section' => $section
+                ],
+                [
+                    'projection' => ['_id' => 0, 'marks' => 1, 'reg_no' => 1, 'student_name' => 1]
+                ]
+            );
+
+            $result = $collection->findOne(
+                [
+                    'faculty_id' => $faculty_id,
                     'batch' => $batch,
                     'semester' => $semester,
                     'department' => $department,

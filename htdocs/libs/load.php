@@ -14,6 +14,8 @@ include_once 'app/AppUser.class.php';
 include_once 'app/essentials.class.php';
 include_once 'app/Admin.class.php';
 include_once 'app/Faculty.class.php';
+include_once 'app/Creator.class.php';
+include_once 'app/Role.class.php';
 
 global $__site_config;
 

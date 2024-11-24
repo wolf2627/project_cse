@@ -19,7 +19,7 @@ class UserSession
      */
     public static function authenticate($user, $pass, $fingerprint = null)
     {
-        echo "Authenticating user $user"."<br>";
+        // echo "Authenticating user $user"."<br>";
         if ($fingerprint == null) {
             $fingerprint = $fingerprint = $_COOKIE['fingerprint'];
         }
@@ -31,7 +31,7 @@ class UserSession
         $user_logged = User::login($user, $pass);
         // print_r($user);
         if ($user_logged['user_id']) {
-            echo "User ID : ".$user_logged['user_id']."<br>";
+            // echo "User ID : ".$user_logged['user_id']."<br>";
             $user = new User($user_logged['user_id'], $user_logged['role']);
             // echo "User Found "."<br>";
             $conn = Database::getConnection();

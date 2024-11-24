@@ -41,7 +41,7 @@ ${basename(__FILE__, '.php')} = function () {
             // }
 
             // Call the core logic to create the test
-            $result = Admin::createTest($testname, $month, $batch, $semester, $year, $department, $subjects, $duration, $totalmarks, $passmarks, $instructions);
+            $result = Creator::createTest($testname, $month, $batch, $semester, $year, $department, $subjects, $duration, $totalmarks, $passmarks, $instructions);
             error_log('Result: ' . $result);
 
             // $result = 'duplicate';

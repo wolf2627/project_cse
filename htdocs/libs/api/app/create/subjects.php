@@ -7,8 +7,7 @@ ${basename(__FILE__, '.php')} = function () {
             $this->response($this->json(['message' => 'Unauthorized']), 401);
         }
         $file = $_FILES['subjects_file']['tmp_name'];
-        $app = new Admin();
-        $creation_result = $app->createSubjects($file);
+        $creation_result = Creator::createSubjects($file);
         
         if ($creation_result) {
             $result = [

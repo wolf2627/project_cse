@@ -28,7 +28,7 @@ ${basename(__FILE__, '.php')} = function () {
         $year = $this->_request['year'];
 
         // Call the core logic to assign faculty
-        $enroll_result = Admin::assignFaculty($faculty_id, $subject_code, $batch, $department, $semester, $section, $student_sections, $year);
+        $enroll_result = Creator::assignFaculty($faculty_id, $subject_code, $batch, $department, $semester, $section, $student_sections, $year);
 
         // Prepare and send the response
         if ($enroll_result) {

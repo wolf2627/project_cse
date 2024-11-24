@@ -1,5 +1,5 @@
 <?php
-require_once 'libs/load.php'; // Adjust the path to your PhpSpreadsheet loader
+require_once 'libs/load.php'; 
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
