@@ -206,44 +206,25 @@ class Faculty
 
             // TODO: Try to optimize this query to reduce the number of queries (use aggregation)
 
-            $findClass = $classCollection->findOne(
-                [
-                    'faculty_id' => $faculty_id,
-                    'batch' => $batch,
-                    'semester' => $semester,
-                    'department' => $department,
-                    'subject_code' => $subject_code,
-                    'section' => $section
-                ],
-                [
-                    'projection' => ['_id' => 1]
-                ]
-            );
+            $classId = $this->getClassId($batch, $semester, $subject_code, $section, $department);
+            $testId = $this->getTestId($testname, $batch, $semester, $subject_code, $department);
 
-            if ($findClass) {
-                // Access the _id of the found class
-                $classId = $findClass->_id;
-
-                // Find marks associated with the class_id
-                $result = $collection->findOne(
-                    ['class_id' => $classId, 'test_name' => $testname],
-                );
-
-                // Log the results for debugging (remove or disable in production)
-                if ($result) {
-                    error_log('Marks retrieved successfully');
-                } else {
-                    $result = [];
-                    error_log('No marks found for the specified criteria.');
-                }
-            } else {
-                $result = [];
-                error_log('No class found for the specified criteria.');
+            if(!$classId || !$testId) {
+                return [];
             }
 
+            $existingData = [
+                'class_id' => new MongoDB\BSON\ObjectId($classId),
+                'test_id' => new MongoDB\BSON\ObjectId($testId),
+            ];
 
-            // Return the result or false if no data is found
-            return $result;
+            $existing = $collection->findOne($existingData);
+
+            if (!$existing) {
+                return [];
+            }
+
+            return $existing;
         } catch (Exception $e) {
             // Log the error with more details for troubleshooting
             error_log('Error fetching marks: ' . $e->getMessage());
@@ -258,35 +239,36 @@ class Faculty
 
         try {
             // Find the document with the given criteria
-            $existing = $collection->findOne([
-                'faculty_id' => $this->faculty_id,
-                'batch' => $batch,
-                'semester' => $semester,
-                'department' => $department,
-                'subject_code' => $subject_code,
-                'test_name' => $testname,
-                'section' => $section
-            ]);
+
+            $classId = $this->getClassId($batch, $semester, $subject_code, $section, $department);
+            $testId = $this->getTestId($testname, $batch, $semester, $subject_code, $department);
+
+            if(!$classId || !$testId) {
+                throw new Exception('Record not found.');
+            }
+
+            $existingData = [
+                'class_id' => new MongoDB\BSON\ObjectId($classId),
+                'test_id' => new MongoDB\BSON\ObjectId($testId),
+            ];
+
+            $existing = $collection->findOne($existingData);
 
             if (!$existing) {
                 throw new Exception('Marks record not found.');
             }
 
-            // Use the positional operator to update the student's mark
+            // Update the marks for the student with the given reg_no
+
             $result = $collection->updateOne(
                 [
-                    'faculty_id' => $this->faculty_id,
-                    'batch' => $batch,
-                    'semester' => $semester,
-                    'subject_code' => $subject_code,
-                    'department' => $department,
-                    'test_name' => $testname,
-                    'section' => $section,
-                    'marks.reg_no' => $reg_no  // Match student by reg_no inside the marks array
+                    'class_id' => new MongoDB\BSON\ObjectId($classId),
+                    'test_id' => new MongoDB\BSON\ObjectId($testId),
+                    'marks.reg_no' => $reg_no
                 ],
                 [
                     '$set' => [
-                        'marks.$.marks' => $new_mark  // Update the specific student's marks
+                        'marks.$.marks' => $new_mark
                     ]
                 ]
             );
