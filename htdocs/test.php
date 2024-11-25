@@ -3,7 +3,7 @@
 
 include 'libs/load.php';
 
-$admin = new Role();
+// $admin = new Role();
 
 // // Create a Role
 // $roleId = $admin->createRole("Professor In Charge", "Manage faculty and student information for the assigned batch in the Department");
@@ -29,7 +29,26 @@ $admin = new Role();
 
 // print_r($admin->getRoleId("Professor In Charge"));
 
-print_r($admin->getRoles());
+$faculty = new Faculty();
+
+$result = $faculty->getTestId("Serial Test 1", "2022-2026", "5", "GE2C25", "CSE");
+
+if($result) {
+    echo "Test ID: " . $result;
+} else {
+    echo "Test ID not found";
+}
+
+echo "<br>";
+
+$result = $faculty->getClassId("2022-2026", "5", "GE2C25", "A", "CSE");
+
+if($result) {
+    echo "Class ID: " . $result;
+} else {
+    echo "Class ID not found";
+}
+
 
 ?>
 </pre>

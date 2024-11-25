@@ -1,5 +1,7 @@
 <?php
 
+use MongoDB\Model\BSONArray;
+
 class Faculty
 {
 
@@ -55,6 +57,38 @@ class Faculty
             return false;
         }
     }
+
+
+    public function getClassId($batch, $semester, $subject_code, $section, $department)
+    {
+        $collection = $this->conn->classes;
+
+        try {
+            $cursor = $collection->findOne(
+                [
+                    'faculty_id' => $this->faculty_id,
+                    'batch' => $batch,
+                    'semester' => $semester,
+                    'subject_code' => $subject_code,
+                    'section' => $section,
+                    'department' => $department
+                ],
+                ['projection' => ['_id' => 1]]
+            );
+
+            if($cursor) {
+                $result = (string)$cursor->_id;
+            } else {
+                $result = false;
+            }
+
+            return $result;
+        } catch (Exception $e) {
+            error_log('Error fetching classes: ' . $e->getMessage());
+            return false;
+        }
+    }
+
 
     public function getBatches()
     {
@@ -272,21 +306,24 @@ class Faculty
     {
         $collection = $this->conn->marks;
 
-        foreach($marks as &$mark){
+        foreach ($marks as &$mark) {
             $mark['marks'] = (int)$mark['marks'];
         }
 
         try {
             // Check if a record for this test already exists
-            $existing = $collection->findOne([
-                'faculty_id' => $this->faculty_id,
-                'batch' => $batch,
-                'department' => $department,
-                'semester' => $semester,
-                'subject_code' => $subject_code,
-                'test_name' => $testname,
-                'section' => $section
-            ]);
+
+            $classId = $this->getClassId($batch, $semester, $subject_code, $section, $department);
+            $testId = $this->getTestId($testname, $batch, $semester, $subject_code, $department);
+
+
+            $existingData = [
+                'class_id' => new MongoDB\BSON\ObjectId($classId),
+                'test_id' => new MongoDB\BSON\ObjectId($testId),
+            ];
+
+
+            $existing = $collection->findOne($existingData);
 
             if ($existing) {
                 return 'duplicate';
@@ -302,21 +339,17 @@ class Faculty
                 ];
             }
 
-            // Prepare the document
-            $data = [
-                'faculty_id' => $this->faculty_id,
-                'batch' => $batch,
-                'semester' => $semester,
-                'subject_code' => $subject_code,
-                'department' => $department,
-                'test_name' => $testname,
-                'section' => $section,
-                'marks' => $structuredMarks, // Structured array for easier querying
-                'created_at' => date('Y-m-d H:i:s')
+            // Prepare the document to be inserted
+
+            $finaldata = [
+                'test_id' => new MongoDB\BSON\ObjectId($testId), //converting to object id
+                'class_id' =>  new MongoDB\BSON\ObjectId($classId), //converting to object id
+                'marks' => $structuredMarks,
+                'Entered_at' => date('Y-m-d H:i:s')
             ];
 
             // Insert the document into the collection
-            $collection->insertOne($data);
+            $collection->insertOne($finaldata);
 
             return true;
         } catch (Exception $e) {
@@ -325,6 +358,36 @@ class Faculty
         }
     }
 
+
+    public function getTestId($testname, $batch, $semester, $subject_code, $department)
+    {
+        $collection = $this->conn->tests;
+
+        try {
+            $cursor = $collection->findOne(
+                [
+                    'testname' => $testname,
+                    'batch' => $batch,
+                    'semester' => $semester,
+                    'subjects.subject_code' => $subject_code,
+                    'department' => $department
+                ],
+                ['projection' => ['_id' => 1]]
+            );
+
+            if ($cursor) {
+                // Correctly access the _id field as a property
+                $result = (string)$cursor->_id; // Convert ObjectId to string
+            } else {
+                $result = false; // Return false if no document is found
+            }
+
+            return $result;
+        } catch (Exception $e) {
+            error_log('Error fetching tests: ' . $e->getMessage());
+            return false; // Return false if an exception occurs
+        }
+    }
 
 
 
