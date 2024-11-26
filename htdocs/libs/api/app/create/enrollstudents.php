@@ -14,7 +14,7 @@ ${basename(__FILE__, '.php')} = function () {
         $year = $this->_request['year'];
         $students = $this->_request['students'];
 
-        $enroll_result = Admin::enrollStudent($students, $semester, $batch, $section, $year);
+        $enroll_result = Creator::enrollStudent($students, $semester, $batch, $section, $year);
         if ($enroll_result) {
             $result = [
                 'message' => 'Users created successfully',

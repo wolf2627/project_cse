@@ -1,5 +1,7 @@
 <?php
 
+use MongoDB\Model\BSONArray;
+
 class Faculty
 {
 
@@ -17,44 +19,7 @@ class Faculty
         return $this->faculty_id;
     }
 
-    /**
-     * Fetch classes handled by the faculty.
-     */
-    public function getClasses()
-    {
-        $collection = $this->conn->classes;
 
-        try {
-            $cursor = $collection->find(
-                ['faculty_id' => $this->faculty_id],
-                ['projection' => ['_id' => 0]]
-            );
-
-            return $cursor->toArray();
-        } catch (Exception $e) {
-            error_log('Error fetching classes: ' . $e->getMessage());
-            return false;
-        }
-    }
-
-    public function getClass($subject_code)
-    {
-        $collection = $this->conn->classes;
-
-        try {
-            $cursor = $collection->findOne(
-                ['faculty_id' => $this->faculty_id, 'subject_code' => $subject_code],
-                ['projection' => ['_id' => 0]]
-            );
-
-            $result = iterator_to_array($cursor);
-
-            return $result ?: false;
-        } catch (Exception $e) {
-            error_log('Error fetching classes: ' . $e->getMessage());
-            return false;
-        }
-    }
 
     public function getBatches()
     {
@@ -158,216 +123,20 @@ class Faculty
     }
 
 
-
-
-    /**
-     * Insert marks for a test if not already present.
-     * deprecated
-     */
-    // public function enterMark($batch, $semester, $subject_code, $testname, $section, $marks)
-    // {
-    //     $collection = $this->conn->marks;
-
-    //     foreach($marks as &$mark){
-    //         $mark['marks'] = (int)$mark['marks'];
-    //     }
-
-    //     try {
-    //         $existing = $collection->findOne([
-    //             'faculty_id' => $this->faculty_id,
-    //             'batch' => $batch,
-    //             'semester' => $semester,
-    //             'subject_code' => $subject_code,
-    //             'test_name' => $testname,
-    //             'section' => $section
-    //         ]);
-
-    //         if ($existing) {
-    //             return 'duplicate';
-    //         }
-
-    //         $data = [
-    //             'faculty_id' => $this->faculty_id,
-    //             'batch' => $batch,
-    //             'semester' => $semester,
-    //             'subject_code' => $subject_code,
-    //             'test_name' => $testname,
-    //             'section' => $section,
-    //             'marks' => $marks,
-    //             'created_at' => date('Y-m-d H:i:s')
-    //         ];
-
-    //         $collection->insertOne($data);
-    //         return true;
-    //     } catch (Exception $e) {
-    //         error_log('error => Error entering marks:' . $e->getMessage());
-    //         return false;
-    //     }
-    // }
-
-    public function getMarks($batch, $semester, $subject_code, $testname, $section, $department)
-    {
-        $collection = $this->conn->marks;
-        $faculty_id = $this->faculty_id;
-
-        // echo "Get Marks " . $faculty_id . " " . $batch . " " . $semester . " " . $subject_code . " " . $testname . " " . $section;
-
-        try {
-            // Query the collection to fetch marks based on the criteria
-            $result = $collection->findOne(
-                [
-                    'faculty_id' => $this->faculty_id,
-                    'batch' => $batch,
-                    'semester' => $semester,
-                    'department' => $department,
-                    'subject_code' => $subject_code,
-                    'test_name' => $testname,
-                    'section' => $section
-                ],
-                [
-                    'projection' => ['_id' => 0, 'marks' => 1, 'reg_no' => 1, 'student_name' => 1]
-                ]
-            );
-
-            // Log the results for debugging (remove or disable in production)
-            if ($result) {
-                error_log('Marks retrieved successfully');
-            } else {
-                $result = [];
-                error_log('No marks found for the specified criteria.');
-            }
-
-            // Return the result or false if no data is found
-            return $result;
-        } catch (Exception $e) {
-            // Log the error with more details for troubleshooting
-            error_log('Error fetching marks: ' . $e->getMessage());
-
-            return false;
-        }
-    }
-
-    public function updateMarks($reg_no, $new_mark, $batch, $semester, $subject_code, $testname, $section, $department)
-    {
-        $collection = $this->conn->marks;
-
-        try {
-            // Find the document with the given criteria
-            $existing = $collection->findOne([
-                'faculty_id' => $this->faculty_id,
-                'batch' => $batch,
-                'semester' => $semester,
-                'department' => $department,
-                'subject_code' => $subject_code,
-                'test_name' => $testname,
-                'section' => $section
-            ]);
-
-            if (!$existing) {
-                throw new Exception('Marks record not found.');
-            }
-
-            // Use the positional operator to update the student's mark
-            $result = $collection->updateOne(
-                [
-                    'faculty_id' => $this->faculty_id,
-                    'batch' => $batch,
-                    'semester' => $semester,
-                    'subject_code' => $subject_code,
-                    'department' => $department,
-                    'test_name' => $testname,
-                    'section' => $section,
-                    'marks.reg_no' => $reg_no  // Match student by reg_no inside the marks array
-                ],
-                [
-                    '$set' => [
-                        'marks.$.marks' => $new_mark  // Update the specific student's marks
-                    ]
-                ]
-            );
-
-            // Return true if one document was modified
-            return $result->getModifiedCount() > 0;
-        } catch (Exception $e) {
-            // Log and throw the error
-            error_log('Error updating marks: ' . $e->getMessage());
-            throw new Exception('Error updating marks: ' . $e->getMessage());
-        }
-    }
-
-
-
-    public function enterMark($batch, $semester, $subject_code, $testname, $section, $marks, $department)
-    {
-        $collection = $this->conn->marks;
-
-        foreach($marks as &$mark){
-            $mark['marks'] = (int)$mark['marks'];
-        }
-
-        try {
-            // Check if a record for this test already exists
-            $existing = $collection->findOne([
-                'faculty_id' => $this->faculty_id,
-                'batch' => $batch,
-                'department' => $department,
-                'semester' => $semester,
-                'subject_code' => $subject_code,
-                'test_name' => $testname,
-                'section' => $section
-            ]);
-
-            if ($existing) {
-                return 'duplicate';
-            }
-
-            // Transform marks into an array of structured objects
-            $structuredMarks = [];
-            foreach ($marks as $key => $student) {
-                $structuredMarks[] = [
-                    'reg_no' => $student['reg_no'],
-                    'studentname' => $student['studentname'],
-                    'marks' => $student['marks']
-                ];
-            }
-
-            // Prepare the document
-            $data = [
-                'faculty_id' => $this->faculty_id,
-                'batch' => $batch,
-                'semester' => $semester,
-                'subject_code' => $subject_code,
-                'department' => $department,
-                'test_name' => $testname,
-                'section' => $section,
-                'marks' => $structuredMarks, // Structured array for easier querying
-                'created_at' => date('Y-m-d H:i:s')
-            ];
-
-            // Insert the document into the collection
-            $collection->insertOne($data);
-
-            return true;
-        } catch (Exception $e) {
-            error_log('Error entering marks: ' . $e->getMessage());
-            return false;
-        }
-    }
-
-
-
-
+    
     /**
      * Fetch students assigned to a faculty and subject.
      */
-    public function getAssignedStudents($subjectCode, $batch, $semester)
+    public function getAssignedStudents($subjectCode, $batch, $semester, $facultyId = null)
     {
         $classCollection = $this->conn->classes;
         $enrollmentCollection = $this->conn->enrollments;
         $studentCollection = $this->conn->students;
 
-        $facultyId = $this->faculty_id;
-
+        
+        if(!$facultyId) {
+            $facultyId = $this->faculty_id;
+        }
 
         try {
             $class = $classCollection->findOne([

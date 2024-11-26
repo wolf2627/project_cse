@@ -32,7 +32,17 @@
                 if (Session::currentScript() != 'login' && Session::currentScript() != 'index') {
                     Session::loadTemplate('_sidebar'); // load sidebar 
                 }
-                Session::loadTemplate(Session::currentScript());
+
+                if (Session::currentScript() == 'login' || Session::currentScript() == 'index') {
+                    Session::loadTemplate(Session::currentScript());
+                } else {
+            ?>
+                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                        <?
+                        Session::loadTemplate(Session::currentScript());
+                        ?>
+                    </main>
+            <? }
             }
             // Session::loadTemplate('_footer'); // load footer
             ?>

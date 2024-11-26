@@ -32,7 +32,7 @@ ${basename(__FILE__, '.php')} = function () {
         
         error_log("New record: $reg_no, $new_mark, $batch, $semester, $subject_code, $testname, $section, $department");
 
-        $updated = $faculty->updateMarks($reg_no, $new_mark, $batch, $semester, $subject_code, $testname, $section, $department);
+        $updated = Marks::updateMarks($reg_no, $new_mark, $batch, $semester, $subject_code, $testname, $section, $department, $faculty->getFacultyId());
 
         // Prepare and send the response
         if ($updated) {
