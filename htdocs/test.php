@@ -1,52 +1,43 @@
 <pre>
 <?php
 
-include 'libs/load.php';
+include 'test.class.php';
 
-// $admin = new Role();
+use MongoDB\BSON\ObjectId;
 
-// // Create a Role
-// $roleId = $admin->createRole("Professor In Charge", "Manage faculty and student information for the assigned batch in the Department");
-// echo "Created Role ID: " . $roleId;
+// $test = new Test();
 
-// // Create a Permission
-// $permissionId = $admin->createPermission("Generate Report", "Generate report for the assigned batch in the Department");
-// echo "Created Permission ID: " . $permissionId;
+// $test_id = '673aa09c95208f634c0fdcd2';
 
-// // Assign Permission to Role
-// $admin->assignPermissionsToRole($roleId, [$permissionId]);
-// echo "Assigned Permissions to Role";
+// $testDetails = $test->getTestDetails($test_id);
 
-// // Assign Role to User
-// $admin->assignRolesToUser("6731234567abc", [$roleId]);
-// echo "Assigned Role to User";
+// echo "Test details: " . json_encode($testDetails) . "\n";
 
-// // Get Roles for User
-// print_r($admin->getRolesForUser("6731234567abc"));
+$pipeline = [['$match' => ['test_id' => new ObjectId('673aa529a80f94e05d040642')]], ['$unwind' => ['path' => '$marks']], ['$lookup' => ['from' => 'tests', 'localField' => 'test_id', 'foreignField' => '_id', 'as' => 'test_details']], ['$addFields' => ['marks.pass' => ['$gte' => ['$marks.marks', ['$toInt' => '12']]], 'marks.category' => ['$switch' => ['branches' => [['case' => ['$gte' => ['$marks.marks', 90]], 'then' => 'Above 90'], ['case' => ['$gte' => ['$marks.marks', 75]], 'then' => 'Above 75'], ['case' => ['$gte' => ['$marks.marks', 60]], 'then' => 'Above 60']], 'default' => 'Below 60']], 'test_details.subject_code' => ['$arrayElemAt' => [['$arrayElemAt' => ['$test_details.subjects.subject_code', 0]], 0]]]], ['$group' => ['_id' => '$marks.category', 'student_count' => ['$sum' => 1], 'students' => ['$push' => ['reg_no' => '$marks.reg_no', 'name' => '$marks.studentname', 'marks' => '$marks.marks', 'pass' => '$marks.pass']], 'test_details' => ['$first' => ['testname' => ['$arrayElemAt' => ['$test_details.testname', 0]], 'subject_code' => ['$arrayElemAt' => ['$test_details.subject_code', 0]], 'totalmarks' => ['$arrayElemAt' => ['$test_details.totalmarks', 0]], 'passmarks' => ['$arrayElemAt' => ['$test_details.passmarks', 0]]]]]]];
+$conn = Database::getConnection()->marks;
 
-// // Get Permissions for Role
-// print_r($admin->getPermissionsForRole($roleId));
+$cursor = $conn->aggregate($pipeline);
 
-// print_r($admin->getRoleId("Professor In Charge"));
+foreach ($cursor as $doc) {
+    echo "Category: " . $doc['_id'] . "\n";
 
-$faculty = new Faculty();
+    echo "Number of Students: " . $doc['student_count'] . "\n";
 
-$result = $faculty->getTestId("Serial Test 1", "2022-2026", "5", "GE2C25", "CSE");
+    echo "Test Name: " . $doc['test_details']['testname'] . "\n";
 
-if($result) {
-    echo "Test ID: " . $result;
-} else {
-    echo "Test ID not found";
+    echo "Subject Code: " . $doc['test_details']['subject_code'] . "\n";
+
+    echo "Students:\n";
+
+    foreach ($doc['students'] as $student) {
+        echo "  Name: " . $student['name'] . ", Marks: " . $student['marks'] . ", Pass: " . ($student['pass'] ? "Yes" : "No") . "\n";
+    }
+
+    echo "-------------------\n\n";
 }
 
-echo "<br>";
-
-$result = $faculty->getClassId("2022-2026", "5", "GE2C25", "A", "CSE");
-
-if($result) {
-    echo "Class ID: " . $result;
-} else {
-    echo "Class ID not found";
+foreach ($cursor as $doc){
+    echo json_encode($doc) . "\n";
 }
 
 

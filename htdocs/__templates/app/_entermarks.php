@@ -2,7 +2,12 @@
     <?php
 
     $faculty = new Faculty();
-    $faculty_class = $faculty->getClass($data['1']);
+    $faculty_class = Classes::getClass($data['1'], $faculty->getFacultyId(), $data['2'], $data['3']);
+
+    if (!$faculty_class) {
+        echo "<div class='alert alert-danger'>No class found</div>";
+        return;
+    }
 
     $batch = $faculty_class['batch'];
     $semester = $faculty_class['semester'];
@@ -15,7 +20,7 @@
     $code = base64_decode($_GET['code']);
     $testname = base64_decode($_GET['testname']);
 
-    $register_marks = $faculty->getMarks($batch, $semester, $subject_code, $testname, $section, $department);
+    $register_marks = Marks::getMarks($batch, $semester, $subject_code, $testname, $section, $department, $faculty->getFacultyId());
 
     if ($register_marks) {
         //TODO: There is a bug in update marks form in fetching marks. Fix it
@@ -36,7 +41,7 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-                
+
                 <!-- Current Marks and Update Form -->
                 <div id="update-form" class="d-none"
                     data-batch="<?= $batch ?>"
@@ -85,6 +90,7 @@
                     <input type="text" id="test_name" name="test_name" value="<?= $testname ?>" hidden>
                     <input type="text" id="section" name="section" value="<?= $section ?>" hidden>
                     <input type="text" id="department" name="department" value="<?= $department ?>" hidden>
+                    <input type="text" id="faculty_id" name="faculty_id" value="<?= $faculty->getFacultyId() ?>" hidden>
                     <button type="button" class="btn btn-warning" id="generateExcel-btn">Generate Excel</button>
                 </form>
                 <div class="table-responsive small">
@@ -124,7 +130,7 @@
                             ?>
                         </tbody>
                     </table>
-                    <button class="btn btn-warning" onclick="window.location.href='/markentry?edit&code=<?= base64_encode($data['1']) ?>&testname=<?= base64_encode($data['0']) ?>&maxmark=<?= $data['4'] ?>'">Edit Marks</button>
+                    <button class="btn btn-warning" onclick="window.location.href='/markentry?edit&code=<?= base64_encode($data['1']) ?>&testname=<?= base64_encode($data['0']) ?>&maxmark=<?= $data['4'] ?>&batch= <?= base64_encode($data['2']) ?>&semester=<?= base64_encode($data['3']) ?>'">Edit Marks</button>
                 </div>
             <?php
         }
@@ -134,11 +140,11 @@
             // print_r($_POST['student_marks']); 
             $student_marks = $_POST['student_marks'];
             $_POST = array(); //clearing the values of the form
-            echo "<h6>Note : Refresh the page to generate Excel File if needed. You can also generate the excel file later.<h6>";
+            echo "<h6>Note : Refresh the page to generate Excel File if needed or . You can also generate the excel file later.<h6>";
             // to refresh the page
-            echo "<button class='btn btn-primary' onclick='window.location.href=\"/markentry?code=" . base64_encode($data['1']) . "&testname=" . base64_encode($data['0']) . "\"'>Refresh</button>";
+            echo "<button class='btn btn-primary' onclick='window.location.href=\"/markentry?code=" . base64_encode($data['1']) . "&batch=" . base64_encode($data['2']) . "&semester=" . base64_encode($data['3']) . "&testname=" . base64_encode($data['0']) . "\"'>Refresh</button>";
 
-            $result = $faculty->enterMark($batch, $semester, $subject_code, $testname, $section, $student_marks, $department);
+            $result = Marks::enterMark($batch, $semester, $subject_code, $testname, $section, $student_marks, $department, $faculty->getFacultyId());
             ?>
                 <div class="table-responsive small">
                     <table class="table table-hover table-bordered mt-3">
@@ -173,7 +179,7 @@
             echo "<h2>Enter Marks for {$testname} ({$code}) - {$department} (Sem: {$semester})</h2>";
             ?>
 
-                <form id="studentMarksForm" method="POST" action="/markentry?code=<?= base64_encode($data['1']) ?>&testname=<?= base64_encode($data['0']) ?>">
+                <form id="studentMarksForm" method="POST" action="/markentry?code=<?= base64_encode($data['1']) ?>&testname=<?= base64_encode($data['0']) ?>&batch= <?= base64_encode($data['2']) ?>&semester=<?= base64_encode($data['3']) ?>">
                     <div class="table-responsive small">
                         <table class="table table-hover table-bordered mt-3">
                             <thead class="table-dark">
@@ -188,7 +194,7 @@
                                 <?php
                                 // print_r($data);
                                 // Fetch student data from the database
-                                $students = $faculty->getAssignedStudents($data[1], $data[2], $data[3]);
+                                $students = $faculty->getAssignedStudents($data[1], $data[2], $data[3], $faculty->getFacultyId());
 
                                 if (!empty($students)) {
                                     $index = 1;

@@ -12,10 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $testname = $_POST['test_name'];
     $section = $_POST['section'];
     $department = $_POST['department'];
+    $faculty_id = $_POST['faculty_id'];
 
     // Initialize Faculty and get marks
-    $faculty = new Faculty();
-    $registered_marks = $faculty->getMarks($batch, $semester, $subject_code, $testname, $section, $department);
+    // $faculty = new Faculty();
+    $registered_marks = Marks::getMarks($batch, $semester, $subject_code, $testname, $section, $department, $faculty_id);
 
     if (!$registered_marks) {
         http_response_code(404); // Not Found

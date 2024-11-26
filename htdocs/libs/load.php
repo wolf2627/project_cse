@@ -13,9 +13,14 @@ include_once 'includes/API.class.php';
 include_once 'app/AppUser.class.php';
 include_once 'app/essentials.class.php';
 include_once 'app/Admin.class.php';
+
+include_once 'app/Classes.class.php';
+include_once 'app/Test.class.php';
+
 include_once 'app/Faculty.class.php';
 include_once 'app/Creator.class.php';
 include_once 'app/Role.class.php';
+include_once 'app/Marks.class.php';
 
 global $__site_config;
 
