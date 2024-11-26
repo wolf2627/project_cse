@@ -20,6 +20,7 @@ class ClassReport
         $subjectCollection = $this->conn->subjects;
         $classesCollection = $this->conn->classes;
         $marksCollection = $this->conn->marks; // Marks collection
+        $facultiesCollection = $this->conn->faculties;
 
         $passmarks = (int)$testDetails->passmarks; // Convert passmarks to integer
 
@@ -46,6 +47,8 @@ class ClassReport
             foreach ($classes as $class) {
                 $class_id = (string) $class['_id']; // Convert class_id to string
                 $section = $class['section'];
+                $faculty_id = (string) $class['faculty_id'];
+                $faculty_name = Faculty::getFacultyName($faculty_id);
 
                 // Initialize counters for each section
                 $appearedCount = 0;
@@ -108,9 +111,11 @@ class ClassReport
                 $sectionWiseReport[$section]['Subjects'][$subject_code] = [
                     'Subject Name' => $subject_name,
                     'Subject Code' => $subject_code,
+                    'Faculty Name' => $faculty_name,
                     'Class ID' => $class_id,
                     'Appeared Students' => ($studentMarks === 'nil') ? 0 : $appearedCount,
                     'Pass Count' => ($studentMarks === 'nil') ? 0 : $passCount,
+                    'Pass Percentage' => ($studentMarks === 'nil' || $appearedCount === 0) ? 0 : round(($passCount / $appearedCount) * 100, 2),
                     'Fail Count' => ($studentMarks === 'nil') ? 0 : $failCount,
                     'Student Marks' => $studentMarks, // Student marks or 'nil'
                     'Failed Students' => $failedStudents // Failed students

@@ -7,6 +7,9 @@ $test_id = $data['0'];  // Replace with your test ID
 $testname = $data['1'];
 $department = $data['2'];
 $sectionWiseReport = $classReport->getSectionWiseReport($test_id);
+
+$testDetails = Test::getTestDetails($test_id);
+
 ?>
 <style>
     .section-header {
@@ -39,22 +42,30 @@ $sectionWiseReport = $classReport->getSectionWiseReport($test_id);
 <div class="container mt-5">
     <h1 class="text-center mb-4"><?= htmlspecialchars($testname) ?> Report</h1>
 
-    <h4>Department: <?= htmlspecialchars($department) ?></h6>
+    <h4 class="d-flex justify-content-between align-items-center">
+    <span>Department: <?= htmlspecialchars($testDetails->department) ?></span>
+    <span>Batch: <?= htmlspecialchars($testDetails->batch) ?></span>
+    <span>Semester : <?= htmlspecialchars($testDetails->semester) ?></span>
+</h4>
+
+
         <?php if (!empty($sectionWiseReport)) : ?>
             <?php foreach ($sectionWiseReport as $section => $data) : ?>
                 <div class="section-header">
                     <h3>Section: <?php echo $section; ?></h3>
                 </div>
 
-                <div class="section-table">
-                    <table class="table table-bordered table-striped">
+                <div class="section-table table-responsive small">
+                    <table class="table table-bordered table-striped ">
                         <thead>
                             <tr>
                                 <th>Subject Code</th>
                                 <th>Subject Name</th>
+                                <th>Faculty</th>
                                 <th>Appeared Students</th>
                                 <th>Pass Count</th>
                                 <th>Fail Count</th>
+                                <th>Pass Percentage</th>
                                 <th>Student Marks</th>
                                 <th>Failed Students</th> <!-- New column -->
                             </tr>
@@ -64,9 +75,11 @@ $sectionWiseReport = $classReport->getSectionWiseReport($test_id);
                                 <tr>
                                     <td><?php echo $subjectData['Subject Code']; ?></td>
                                     <td><?php echo $subjectData['Subject Name']; ?></td>
+                                    <td><?php echo $subjectData['Faculty Name'];?></td>
                                     <td><?php echo $subjectData['Appeared Students']; ?></td>
                                     <td><?php echo $subjectData['Pass Count']; ?></td>
                                     <td><?php echo $subjectData['Fail Count']; ?></td>
+                                    <td><?php echo $subjectData['Pass Percentage']; ?>%</td>
                                     <td>
                                         <?php
                                         if ($subjectData['Student Marks'] == 'nil') {
