@@ -19,6 +19,11 @@ class Faculty
         return $this->faculty_id;
     }
 
+    public static function getFacultyName($faculty_id){
+        $facultyCollection = Database::getConnection()->faculties;
+        $faculty = $facultyCollection->findOne(['faculty_id' => $faculty_id]);
+        return $faculty ? $faculty['name'] : 'Unknown Faculty';
+    }
 
 
     public function getBatches()
@@ -117,7 +122,7 @@ class Faculty
 
             return $result ?: throw new Exception('No tests found.');
         } catch (Exception $e) {
-            error_log('Error fetching tests: ' . $e->getMessage());
+            //error_log('Error fetching tests: ' . $e->getMessage());
             return false;
         }
     }

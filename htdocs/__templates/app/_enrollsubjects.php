@@ -112,8 +112,8 @@ if (isset($_POST['semester']) && isset($_POST['section']) && isset($_POST['batch
 
             <!-- Available Subjects to Enroll -->
             <div class="form-group mb-4">
-                <label for="subjects">Select Subjects</label>
-                <select class="form-select" id="subjects" name="subjects[]" multiple="multiple">
+                <label for="enroll-subjects">Select Subjects</label>
+                <select class="form-select" id="enroll-subjects" name="subjects[]" multiple="multiple">
                     <?php
                     $subjects = essentials::loadSubjects();
                     foreach ($subjects as $subject): ?>

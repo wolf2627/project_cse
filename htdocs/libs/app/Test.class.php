@@ -8,9 +8,9 @@ class Test {
         $this->conn = Database::getConnection();
     }
 
-    public function getTestDetails($test_id)
+    public static function getTestDetails($test_id)
     {
-        $test = $this->conn->tests->findOne(['_id' => new MongoDB\BSON\ObjectId($test_id)]);
+        $test = Database::getConnection()->tests->findOne(['_id' => new MongoDB\BSON\ObjectId($test_id)]);
 
         return $test;
     }
@@ -41,8 +41,21 @@ class Test {
 
             return $result;
         } catch (Exception $e) {
-            error_log('Error fetching tests: ' . $e->getMessage());
+            // error_log('Error fetching tests: ' . $e->getMessage());
             return false; // Return false if an exception occurs
         }
+    }
+
+    /** function to return tests available and its details */
+
+    public static function getTests(){
+        $collection = Database::getConnection()->tests;
+        $cursor = $collection->find();
+        $tests = [];
+        foreach ($cursor as $test) {
+            $test['_id'] = (string)$test['_id'];
+            $tests[] = $test;
+        }
+        return $tests;
     }
 }
