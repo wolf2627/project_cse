@@ -122,7 +122,7 @@ class Faculty
 
             return $result ?: throw new Exception('No tests found.');
         } catch (Exception $e) {
-            error_log('Error fetching tests: ' . $e->getMessage());
+            //error_log('Error fetching tests: ' . $e->getMessage());
             return false;
         }
     }

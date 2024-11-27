@@ -18,32 +18,26 @@ $role = Session::get('role');
                         Dashboard
                     </a>
                 </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="#">
-                        <svg class="bi">
-                            <use xlink:href="#home-door" />
-                        </svg>
-                        Home
-                    </a>
-                </li> -->
-
             </ul>
 
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
-                <span>Reports</span>
-                <a class="link-secondary" href="#" aria-label="Add a new report">
-                </a>
-            </h6>
-
-            <?
-
-            // Fetch tests from the database
-            $tests = Test::getTests();
-            ?>
             <ul class="nav flex-column mb-auto">
+
+            <?php if ($role == "admin"): ?>
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
+                    <span>Reports</span>
+                    <a class="link-secondary" href="#" aria-label="Add a new report">
+                    </a>
+                </h6>
+
+                <?
+
+                // Fetch tests from the database
+                $tests = Test::getTests();
+                ?>
+
                 <?php foreach ($tests as $test): ?>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-2" href="/report?testid=<?=base64_encode((string)$test->_id)?>&testname=<?=base64_encode($test->testname)?>&dept=<?=base64_encode($test->department)?>">
+                        <a class="nav-link d-flex align-items-center gap-2" href="/report?testid=<?= base64_encode((string)$test->_id) ?>&testname=<?= base64_encode($test->testname) ?>&dept=<?= base64_encode($test->department) ?>">
                             <svg class="bi">
                                 <use xlink:href="#file-earmark-text" />
                             </svg>
@@ -52,8 +46,9 @@ $role = Session::get('role');
                         </a>
                     </li>
                 <?php endforeach; ?>
+                <?php endif;?>
 
-                <?php if ($role == "faculty" || $role == "admin"): ?>
+                <?php if ($role == "faculty"): ?>
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
                         <span>Faculty</span>
                     </h6>
@@ -179,6 +174,15 @@ $role = Session::get('role');
                                 <use xlink:href="#file-earmark-text" />
                             </svg>
                             Assign Faculty
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="/assignrole">
+                            <svg class="bi">
+                                <use xlink:href="#file-earmark-text" />
+                            </svg>
+                            Assign Role
                         </a>
                     </li>
                 <?php endif; ?>
