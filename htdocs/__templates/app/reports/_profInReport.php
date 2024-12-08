@@ -61,10 +61,9 @@ $overall = $classReport->calculateOverallReport($sectionWiseReport);
                                 <td><?php echo $subject_code['Pass Percentage']; ?>%</td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="#A-report-table" class="btn btn-info">A</a>
-                                        <a href="#B-report-table" class="btn btn-info">B</a>
-                                        <a href="#C-report-table" class="btn btn-info">C</a>
-                                        <a href="#D-report-table" class="btn btn-info">D</a>
+                                        <?php foreach ($sectionWiseReport as $section => $data) : ?>
+                                            <a href="#<?= $section ?>-report-table" class="btn btn-info"><?= $section ?></a>
+                                        <?php endforeach; ?>
                                     </div>
                                 </td>
                             </tr>
