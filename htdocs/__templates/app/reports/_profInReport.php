@@ -10,6 +10,9 @@ $sectionWiseReport = $classReport->getSectionWiseReport($test_id);
 
 $testDetails = Test::getTestDetails($test_id);
 
+
+$overall = $classReport->calculateOverallReport($sectionWiseReport);
+
 ?>
 
 
@@ -29,8 +32,50 @@ $testDetails = Test::getTestDetails($test_id);
         <input type="hidden" id="batch_class_wise_year" value="<?= $testDetails->batch ?>">
         <input type="hidden" id="semester_class_wise_year" value="<?= $testDetails->semester ?>">
         <button class="btn btn-primary" id="class-wise-year-report-btn" value="<?= $test_id ?>">Download PDF</button>
-        <?php foreach ($sectionWiseReport as $section => $data) : ?>
+
+        <div class="overall-report">
             <div class="section-header">
+                <h3>Year Analysis</h3>
+            </div>
+            <div class="section-table table-responsive small">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Appeared Students</th>
+                            <th>Pass Count</th>
+                            <th>Fail Count</th>
+                            <th>Pass Percentage</th>
+                            <th>View Section</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($overall as $subject_code) : ?>
+                            <tr>
+                                <td><?php echo $subject_code['Subject Code']; ?></td>
+                                <td id="special-algin"><?php echo $subject_code['Subject Name']; ?></td>
+                                <td><?php echo $subject_code['Total Appeared Students']; ?></td>
+                                <td><?php echo $subject_code['Total Pass Count']; ?></td>
+                                <td><?php echo $subject_code['Total Fail Count']; ?></td>
+                                <td><?php echo $subject_code['Pass Percentage']; ?>%</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="#A-report-table" class="btn btn-info">A</a>
+                                        <a href="#B-report-table" class="btn btn-info">B</a>
+                                        <a href="#C-report-table" class="btn btn-info">C</a>
+                                        <a href="#D-report-table" class="btn btn-info">D</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <?php foreach ($sectionWiseReport as $section => $data) : ?>
+            <div class="section-header" id="<?=$section?>-report-table">
                 <h3>Section: <?php echo $section; ?></h3>
             </div>
 
@@ -46,7 +91,7 @@ $testDetails = Test::getTestDetails($test_id);
                             <th>Fail Count</th>
                             <th>Pass Percentage</th>
                             <th>Student Marks</th>
-                            <th>Failed Students</th> <!-- New column -->
+                            <th>Failed Students</th> 
                         </tr>
                     </thead>
                     <tbody>
@@ -154,65 +199,65 @@ $testDetails = Test::getTestDetails($test_id);
 
 
 <script>
-// JavaScript to handle the modal and populate student details dynamically
-var studentModal = document.getElementById('studentModal');
-studentModal.addEventListener('show.bs.modal', function (event) {
-    // Extract data attributes from the button that triggered the modal
-    var button = event.relatedTarget;
-    var subjectName = button.getAttribute('data-subject');
-    var studentList = JSON.parse(button.getAttribute('data-studentlist'));
+    // JavaScript to handle the modal and populate student details dynamically
+    var studentModal = document.getElementById('studentModal');
+    studentModal.addEventListener('show.bs.modal', function(event) {
+        // Extract data attributes from the button that triggered the modal
+        var button = event.relatedTarget;
+        var subjectName = button.getAttribute('data-subject');
+        var studentList = JSON.parse(button.getAttribute('data-studentlist'));
 
-    // Update the modal content
-    var modalTitle = studentModal.querySelector('#subjectName');
-    modalTitle.textContent = 'Subject: ' + subjectName;
+        // Update the modal content
+        var modalTitle = studentModal.querySelector('#subjectName');
+        modalTitle.textContent = 'Subject: ' + subjectName;
 
-    var studentListElement = studentModal.querySelector('#studentList');
-    studentListElement.innerHTML = ''; // Clear any existing data
+        var studentListElement = studentModal.querySelector('#studentList');
+        studentListElement.innerHTML = ''; // Clear any existing data
 
-    var i = 1;
-    // Populate the student table
-    if (studentList.length > 0) {
-        studentList.forEach(function (student) {
+        var i = 1;
+        // Populate the student table
+        if (studentList.length > 0) {
+            studentList.forEach(function(student) {
+                var row = document.createElement('tr');
+                row.innerHTML = '<td>' + i + '</td><td>' + student['Student Name'] + '</td><td>' + student['Reg No'] + '</td><td>' + student['Marks'] + '</td>';
+                studentListElement.appendChild(row);
+                i++;
+            });
+        } else {
             var row = document.createElement('tr');
-            row.innerHTML = '<td>' + i + '</td><td>' + student['Student Name'] + '</td><td>' + student['Reg No'] + '</td><td>' + student['Marks'] + '</td>';
+            row.innerHTML = '<td colspan="3">No students available for this subject.</td>';
             studentListElement.appendChild(row);
-            i++;
-        });
-    } else {
-        var row = document.createElement('tr');
-        row.innerHTML = '<td colspan="3">No students available for this subject.</td>';
-        studentListElement.appendChild(row);
-    }
-});
+        }
+    });
 
-// JavaScript to handle the modal for failed students
-var failedStudentModal = document.getElementById('failedStudentModal');
-failedStudentModal.addEventListener('show.bs.modal', function (event) {
-    // Extract data attributes from the button that triggered the modal
-    var button = event.relatedTarget;
-    var subjectName = button.getAttribute('data-subject');
-    var failedStudentList = JSON.parse(button.getAttribute('data-failedlist'));
+    // JavaScript to handle the modal for failed students
+    var failedStudentModal = document.getElementById('failedStudentModal');
+    failedStudentModal.addEventListener('show.bs.modal', function(event) {
+        // Extract data attributes from the button that triggered the modal
+        var button = event.relatedTarget;
+        var subjectName = button.getAttribute('data-subject');
+        var failedStudentList = JSON.parse(button.getAttribute('data-failedlist'));
 
-    // Update the modal content
-    var modalTitle = failedStudentModal.querySelector('#failedSubjectName');
-    modalTitle.textContent = 'Subject: ' + subjectName;
+        // Update the modal content
+        var modalTitle = failedStudentModal.querySelector('#failedSubjectName');
+        modalTitle.textContent = 'Subject: ' + subjectName;
 
-    var failedStudentListElement = failedStudentModal.querySelector('#failedStudentList');
-    failedStudentListElement.innerHTML = ''; // Clear any existing data
+        var failedStudentListElement = failedStudentModal.querySelector('#failedStudentList');
+        failedStudentListElement.innerHTML = ''; // Clear any existing data
 
-    // Populate the failed student table
-    var i = 1;
-    if (failedStudentList.length > 0) {
-        failedStudentList.forEach(function (student) {
+        // Populate the failed student table
+        var i = 1;
+        if (failedStudentList.length > 0) {
+            failedStudentList.forEach(function(student) {
+                var row = document.createElement('tr');
+                row.innerHTML = '<td>' + i + '</td><td>' + student['Student Name'] + '</td><td>' + student['Reg No'] + '</td><td>' + student['Marks'] + '</td>';
+                failedStudentListElement.appendChild(row);
+                i++;
+            });
+        } else {
             var row = document.createElement('tr');
-            row.innerHTML = '<td>' + i + '</td><td>' + student['Student Name'] + '</td><td>' + student['Reg No'] + '</td><td>' + student['Marks'] + '</td>';
+            row.innerHTML = '<td colspan="3">No failed students available for this subject.</td>';
             failedStudentListElement.appendChild(row);
-            i++;
-        });
-    } else {
-        var row = document.createElement('tr');
-        row.innerHTML = '<td colspan="3">No failed students available for this subject.</td>';
-        failedStudentListElement.appendChild(row);
-    }
-});
+        }
+    });
 </script>
