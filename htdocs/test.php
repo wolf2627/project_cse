@@ -4,15 +4,15 @@
 
 include 'libs/load.php';
 
-$role = new Role();
+// $role = new Role();
 
-$roleName = 'student';
+// $roleName = 'student';
 
-$roleCategory = 'student';
+// $roleCategory = 'student';
 
-$roles = $role->getRoles();
+// $roles = $role->getRoles();
 
-print_r($roles);
+// print_r($roles);
 
 
 // $classreport = new ClassReport();
@@ -34,6 +34,22 @@ print_r($roles);
 
 
 // print_r($overall);
+
+
+$permission = new Permission();
+// $result = $permission->createPermission('test_permission', 'This is a test permission', 'faculty');
+
+// $result = $permission->getPermissions("faculty");
+
+// print_r($result);
+
+// $result = $permission->updatePermission('673fe69b72d669193308d813', 'Generate_report', 'This is a new permission', 'faculty');
+
+// print_r($result);
+
+$result = $permission->deletePermission('6756e35a4336e5570a0d12d3');
+
+echo $result;
 
 ?>
 

@@ -50,7 +50,7 @@ class UserSession
             try { //TODO : Try to add username in the session doc.
                 $result = $collection->insertOne(['user_id' => $user_logged['user_id'],'role' => $user_logged['role']  ,'token' => $token, 'login_time' => $now, 'login_time_in' => $IST_time ,'ip' => $ip, 'user_agent' => $agent, 'active' => 1, 'fingerprint' => $fingerprint]);
                 if ($result) {
-                    echo "Session Created"."<br>";
+                    // echo "Session Created"."<br>";
                     Session::set('session_token', $token);
                     return $token;
                 } else {
