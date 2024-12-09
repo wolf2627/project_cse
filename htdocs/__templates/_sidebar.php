@@ -185,6 +185,16 @@ $role = Session::get('role');
                             Assign Role
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="/managerole">
+                            <svg class="bi">
+                                <use xlink:href="#file-earmark-text" />
+                            </svg>
+                            Manage Role
+                        </a>
+                    </li>
+
                 <?php endif; ?>
 
             </ul>

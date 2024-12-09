@@ -5,10 +5,10 @@ ${basename(__FILE__, '.php')} = function () {
     if (!Session::isAuthenticated()) {
         $this->response($this->json(['message' => 'Unauthorized']), 401);
     }
-    if ($_GET['operation'] == 'delete') {
+    if ($_GET['operation'] == 'unassign') {
 ?>
-        <h4>Delete Role</h4>
-        <form id="delete-form">
+        <h4>Assign Role</h4>
+        <form id="assign-role-form">
             <div class="mb-3">
                 <label for="roleId" class="form-label">Select Role:</label>
                 <select id="roleId" class="form-control" required>

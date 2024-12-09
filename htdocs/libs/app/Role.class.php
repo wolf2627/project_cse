@@ -9,7 +9,7 @@ class Role
         $this->conn = Database::getConnection();
     }
 
-    public function createRole($roleName, $description)
+    public function createRole($roleName, $roleCategory ,$description)
     {
         $rolesCollection = $this->conn->roles;
 
@@ -27,6 +27,7 @@ class Role
         // Proceed with creating the new role
         $result = $rolesCollection->insertOne([
             "role_name" => $roleName,
+            "role_category" => $roleCategory,
             "description" => $description
         ]);
 
@@ -77,13 +78,21 @@ class Role
         return $result->getDeletedCount();
     }
 
-    public function getRoles()
+    public function getRoles($roleCategory=null)
     {
 
         $rolesCollection = $this->conn->roles;
 
-        $roles = $rolesCollection->find()->toArray();
-
+        if($roleCategory==null){
+            $roles = $rolesCollection->find()->toArray();
+        } else if($roleCategory=="student"){
+            $roles = $rolesCollection->find(['role_category' => $roleCategory])->toArray();
+        } else if($roleCategory=="faculty"){
+            $roles = $rolesCollection->find(['role_category' => $roleCategory])->toArray();
+        } else {
+            $roles = [];
+        }
+        
         return $roles;
     }
 
