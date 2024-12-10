@@ -1,0 +1,325 @@
+[33mcommit 0f50bf2d47af0c77650bd61857a7adf6f3404aa6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfix-permission-crud[m[33m, [m[1;31morigin/dev[m[33m, [m[1;32mdev[m[33m)[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Tue Dec 10 13:31:32 2024 +0000
+
+    Revert "permission crud done"
+    
+    This reverts commit 7823359463ad338ddcbe3f06790135c8aecf8e96.
+
+[33mcommit 7823359463ad338ddcbe3f06790135c8aecf8e96[m[33m ([m[1;31morigin/fix-permission-crud[m[33m)[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Tue Dec 10 13:30:20 2024 +0000
+
+    permission crud done
+
+[33mcommit 4cd862d5ef29624efc70ea869a953227afd45860[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Dec 9 12:39:12 2024 +0000
+
+    permissions WIP
+
+[33mcommit 552e0a320c9d2a73c488d7cc3d43b29d0f3561af[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Dec 9 11:55:23 2024 +0000
+
+    roles WIP
+
+[33mcommit 1c5bdf30bfa8df98c32434ae8ef4f2d4558acaf1[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Dec 8 03:59:43 2024 +0000
+
+    bug fix: class show
+
+[33mcommit 8210609729e66fb982b8981395a5467c63705d5d[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Dec 8 03:52:35 2024 +0000
+
+    year analysis display added
+
+[33mcommit 1552ad3f690b1135b891c1a4d0dc0f6b19b64294[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Dec 8 02:50:35 2024 +0000
+
+    report generation year-wise report added
+
+[33mcommit fc0b4307e111a4bdc8ffd95907776d531545241e[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Wed Nov 27 09:22:25 2024 +0000
+
+    deleted unwanted files
+
+[33mcommit afd546f2727ee22e926de53f552b05d74d90543e[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Wed Nov 27 09:10:30 2024 +0000
+
+    minor fix
+
+[33mcommit 4e4686849ab7c54e64acad05abcfb7ca92e7eaf8[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Wed Nov 27 08:16:44 2024 +0000
+
+    Classwise report update
+
+[33mcommit 1058131aa6ee8427fe8a9a73373aa3d915eae713[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Wed Nov 27 04:32:58 2024 +0000
+
+    classwise report generation - pdf
+
+[33mcommit d906116cddb88ade433358e8a4f4d43097ed0991[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Tue Nov 26 17:14:54 2024 +0000
+
+    report pdf generation in-progress
+
+[33mcommit 5340e931cc0abe308e6ddacb2f068cf1c5493e06[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Tue Nov 26 10:41:40 2024 +0000
+
+    Test Reports implementation WIP
+
+[33mcommit 490e9c9c881e83ac7a7a062895aea1a08b0708cd[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Tue Nov 26 03:09:10 2024 +0000
+
+    Classess and Tests are more abstracted, and defined new
+
+[33mcommit f897458552871e8346894f23ecf9fb40caace18d[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 25 15:46:59 2024 +0000
+
+    Getting Marks, Updating Marks Modified
+
+[33mcommit 33e35d80dd42aa1a7df7f07d5df7a885c3374720[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 25 15:27:13 2024 +0000
+
+    Entering Marks Modified
+
+[33mcommit 3aee5631b8cd7dc58e6ae161fa62e506c089322b[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 24 17:11:01 2024 +0000
+
+    marks optimisation in progress both in db and code
+
+[33mcommit 0e92dad461d5f01c85ccf4540be356b536c211a4[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 24 09:40:35 2024 +0000
+
+    Roles, Permissions WIP, Minor Change in UI, Marks collections Update : WIP, Admin class into Creator Class
+
+[33mcommit 1b156b32611eceb1aab5754f50db5df6a79692a7[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Fri Nov 22 03:49:10 2024 +0000
+
+    phpword, tcpdf installed : Composer
+
+[33mcommit abbc7fe1ed18c736b5e77ab7e916cddb5fd89b6d[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Tue Nov 19 08:02:10 2024 +0000
+
+    bug Fixes and UX enhance
+
+[33mcommit eb00761d7a03150d7e8d5835aeaafb67ebfeab30[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Tue Nov 19 05:30:23 2024 +0000
+
+    excel file generation
+
+[33mcommit f0abfe56f7a3be0e79d895490951b776738a95ea[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 18 17:22:07 2024 +0000
+
+    api added, edit mark done
+
+[33mcommit cc39cfdda6028c50d3ed587e4219953b05f07c24[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 18 17:21:20 2024 +0000
+
+    edit mark feature done
+
+[33mcommit 0217b30ed925b110f4b31195f86244a589f75719[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 18 13:31:54 2024 +0000
+
+    footer added
+
+[33mcommit 605663fa0a27b1843e7f9eea3b1b482e34f26171[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 18 07:54:34 2024 +0000
+
+    mark entry bug fix
+
+[33mcommit 5bdf1646257a042316686eecd38887cc5d46e612[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 18 05:57:40 2024 +0000
+
+    Marks entry done
+
+[33mcommit 658bf086ff92e02c7fed3b0c9bfe95a1de57b975[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 18 04:17:25 2024 +0000
+
+    Mark Entry done, retrive WIP
+
+[33mcommit d45fa56c95caa5eb97eb2d9a57acb9869f2243f2[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 18 02:34:48 2024 +0000
+
+    mark entery sidebar , students generation done
+
+[33mcommit 3fb65875bf6390782a891167df03ac4dd929c109[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 17 17:26:02 2024 +0000
+
+    Marks Entry WIP
+
+[33mcommit 7e780c72a6c4a4161f354e16f3a4d96678c3c760[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 17 16:45:14 2024 +0000
+
+    create test done
+
+[33mcommit 22750deb6b1f640d2d536e2955a87c8e578c2eca[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 17 13:17:49 2024 +0000
+
+    separated classes, admin
+
+[33mcommit 95bf5c83041481c676b88fe8c604247d7e3d4e8a[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 17 12:20:39 2024 +0000
+
+    markentry WIP
+
+[33mcommit 5e12bbc850a9c1fedf0eaf10b7a131a6b0deae88[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 17 11:01:58 2024 +0000
+
+    role stored in session, dashboard created, sidebar icons modified
+
+[33mcommit a02ad2cc3822b097ee69fde4c3cff60776a7d41a[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 17 09:08:53 2024 +0000
+
+    faculty assign done
+
+[33mcommit dd189e0d7c233f08d7ce30ae31e1b6682bac9e14[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 17 05:14:36 2024 +0000
+
+    student enrollment done
+
+[33mcommit 97f5140cdcbefed88bbdfefde4034dd866eb9ecd[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 17 05:14:23 2024 +0000
+
+    student enrollment done
+
+[33mcommit 51975200c9b6103163eae39c70d69e2ca7bfae77[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sat Nov 16 05:31:18 2024 +0000
+
+    Session Management and User Creation Enhanced
+
+[33mcommit 44e4a7149ed088ba6d6ab652610ca420ce291222[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Fri Nov 15 16:40:33 2024 +0000
+
+    Subject Creation done
+
+[33mcommit d8a9a54fbcb7e982885370889e5ce5f7b1722741[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Fri Nov 15 14:26:57 2024 +0000
+
+    user creation faculty and student done
+
+[33mcommit 4f2b40f94353dc03fe6bb248bcedfc818efc1619[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Fri Nov 15 01:56:08 2024 +0000
+
+    session validation fix
+
+[33mcommit 65e1768442de06566e377930b3f4fa2904a50365[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Thu Nov 14 15:45:17 2024 +0000
+
+    Database sessions
+
+[33mcommit f8c5a485836149f9f502c1309adb541db6432693[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Thu Nov 14 11:47:32 2024 +0000
+
+    API added
+
+[33mcommit 20fd012f3d92a95f717a36cc184597a96a55da6f[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Tue Nov 12 00:19:37 2024 +0000
+
+    templating: WIP
+
+[33mcommit b983d0ba8cd590f6ada25ae96464fe879b9b283c[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 11 17:12:54 2024 +0000
+
+    templating WIP
+
+[33mcommit 132e81437abda80457bafc064271655176f8abea[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 11 13:45:30 2024 +0000
+
+    gitignore fix
+
+[33mcommit e881c20db7839421ae9f33b234a7821d552c7a16[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 11 13:44:38 2024 +0000
+
+    fix json include
+
+[33mcommit 9f3fb87cf46090ef0fb0bc70da13ef14c617ce21[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Mon Nov 11 13:43:12 2024 +0000
+
+    Session Management fix
+
+[33mcommit 93fca287f52d720e34832ec2c5d1a8d8b9aa0785[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 10 16:48:04 2024 +0000
+
+    usersession build fix
+
+[33mcommit 243a07fbaa22617120ef266f5a9da6dd31d317c1[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 10 16:13:43 2024 +0000
+
+    Templating done, modals, toasts and other js loaded
+
+[33mcommit c07a18c6dad993499139f5548d7f3e96bd0788b0[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 10 12:53:11 2024 +0000
+
+    htaccess added
+
+[33mcommit 81db1bc5e74c2dc0ed7bef9137a4f01bc006a76f[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 10 07:45:36 2024 +0000
+
+    welcome, signin : WIP
+
+[33mcommit 3afb0957eca60931a165bb24c8b504802e31126d[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sun Nov 10 05:32:12 2024 +0000
+
+    work env setted up, fixed template loading
+
+[33mcommit 1ba6886a802d201fe3716d5580f8f3e5bbc949c1[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sat Nov 9 16:17:43 2024 +0000
+
+    login, session_and user management done
+
+[33mcommit b8ec3ef7475a89e410ce310f27c3bbae7c7f1a0b[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m
+Author: wolf <aswfrln@gmail.com>
+Date:   Sat Nov 9 16:15:03 2024 +0000
+
+    getting started with readme
