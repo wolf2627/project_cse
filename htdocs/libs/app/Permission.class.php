@@ -1,6 +1,7 @@
 <?php
 
-class Permission {
+class Permission
+{
 
     private $conn = null;
     private $collection = null;
@@ -12,7 +13,7 @@ class Permission {
     }
 
     // Create a new permission
-    public function createPermission($permissionName, $description, $category)
+    public function createPermission($permissionName, $category, $description,)
     {
         $permissionsCollection = $this->collection;
 
@@ -58,28 +59,33 @@ class Permission {
     }
 
     // Update a permission
-    public function updatePermission($permissionId, $permissionName, $description, $category)
+    public function updatePermission($permissionId, $permissionName, $category, $description)
     {
         $permissionsCollection = $this->conn->permissions;
+
+        // Capitalize the first letter of the permission name
+        $permissionName = ucfirst($permissionName);
 
         $result = $permissionsCollection->updateOne(
             ["_id" => new MongoDB\BSON\ObjectId($permissionId)],
             ['$set' => [
                 "permission_name" => $permissionName,
-                "category" => $category,
+                "permission_category" => $category,
                 "description" => $description,
             ]]
         );
 
-        try {
-            if ($result->getModifiedCount()) {
-                return true;
-            } else {
-                throw new Exception("Failed to update permission");
-            }
-        } catch (Exception $e) {
-            error_log($e->getMessage());
-            return false;
+        if ($result->getMatchedCount() == 0) {
+            error_log("Permission not found with ID: $permissionId");
+            throw new Exception("Permission not found");
+        }
+
+        if ($result->getModifiedCount()) {
+            return true;
+        } else {
+            // Log a more detailed error message with context
+            error_log("No changes were made to the permission: $permissionId");
+            throw new Exception("No changes were made to the permission");
         }
     }
 
@@ -106,7 +112,7 @@ class Permission {
 
         if ($category) {
             $permissions = $permissionsCollection->find(["permission_category" => $category]);
-        } else if($category == null) {
+        } else if ($category == null) {
             $permissions = $permissionsCollection->find();
         } else {
             $permissions = [];
@@ -121,6 +127,20 @@ class Permission {
         }
 
         return $permissionsArray;
+    }
+
+    // Get a permission by ID
+    public function getPermissionByID($permissionId)
+    {
+        $permissionsCollection = $this->conn->permissions;
+
+        $permission = $permissionsCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($permissionId)]);
+
+        if ($permission) {
+            return $permission;
+        } else {
+            throw new Exception("Permission not found");
+        }
     }
 
     // Get all permissions for a role
@@ -250,5 +270,4 @@ class Permission {
             throw new Exception("Failed to remove permission from user");
         }
     }
-
 }
