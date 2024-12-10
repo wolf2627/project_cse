@@ -126,15 +126,6 @@ class User
         }
     }
 
-    /**
-     * get the user id
-     */
-
-    public function get_Id()
-    {
-        return $this->user_id;
-    }
-
     /* 
     * Since Date of Birth has special format, a override method is written for updating Dob. 
     * However it formats the dob and invokes _set_data method to update.

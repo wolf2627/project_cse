@@ -10,8 +10,6 @@ include_once 'includes/User.class.php';
 include_once 'includes/UserSession.class.php';
 include_once 'includes/REST.class.php';
 include_once 'includes/API.class.php';
-include_once 'includes/Log.class.php';
-
 include_once 'app/AppUser.class.php';
 include_once 'app/essentials.class.php';
 include_once 'app/Admin.class.php';
