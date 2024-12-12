@@ -231,8 +231,27 @@ class Permission
     }
 
     // Assign a permission to a role
+
+    /**
+     * Assign a permission to a role
+     * @param string $roleId
+     * @param Array $permissionId
+     */
+
     public function assignPermissionToRole($roleId, $permissionId)
     {
+
+        /**
+         * TODO: 
+         * 0. reframe the function below for proper implementation
+         * 1. Check if the role exists
+         * 2. Check if the permissions exists
+         * 3. Check if the permission is already assigned to the role
+         * 4. If the permissions are already assigned, and no new permission is given, leave it. else add the new permissions
+         * 5. If the permissions are not assigned, insert the new permissions to the role
+         * 
+         */
+
         $rolesCollection = $this->conn->roles;
 
         if (!$rolesCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($roleId)])) {
