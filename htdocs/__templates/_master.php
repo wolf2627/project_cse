@@ -73,6 +73,8 @@
     <!-- Include Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
 
     <script src="<?= get_config("base_path") ?>js/app.min.js"></script>
     <script src="<?= get_config("base_path") ?>js/dialog.js"></script>

@@ -146,9 +146,9 @@ class Permission
     // Get all permissions for a role
     public function getPermissionsForRole($roleId)
     {
-        $permissionsCollection = $this->conn->permissions;
+        $permissionsCollection = $this->conn->role_permissions;
 
-        $permissions = $permissionsCollection->find();
+        $permissions = $permissionsCollection->find(["role_id" => new MongoDB\BSON\ObjectId($roleId)]);
 
         $permissionsArray = [];
 
@@ -159,6 +159,33 @@ class Permission
         return $permissionsArray;
     }
 
+    // Get permissions by role ID and format the structure
+    public function getFormattedPermissionsForRole($roleId)
+    {
+        $rolePermissionsCollection = $this->conn->role_permissions;
+
+        $rolePermissions = $rolePermissionsCollection->findOne(["role_id" => new MongoDB\BSON\ObjectId($roleId)]);
+
+        if (!$rolePermissions) {
+            throw new Exception("Role not found");
+        }
+
+        $permissionsArray = [];
+
+        foreach ($rolePermissions['permissions'] as $permissionId) {
+            $permission = $this->getPermissionByID($permissionId);
+            $permissionsArray[] = [
+                'id' => (string) $permission['_id'],
+                'name' => $permission['permission_name'],
+                'category' => $permission['permission_category'],
+                'description' => $permission['description']
+            ];
+        }
+
+        return $permissionsArray;
+    }
+
+    
     // Get all permissions for a user
     public function getPermissionsForUser($userId)
     {
