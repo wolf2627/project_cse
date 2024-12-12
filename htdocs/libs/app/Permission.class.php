@@ -185,7 +185,7 @@ class Permission
         return $permissionsArray;
     }
 
-    
+
     // Get all permissions for a user
     public function getPermissionsForUser($userId)
     {
@@ -235,15 +235,49 @@ class Permission
     {
         $rolesCollection = $this->conn->roles;
 
-        $result = $rolesCollection->updateOne(
-            ["_id" => new MongoDB\BSON\ObjectId($roleId)],
-            ['$addToSet' => ["permissions" => new MongoDB\BSON\ObjectId($permissionId)]]
-        );
+        if (!$rolesCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($roleId)])) {
+            throw new Exception("Role not found");
+        }
 
-        if ($result->getModifiedCount()) {
-            return true;
+        $permissionsCollection = $this->conn->permissions;
+
+        foreach ($permissionId as $id) {
+            if (!$permissionsCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($id)])) {
+                throw new Exception("Permission not found: $id");
+            }
+        }
+
+        $rolePermissionsCollection = $this->conn->role_permissions;
+
+        $existingPermissions = $rolePermissionsCollection->findOne(["role_id" => new MongoDB\BSON\ObjectId($roleId)]);
+
+        if ($existingPermissions) {
+            echo "Existing permissions found <br>";
+            $result = $rolePermissionsCollection->updateOne(
+                ["role_id" => new MongoDB\BSON\ObjectId($roleId)],
+                ['$addToSet' => ["permissions" => ['$each' => $permissionId]]],
+                ['upsert' => true]
+            );
+
+            if ($result->getModifiedCount()) {
+                return true;
+            } else {
+                throw new Exception("Failed to update permissions to role <br>");
+            }
         } else {
-            throw new Exception("Failed to assign permission to role");
+
+            echo "No existing permissions found <br>";
+
+            $result = $rolePermissionsCollection->insertOne([
+                "role_id" => new MongoDB\BSON\ObjectId($roleId),
+                "permissions" => $permissionId
+            ]);
+
+            if ($result->getInsertedId()) {
+                return $result->getInsertedId();
+            } else {
+                throw new Exception("Failed to assign permission to role");
+            }
         }
     }
 
