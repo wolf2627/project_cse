@@ -238,65 +238,79 @@ class Permission
      * @param Array $permissionId
      */
 
-    public function assignPermissionToRole($roleId, $permissionId)
+    public function assignPermissionToRole($roleId, $permissionIds)
     {
-
-        /**
-         * TODO: 
-         * 0. reframe the function below for proper implementation
-         * 1. Check if the role exists
-         * 2. Check if the permissions exists
-         * 3. Check if the permission is already assigned to the role
-         * 4. If the permissions are already assigned, and no new permission is given, leave it. else add the new permissions
-         * 5. If the permissions are not assigned, insert the new permissions to the role
-         * 
-         */
-
         $rolesCollection = $this->conn->roles;
-
-        if (!$rolesCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($roleId)])) {
-            throw new Exception("Role not found");
-        }
-
         $permissionsCollection = $this->conn->permissions;
-
-        foreach ($permissionId as $id) {
-            if (!$permissionsCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($id)])) {
-                throw new Exception("Permission not found: $id");
-            }
-        }
-
         $rolePermissionsCollection = $this->conn->role_permissions;
 
-        $existingPermissions = $rolePermissionsCollection->findOne(["role_id" => new MongoDB\BSON\ObjectId($roleId)]);
+        $roleIdObj = new MongoDB\BSON\ObjectId($roleId);
 
-        if ($existingPermissions) {
-            echo "Existing permissions found <br>";
-            $result = $rolePermissionsCollection->updateOne(
-                ["role_id" => new MongoDB\BSON\ObjectId($roleId)],
-                ['$addToSet' => ["permissions" => ['$each' => $permissionId]]],
-                ['upsert' => true]
-            );
+        // Validate role existence
+        if (!$rolesCollection->findOne(['_id' => $roleIdObj])) {
+            throw new Exception('Role not found');
+        }
 
-            if ($result->getModifiedCount()) {
-                return true;
-            } else {
-                throw new Exception("Failed to update permissions to role <br>");
+        if(empty($permissionIds)){
+            if($this->revokeAllPermissions($roleId)){
+                return [];
             }
+        }
+
+        // Validate provided permissions
+        $validPermissionsId = [];
+        foreach ($permissionIds as $id) {
+            $objectId = new MongoDB\BSON\ObjectId($id);
+            if ($permissionsCollection->findOne(['_id' => $objectId])) {
+                $validPermissionsId[] = $objectId;
+            }
+        }
+
+        // Update permissions
+        $rolePermissionsCollection->updateOne(
+            ['role_id' => $roleIdObj],
+            ['$set' => ['permissions' => $validPermissionsId]],
+            ['upsert' => true]
+        );
+
+        // Fetch and return updated permissions
+        $updatedPermissionsDoc = $rolePermissionsCollection->findOne(['role_id' => $roleIdObj]);
+        $finalPermissions = isset($updatedPermissionsDoc['permissions'])
+            ? array_map('strval', (array) $updatedPermissionsDoc['permissions']) // Cast BSONArray to array
+            : [];
+
+        $finalResult = [];
+
+        foreach ($finalPermissions as $permissionId) {
+            $permission = $permissionsCollection->findOne(['_id' => new MongoDB\BSON\ObjectId($permissionId)]);
+            $finalResult[] = [
+                'id' => (string) $permission['_id'],
+                'name' => $permission['permission_name'],
+                'category' => $permission['permission_category'],
+                'description' => $permission['description']
+            ];
+        }
+
+        return $finalResult;
+    }
+
+
+
+    public function revokeAllPermissions($roleId)
+    {
+        $rolesCollection = $this->conn->roles;
+        $rolePermissionsCollection = $this->conn->role_permissions;
+
+        if (!$rolesCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($roleId)])) {
+            return ["error" => "Role not found"];
+        }
+
+        $result = $rolePermissionsCollection->deleteOne(["role_id" => new MongoDB\BSON\ObjectId($roleId)]);
+
+        if ($result->getDeletedCount()) {
+            return true;
         } else {
-
-            echo "No existing permissions found <br>";
-
-            $result = $rolePermissionsCollection->insertOne([
-                "role_id" => new MongoDB\BSON\ObjectId($roleId),
-                "permissions" => $permissionId
-            ]);
-
-            if ($result->getInsertedId()) {
-                return $result->getInsertedId();
-            } else {
-                throw new Exception("Failed to assign permission to role");
-            }
+            throw new Exception("Failed to delete permission");
         }
     }
 

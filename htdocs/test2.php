@@ -7,9 +7,14 @@
     $permissions = new Permission();
 
     try{
-        $result = $permissions->assignPermissionToRole($_POST['role'], $_POST['permissions']);
+        if(!isset($_POST['permissions'])){
+            $permissionsRec = null;
+        } else {
+            $permissionsRec = $_POST['permissions'];
+        }
+        $result = $permissions->assignPermissionToRole($_POST['role'], $permissionsRec);
 
-        echo "Permission assigned to role";
+        print_r($result);
 
     } catch (Exception $e) {
         echo $e->getMessage();
