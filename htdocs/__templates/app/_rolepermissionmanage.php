@@ -7,17 +7,17 @@ $permission = new Permission();
 $permissions = $permission->getPermissions();
 
 ?>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <div class="container mt-5">
-        
-    <form id="rolePermissionForm" action="\test2" method="POST">
+    <h2 class="text-center">Role Permission Management</h2>
+
+    <form id="rolePermissionForm" method="POST">
         <div class="mb-3">
             <label for="permission-role" class="form-label">Select Role:</label>
             <select class="form-select" id="permission-role" name="role" required>
                 <option value="">Select Role</option>
                 <?php foreach ($roles as $role) : ?>
-                    <option value="<?= $role->_id ?>"><?= $role['role_name'] ?></option>
+                    <option value="<?= $role->_id ?>" data-name="<?= $role['role_name'] ?>"><?= $role['role_name'] ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

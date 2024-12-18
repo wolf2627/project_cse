@@ -2,7 +2,7 @@
 
 ${basename(__FILE__, '.php')} = function () {
 
-    if ($this->paramsExists(['role_id'])) {
+    if ($this->paramsExists(['roleId'])) {
 
         if (!Session::isAuthenticated()) {
             $this->response($this->json(['message' => 'Unauthorized']), 401);
@@ -11,7 +11,7 @@ ${basename(__FILE__, '.php')} = function () {
         $permission = new Permission();
 
         try {
-            $permissionId = $this->_request['role_id'];
+            $permissionId = $this->_request['roleId'];
 
             // Get the permission
             $permissionData = $permission->getFormattedPermissionsForRole($permissionId);
@@ -19,7 +19,7 @@ ${basename(__FILE__, '.php')} = function () {
             $this->response(
                 $this->json([
                     'success' => true,
-                    'permissions' => $permissionData
+                    'permission' => $permissionData
                 ]),
                 200
             );
@@ -28,7 +28,7 @@ ${basename(__FILE__, '.php')} = function () {
             $errorMessage = $e->getMessage();
 
             // Handle specific errors
-            if ($errorMessage === 'Permission not found') {
+            if ($errorMessage === 'Permission not found' || $errorMessage === 'Role not found') {
                 $this->response(
                     $this->json([
                         'success' => false,

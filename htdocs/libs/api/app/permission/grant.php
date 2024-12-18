@@ -13,7 +13,12 @@ ${basename(__FILE__, '.php')} = function () {
         try {
 
             $roleId = $this->_request['roleId'];
-            $permissionsID = $this->_request['permissionsID'] ? $this->_request['permissionsID'] : [];
+            $permissionsID = isset($this->_request['permissionsID']) &&
+                ((is_array($this->_request['permissionsID']) && count($this->_request['permissionsID']) > 0) ||
+                    (is_string($this->_request['permissionsID']) && strlen($this->_request['permissionsID']) > 0))
+                ? $this->_request['permissionsID']
+                : [];
+
 
             // Grant the permission to the role
             $result = $permission->assignPermissionToRole($roleId, $permissionsID);
