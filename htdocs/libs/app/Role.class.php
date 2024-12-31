@@ -103,4 +103,9 @@ class Role
 
         return $role['role_name'];
     }
+
+    public function AssignOtherRoles($referenceNumber, $role, $roleCategory){
+        
+        $UserRoleCollection = $this->conn->user_roles;
+    }
 }

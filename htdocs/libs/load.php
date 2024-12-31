@@ -25,6 +25,8 @@ include_once 'app/Role.class.php';
 include_once 'app/Marks.class.php';
 include_once 'app/Permission.class.php';
 
+include_once 'app/Access.class.php';
+
 include_once 'app/reports/ClassReport.class.php';
 
 global $__site_config;
