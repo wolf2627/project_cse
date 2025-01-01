@@ -1,129 +1,119 @@
-<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
+<h6 class="sidebar-heading justify-content-between align-items-center px-3 text-muted">
     <span>Admin</span>
 </h6>
 
-<li class="nav-item">
-    <button class="nav-link d-flex align-items-center gap-2 btn-toggle" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
-        <svg class="bi">
-            <use xlink:href="#new-folder"></use>
-        </svg>
-        Create
-        <svg class="bi arrow-mov ">
-            <use xlink:href="#plus"></use>
-        </svg>
-    </button>
-    <div class="collapse" id="dashboard-collapse">
-        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2" href="/createuser">
-                    <svg class="bi">
-                        <use xlink:href="#person-fill" />
+
+<?php
+
+$listOfLinks = [
+    [
+        'name' => 'Create',
+        'icon' => 'new-folder',
+        'subLinks' => [
+            [
+                'name' => 'User',
+                'icon' => 'person-fill',
+                'href' => '/createuser'
+            ],
+            [
+                'name' => 'Subject',
+                'icon' => 'journal-plus',
+                'href' => '/createsubject'
+            ],
+            [
+                'name' => 'Test',
+                'icon' => 'journal-plus',
+                'href' => '/createtest'
+            ]
+        ]
+    ],
+    [
+        'name' => 'Assign Faculty',
+        'icon' => 'bi-person-rolodex',
+        'href' => '/assignfaculty'
+    ],
+    [
+        'name' => 'Enroll Students',
+        'icon' => 'file-person-fill',
+        'href' => '/enrollsubjects'
+    ],
+    [
+        'name' => 'Role',
+        'icon' => 'new-folder',
+        'subLinks' => [
+            [
+                'name' => 'Assign Role',
+                'icon' => 'file-earmark-text',
+                'href' => '/assignrole'
+            ],
+            [
+                'name' => 'Manage Role',
+                'icon' => 'file-earmark-text',
+                'href' => '/managerole'
+            ],
+        ]
+    ],
+    [
+        'name' => 'Permission',
+        'icon' => 'new-folder',
+        'subLinks' => [
+            [
+                'name' => 'manage',
+                'icon' => 'file-earmark-text',
+                'href' => '/managepermission'
+            ],
+        ]
+    ],
+    [
+        'name' => 'Grant Permission',
+        'icon' => 'file-earmark-text',
+        'href' => '/role-permission-manage'
+    ]
+];
+
+
+foreach ($listOfLinks as $link) {
+    $subLinks = $link['subLinks'] ?? [];
+    $href = $link['href'] ?? '#';
+    $icon = $link['icon'] ?? '';
+    $name = str_replace(' ', '-', $link['name'] ?? '');
+
+    if (!empty($subLinks)) {
+        echo "<li>
+                <a href='#{$name}Collapse' class='nav-link link-body-emphasis' data-bs-toggle='collapse' role='button' aria-expanded='false' aria-controls='{$name}Collapse'>
+                    <svg class='bi pe-none me-2' width='16' height='16'>
+                        <use xlink:href='#{$icon}'></use>   
                     </svg>
-                    User
+                    <p>{$name}</p>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2" href="/createsubject">
-                    <svg class="bi">
-                        <use xlink:href="#journal-plus" />
+                <div class='collapse' id='{$name}Collapse'>
+                    <ul class='list-unstyled ps-0'>";
+        foreach ($subLinks as $subLink) {
+            $subHref = $subLink['href'] ?? '#';
+            $subIcon = $subLink['icon'] ?? '';
+            $subName = $subLink['name'] ?? '';
+
+            echo "<li>
+                    <a href='{$subHref}' class='nav-link link-body-emphasis'>
+                        <svg class='bi pe-none me-2' width='16' height='16'>
+                            <use xlink:href='#{$subIcon}'></use>
+                        </svg>
+                        <p>{$subName}</p>
+                    </a>
+                </li>";
+        }
+        echo "</ul>
+            </div>
+        </li>";
+    } else {
+        echo "<li>
+                <a href='{$href}' class='nav-link link-body-emphasis'>
+                    <svg class='bi pe-none me-2' width='16' height='16'>
+                        <use xlink:href='#{$icon}'></use>
                     </svg>
-                    Subject
+                    <p>{$name}</p>
                 </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2" href="/createtest">
-                    <svg class="bi">
-                        <use xlink:href="#journal-plus" />
-                    </svg>
-                    Test
-                </a>
-            </li>
-        </ul>
-    </div>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link d-flex align-items-center gap-2" href="/enrollsubjects">
-        <svg class="bi">
-            <use xlink:href="#file-person-fill" />
-        </svg>
-        Enroll Students
-    </a>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link d-flex align-items-center gap-2" href="/assignfaculty">
-        <svg class="bi">
-            <use xlink:href="#bi-person-rolodex" />
-        </svg>
-        Assign Faculty
-    </a>
-</li>
-
-<li class="nav-item">
-    <button class="nav-link d-flex align-items-center gap-2 btn-toggle" data-bs-toggle="collapse" data-bs-target="#Role-collapse" aria-expanded="false">
-        <svg class="bi">
-            <use xlink:href="#new-folder"></use>
-        </svg>
-        Role
-        <svg class="bi arrow-mov ">
-            <use xlink:href="#plus"></use>
-        </svg>
-    </button>
-    <div class="collapse" id="Role-collapse">
-        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2" href="/assignrole">
-                    <svg class="bi">
-                        <use xlink:href="#file-earmark-text" />
-                    </svg>
-                    Assign
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2" href="/managerole">
-                    <svg class="bi">
-                        <use xlink:href="#file-earmark-text" />
-                    </svg>
-                    Manage
-                </a>
-            </li>
-        </ul>
-    </div>
-</li>
-
-
-<li class="nav-item">
-    <button class="nav-link d-flex align-items-center gap-2 btn-toggle" data-bs-toggle="collapse" data-bs-target="#Permission-collapse" aria-expanded="false">
-        <svg class="bi">
-            <use xlink:href="#new-folder"></use>
-        </svg>
-        Permission
-        <svg class="bi arrow-mov ">
-            <use xlink:href="#plus"></use>
-        </svg>
-    </button>
-    <div class="collapse" id="Permission-collapse">
-        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2" href="/managepermission">
-                    <svg class="bi">
-                        <use xlink:href="#file-earmark-text" />
-                    </svg>
-                    Manage
-                </a>
-            </li>
-        </ul>
-    </div>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link d-flex align-items-center gap-2" href="/role-permission-manage">
-        <svg class="bi">
-            <use xlink:href="#file-earmark-text" />
-        </svg>
-        Grant Permission
-    </a>
-</li>
+            </li>";
+    }
+}
+?>

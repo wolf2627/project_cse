@@ -1,103 +1,203 @@
-.dropdown-toggle {
-  outline: 0;
+/* Adjust margin when sidebar is expanded */
+.sidebar-cus:hover+.main-content main,
+.sidebar-cus:hover+.main-content footer,
+.sidebar-cus:hover+.main-content header {
+    margin-left: 280px;
 }
 
-/* Styles for the button toggle */
-.btn-toggle:hover,
-.btn-toggle:focus {
-  color: rgba(var(--bs-emphasis-color-rgb), 0.85);
-  background-color: var(--bs-tertiary-bg);
-}
-
-/* Target the arrow icon directly */
-.arrow-mov {
-  display: inline-block;
-  position: relative;
-  width: 1.25em;
-  height: 1.25em;
-  margin-left: auto;
-  transform-origin: center;
-  fill: currentColor; /* Make sure the icon uses the current text color */
-  transition: transform 0.35s ease;
-}
-
-/* Dark theme specific icon */
-[data-bs-theme="dark"] .arrow-mov {
-  fill: rgba(255, 255, 255, 0.5); /* Adjust fill color for dark theme */
-}
-
-/* Rotate the icon when expanded */
-.btn-toggle[aria-expanded="true"] .arrow-mov {
-  transform: rotate(180deg); /* Rotates the arrow when expanded */
-}
-
-/* Styles for the sidebar */
-
-.btn-toggle-nav a {
-  padding: 0.1875rem 0.5rem;
-  margin-top: 0.125rem;
-  margin-left: 1.25rem;
-}
-
-.btn-toggle-nav a:hover,
-.btn-toggle-nav a:focus {
-  background-color: var(--bs-tertiary-bg);
-}
-
-.scrollarea {
-  overflow-y: auto;
-}
-
-.bi {
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
-}
-
-/*
- * Sidebar
- */
-
-@media (min-width: 768px) {
-  .sidebar .offcanvas-lg {
-    position: -webkit-sticky;
+.sidebar-cus {
     position: fixed;
+    width: 80px;
+    height: 100%;
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    justify-content: space-between;
+    overflow-y: auto;
     overflow-x: hidden;
-    top: 48px;
-  }
-  .navbar-search {
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: #888 #e0e0e0;
+    /* Firefox */
+}
+
+.sidebar-cus::-webkit-scrollbar {
+    width: 5px;
+    /* Width of the scrollbar */
+}
+
+.sidebar-cus::-webkit-scrollbar-track {
+    background: #e0e0e0;
+    /* Background of the scrollbar track */
+}
+
+.sidebar-cus::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Color of the scrollbar thumb */
+    border-radius: 10px;
+    /* Roundness of the scrollbar thumb */
+    border: 2px solid #e0e0e0;
+    /* Padding around the scrollbar thumb */
+}
+
+
+.sidebar-cus ul {
+    white-space: nowrap;
+    margin-right: 0;
+}
+
+.sidebar-cus ul li p {
+    white-space: nowrap;
+    display: none;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+}
+
+.sidebar-cus ul h6 {
+    display: none;
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 0px;
+}
+
+.sidebar-cus:hover ul li p {
     display: block;
-  }
+    display: inline;
+    opacity: 1;
 }
 
-.sidebar .nav-link {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--bs-emphasis-color);
+.sidebar-user-image strong,
+.sidebar-user-image small {
+    display: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
 }
 
-.sidebar .nav-link.active {
-  color: #2470dc;
-  background-color: rgba(36, 112, 220, 0.1);
+.sidebar-logo span {
+    display: none;
 }
 
-.sidebar-heading {
-  font-size: 0.75rem;
-  color: var(--bs-emphasis-color);
+.sidebar-cus .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/*
- * Navbar
- */
-
-.navbar-brand {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  background-color: #03A9F4;
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.25);
+.sidebar-cus .sidebar-bottom-banner {
+    display: none;
 }
 
-.navbar .form-control {
-  padding: 0.75rem 1rem;
-  border-radius: 0.25rem;
+/* TODO: Add Sidebar side heading for classification */
+.sidebar-cus .sidebar-heading {
+    display: none !important;
+    transition: 0.3s ease-in-out;
+}
+
+.sidebar-cus:hover .sidebar-heading {
+    display: block !important;
+}
+
+
+.sidebar-cus:hover .sidebar-bottom-banner {
+    display: flex;
+}
+
+.sidebar-cus:hover {
+    width: 280px;
+    backdrop-filter: blur(5px);
+}
+
+
+.sidebar-cus:hover ul h6 {
+    display: block;
+}
+
+.sidebar-cus:hover .sidebar-user-image strong,
+.sidebar-cus:hover .sidebar-user-image small {
+    display: block;
+}
+
+/* .sidebar-cus:hover .sidebar-user-image .sidebar-user-info {
+    display: block;
+  } */
+
+.sidebar-cus:hover .sidebar-logo span {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .sidebar-cus {
+        transform: translateX(-100%);
+        transition: transform 0.4s ease-in-out;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100%;
+        background-color: rgba(192, 192, 192, 0.555);
+        z-index: 9999;
+        overflow-y: auto;
+    }
+
+    .sidebar-cus.visible {
+        transform: translateX(0);
+        /* Show sidebar when toggled */
+    }
+
+    /*Test this*/
+    .sidebar-cus .sidebar-bottom-banner {
+        display: flex !important;
+    }
+
+    .sidebar-cus .sidebar-heading {
+        display: block !important;
+    }
+
+    .sidebar-cus.visible~.main-content {
+        filter: blur(5px);
+        pointer-events: none;
+        touch-action: none;
+        /* Block the touch */
+    }
+
+    .sidebar-cus ul li p,
+    .sidebar-cus ul h6,
+    .sidebar-cus .sidebar-logo span,
+    .sidebar-cus strong,
+    .sidebar-cus ul,
+    .sidebar-cus small {
+        display: block;
+        /* Show all sidebar elements */
+        opacity: 1;
+    }
+
+    .sidebar-cus ul li p {
+        display: inline;
+        /* Show text */
+        opacity: 1;
+    }
+
+    /* Backdrop overlay */
+    .sidebar-overlay {
+        /*Needs to be tested*/
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Semi-transparent black */
+        z-index: 9998;
+        /* Below the sidebar but above the content */
+    }
+
+    /* Show the overlay when sidebar is visible */
+    .sidebar-cus.visible+.sidebar-overlay {
+        /*Needs to be tested*/
+        display: block;
+        /* Show overlay */
+    }
 }

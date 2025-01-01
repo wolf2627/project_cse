@@ -1,56 +1,39 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
 
-<? Session::loadTemplate('_head'); // load head 
+<?
+Session::loadTemplate('_head'); // load head 
 ?>
 
 <body>
 
-    <? Session::loadTemplate('_modetoggle'); // load mode toggle
-    ?>
-
-    <?
-    //load svg for using icons 
-    Session::loadTemplate('svg'); // load svg
+    <? Session::loadTemplate('svg'); // load svg 
     ?>
 
     <?
     if (Session::currentScript() == 'login' || Session::currentScript() == 'index' || Session::$isError) {
         Session::loadTemplate('_otherheader'); // load signin header
-    } else {
-        Session::loadTemplate('_mainheader'); // load header
-    }
-    ?>
+        Session::loadTemplate(Session::currentScript());
+    } else { ?>
+        <div class="sidebar-overlay"></div>
 
-    <div class="container-fluid">
-        <div class="row">
-            <?
-            // load script dynamically based on the current script
-            if (Session::$isError) {
-                Session::loadTemplate('_error');
-            } else {
-                if (Session::currentScript() != 'login' && Session::currentScript() != 'index') {
-                    Session::loadTemplate('_sidebar'); // load sidebar 
-                }
+        <? Session::loadTemplate('_sidebar'); ?>
 
-                if (Session::currentScript() == 'login' || Session::currentScript() == 'index') {
-                    Session::loadTemplate(Session::currentScript());
-                } else {
-            ?>
-                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                        <?
-                        Session::loadTemplate(Session::currentScript());
-                        ?>
-                    </main>
-            <? }
-            }
-            // Session::loadTemplate('_footer'); // load footer
+        <div class="main-content d-flex flex-column">
+
+            <? Session::loadTemplate('_header') ?>
+
+            <main class="flex-grow-1 px-4" style="padding-bottom: 60px;">
+                <? Session::loadTemplate(Session::currentScript()); ?>
+            </main>
+
+            <? Session::loadTemplate('_footer'); // load footer
             ?>
         </div>
-    </div>
 
-    <? //Session::loadTemplate('_footer'); // load footer
-    ?>
+    <? } ?>
+
+
 
     <? Session::loadTemplate('_modal'); //load modal template 
     ?>
