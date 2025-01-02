@@ -7,7 +7,7 @@ ${basename(__FILE__, '.php')} = function () {
     }
     if ($_GET['operation'] == 'unassign') {
 ?>
-        <h4>Assign Role</h4>
+        <h4>Unassign Role (not implemented)</h4>
         <form id="assign-role-form">
             <div class="mb-3">
                 <label for="roleId" class="form-label">Select Role:</label>

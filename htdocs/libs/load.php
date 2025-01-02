@@ -20,6 +20,7 @@ include_once 'app/Classes.class.php';
 include_once 'app/Test.class.php';
 
 include_once 'app/Faculty.class.php';
+include_once 'app/Student.class.php';
 include_once 'app/Creator.class.php';
 include_once 'app/Role.class.php';
 include_once 'app/Marks.class.php';

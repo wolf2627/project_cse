@@ -26,6 +26,23 @@ class Faculty
     }
 
 
+    public function getFacultyDetails($facultyId)
+    {
+        $facultyCollection = $this->conn->faculties;
+        $faculty = $facultyCollection->findOne(
+            ['faculty_id' => $facultyId],
+            ['projection' => ['created_at' => 0]]
+        );
+
+        if(!$faculty) {
+            throw new Exception('Faculty not found.');
+        }
+
+        $result = iterator_to_array($faculty);
+
+        return $result;
+    }
+
     public function getBatches()
     {
         $collection = $this->conn->classes;

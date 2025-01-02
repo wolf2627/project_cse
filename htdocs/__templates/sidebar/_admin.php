@@ -68,6 +68,11 @@ $listOfLinks = [
         'name' => 'Grant Permission',
         'icon' => 'file-earmark-text',
         'href' => '/role-permission-manage'
+    ],
+    [
+        'name' => 'Assign Role',
+        'icon' => 'file-earmark-text',
+        'href' => '/user-role-manage'
     ]
 ];
 

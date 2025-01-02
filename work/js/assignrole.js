@@ -19,7 +19,7 @@ function loadAssignRoleForms() {
 
     } else if (operation === 'unassign') {
         // ajax call to the backend for the form
-        fetch('/api/app/template/assignrole?operation=unassign')
+        fetch('/api/app/template/unassignrole?operation=unassign')
             .then(response => response.text())
             .then(data => {
                 formContainer.innerHTML = data;

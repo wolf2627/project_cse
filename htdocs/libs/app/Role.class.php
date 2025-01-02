@@ -85,27 +85,62 @@ class Role
 
         if ($roleCategory) {
             $roles = $rolesCollection->find(["role_category" => $roleCategory]);
-        } else if($roleCategory == null){
-            $roles = $rolesCollection->find();
         } else {
-            $roles = [];
+            $roles = $rolesCollection->find();
         }
 
-        return $roles;
+        $rolesArray = [];
+        foreach ($roles as $role){
+            $rolesArray[] = $role;
+        }
+
+        return $rolesArray;
     }
 
     public function getRoleName($roleId)
     {
-
         $rolesCollection = $this->conn->roles;
-
         $role = $rolesCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($roleId)]);
-
         return $role['role_name'];
     }
 
-    public function AssignOtherRoles($referenceNumber, $role, $roleCategory){
-        
-        $UserRoleCollection = $this->conn->user_roles;
+    public function getAssignedRoles($userId)
+    {
+        $UserRoleCollection = $this->conn->user_roles; // Assuming 'users' collection
+
+        $userRoles = $UserRoleCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($userId)]);
+
+        if ($userRoles) {
+            return $userRoles['roles'];
+        }
+
+        return [];
+    }
+
+    public function AssignOtherRoles($userId, $roleId) {
+        $UserRoleCollection = $this->conn->user_roles; // Assuming 'users' collection
+    
+        // Check if the role already exists in the user's roles array
+        $existingUser = $UserRoleCollection->findOne([
+            "_id" => new MongoDB\BSON\ObjectId($userId),
+            "roles" => new MongoDB\BSON\ObjectId($roleId)
+        ]);
+    
+        if ($existingUser) {
+            error_log("Role update failed: Role with ID '$roleId' already exists for user '$userId'.");
+            throw new Exception("Role already exists for the user");
+        }
+    
+        // Update the roles array by adding the new role
+        $updateResult = $UserRoleCollection->updateOne(
+            ["_id" => new MongoDB\BSON\ObjectId($userId)],
+            ['$addToSet' => ["roles" => new MongoDB\BSON\ObjectId($roleId)]]
+        );
+    
+        if ($updateResult->getModifiedCount() > 0) {
+            return "Role successfully added to the user.";
+        } else {
+            throw new Exception("Failed to add the role to the user.");
+        }
     }
 }
