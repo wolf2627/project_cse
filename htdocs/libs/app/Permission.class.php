@@ -260,7 +260,12 @@ class Permission
         // Validate provided permissions
         $validPermissionsId = [];
         foreach ($permissionIds as $id) {
-            $objectId = new MongoDB\BSON\ObjectId($id);
+            try{
+                $objectId = new MongoDB\BSON\ObjectId($id);
+            } catch (Exception $e) {
+                throw new Exception('Invalid permission id');
+            }
+           
             if ($permissionsCollection->findOne(['_id' => $objectId])) {
                 $validPermissionsId[] = $objectId;
             }

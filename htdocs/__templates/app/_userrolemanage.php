@@ -15,13 +15,13 @@ $roles = $role->getRoles();
         <div class="mb-3">
             <label for="user-role-category" class="form-label">Select User Category:</label>
             <select class="form-select" id="user-role-category" name="role_category" required>
+                <!-- TODO: Load the User Category from Essentials -->
                 <option value="">Select User Category</option>
                 <option value="faculty">Faculty</option>
                 <option value="student">Student</option>
-                <option value="admin">Admin</option>
             </select>
         </div>
-    
+
         <div class="mb-3">
             <label for="role-user-id" class="form-label">Enter Register No/Faculty ID:</label>
             <input type="text" id="role-user-id" class="form-control" placeholder="Register No/Faculty ID" name="role-user-id" required>
@@ -32,10 +32,12 @@ $roles = $role->getRoles();
 
         <div id="user-info"></div>
 
-        <div id="roles-container">
+        <div id="roles-container" class="mb-3">
             <!-- Permissions will be dynamically loaded here -->
         </div>
 
-        <!-- <button type="submit" class="btn btn-primary">Save Roles</button> -->
+        <div id="userrole-submit-btn" class="mb-3">
+        </div>
+
     </form>
 </div>
