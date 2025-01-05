@@ -135,7 +135,7 @@ class Role
             try {
                 $roleObjId = new MongoDB\BSON\ObjectId($roleId);
             } catch (Exception $e) {
-                throw new Exception( $roleId + 'id is Invalid');
+                throw new Exception( $roleId . 'id is Invalid');
             }
 
             if ($rolesCollection->findOne(['_id' => $roleObjId])) {
@@ -182,7 +182,8 @@ class Role
         $userRoleCollection = $this->conn->user_roles;
 
         if (!$userRoleCollection->findOne(['user_id' => $userId])) {
-            throw new Exception('User not found');
+            //throw new Exception('No roles assigned to the user');
+            return true;
         }
 
         $result = $userRoleCollection->deleteOne(['user_id' => $userId]);

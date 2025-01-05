@@ -8,7 +8,7 @@ $roles = $role->getRoles();
 <div class="container mt-5">
     <h2 class="text-center">Role Management</h2>
 
-    <form id="userrolesform" method="POST">
+    <form id="userrolesform">
 
         <!-- Category of User faculty, student, Admin for retrival of user data -->
 
@@ -36,8 +36,7 @@ $roles = $role->getRoles();
             <!-- Permissions will be dynamically loaded here -->
         </div>
 
-        <div id="userrole-submit-btn" class="mb-3">
-        </div>
+        <button type="button" id="user-role-submit" class="btn btn-primary d-none">Save Roles</button>
 
     </form>
 </div>
