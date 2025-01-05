@@ -187,11 +187,13 @@ class Session
      */
     public static function ensureRole($role)
     {
-        if (!Session::isAuthenticated() || Session::getUser()->getRole() != $role || Session::get('role') != $role) {
-            return false;
-        } else {
+        $user = Session::getUser();
+        if ($user && $user->getRole() == $role) {
             return true;
         }
+
+        header("Location: /dashboard");
+        die();
     }
 
     //TODO: fix this function
