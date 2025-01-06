@@ -1,4 +1,4 @@
-/* Processed on 5/1/2025 @ 3:44:6 */
+/* Processed on 6/1/2025 @ 8:49:16 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -190,6 +190,62 @@ $('#class-wise-year-report-btn').click(function () {
 
 
 
+$(document).ready(function () {
+
+    console.log('createadmin is ready');
+
+    $('#admin-create-account-btn').click(function () {
+        console.log('create admin account clicked');
+        var username = $('#admin-username').val();
+        var password = $('#admin-password').val();
+        var email = $('#admin-email').val();
+        var confirm_password = $('#admin-confirm-password').val();
+
+        console.log('username: ' + username);
+        console.log('password: ' + password);
+        console.log('email: ' + email);
+        console.log('confirm_password: ' + confirm_password);
+
+        if (password !== confirm_password) {
+            alert('Passwords do not match');
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('user', username);
+        formData.append('password', password);
+        formData.append('email', email);
+        formData.append('confirm_password', confirm_password);
+
+        $.ajax({
+            url: '/api/app/create/admin',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log('create admin account success');
+                console.log(data);
+                if (data.message === 'success') {
+                    var successToast = new Toast('now', 'success', 'Admin account created successfully');
+                    successToast.show();
+                } else {
+                    var errorToast = new Toast('now', 'error', 'Error creating admin account');
+                    errorToast.show();
+                }
+            },
+            error: function (err) {
+                console.log('create admin account error');
+                console.log(err);
+                var errorToast = new Toast('now', 'error', 'Error creating admin account');
+                errorToast.show();
+            }
+        });
+
+
+    });
+
+});
 // Event listener for 'Create User' button click
 $('#create-subjects').on('click', function () {
     // Create a new FormData object to hold form data
@@ -393,7 +449,7 @@ $('#create-users').on('click', function () {
     var role = $('input[name="role"]:checked').val();
 
     // Get the uploaded file
-    var fileInput = $('#formFile')[0];
+    var fileInput = $('#formFile-usercreate')[0];
     var file = fileInput.files[0];
 
     // Validate form data
@@ -428,7 +484,7 @@ $('#create-users').on('click', function () {
                 // Optionally, display a toast or alert to confirm form submission
                 var t = new Toast('New', 'now', 'Creating profiles');
                 t.show();
-                
+
                 // Make the API call to create the user (sending the form data)
                 $.ajax({
                     url: '/api/app/create/users',  // Your API endpoint for creating the user
@@ -436,7 +492,7 @@ $('#create-users').on('click', function () {
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function(response) {
+                    success: function (response) {
                         console.log('User created successfully:', response);
 
                         // Do something after the user is created, like refreshing the user list or showing a success message
@@ -444,7 +500,7 @@ $('#create-users').on('click', function () {
                         t.show();
                         // alert("User created successfully!");
                     },
-                    error: function(error) {
+                    error: function (error) {
                         console.log('Error creating user:', error);
                         alert("An error occurred while creating the user. Please try again.");
                     }
@@ -466,8 +522,14 @@ $('#create-users').on('click', function () {
 
     // Show the confirmation dialog
     d.show();
+
+
+    $('#formFile-usercreate').val(''); // Clear the file input after submission
 });
 
+$('#create-users-clear').on('click', function () {
+    $('#formFile-usercreate').val('');
+});
 
 
 $(document).ready(function () {

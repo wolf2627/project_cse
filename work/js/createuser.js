@@ -10,7 +10,7 @@ $('#create-users').on('click', function () {
     var role = $('input[name="role"]:checked').val();
 
     // Get the uploaded file
-    var fileInput = $('#formFile')[0];
+    var fileInput = $('#formFile-usercreate')[0];
     var file = fileInput.files[0];
 
     // Validate form data
@@ -45,7 +45,7 @@ $('#create-users').on('click', function () {
                 // Optionally, display a toast or alert to confirm form submission
                 var t = new Toast('New', 'now', 'Creating profiles');
                 t.show();
-                
+
                 // Make the API call to create the user (sending the form data)
                 $.ajax({
                     url: '/api/app/create/users',  // Your API endpoint for creating the user
@@ -53,7 +53,7 @@ $('#create-users').on('click', function () {
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function(response) {
+                    success: function (response) {
                         console.log('User created successfully:', response);
 
                         // Do something after the user is created, like refreshing the user list or showing a success message
@@ -61,7 +61,7 @@ $('#create-users').on('click', function () {
                         t.show();
                         // alert("User created successfully!");
                     },
-                    error: function(error) {
+                    error: function (error) {
                         console.log('Error creating user:', error);
                         alert("An error occurred while creating the user. Please try again.");
                     }
@@ -83,4 +83,11 @@ $('#create-users').on('click', function () {
 
     // Show the confirmation dialog
     d.show();
+
+
+    $('#formFile-usercreate').val(''); // Clear the file input after submission
+});
+
+$('#create-users-clear').on('click', function () {
+    $('#formFile-usercreate').val('');
 });

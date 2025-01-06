@@ -80,7 +80,7 @@ class Session
      *
      * @param string $key
      * @return string $value
-    */
+     */
     public static function get($key, $default = false)
     {
         if (Session::isset($key)) {
@@ -185,15 +185,19 @@ class Session
      * @param String $role
      * @return void
      */
-    public static function ensureRole($role)
+    public static function ensureRole($role, $api = false)
     {
         $user = Session::getUser();
         if ($user && $user->getRole() == $role) {
             return true;
         }
 
-        header("Location: /dashboard");
-        die();
+        if ($api) {
+            return false;
+        } else {
+            header("Location: /dashboard");
+            die();
+        }
     }
 
     //TODO: fix this function
@@ -203,14 +207,14 @@ class Session
      * @param String $owner
      * @return boolean
      */
-//     public static function isOwnerOf($owner)
-//     {
-//         $sess_user = Session::getUser();
-//         if ($sess_user) {
-//             return $sess_user->getEmail() == $owner;
-//         } else {
-//             return false;
-//         }
-//     }
-// }
+    //     public static function isOwnerOf($owner)
+    //     {
+    //         $sess_user = Session::getUser();
+    //         if ($sess_user) {
+    //             return $sess_user->getEmail() == $owner;
+    //         } else {
+    //             return false;
+    //         }
+    //     }
+    // }
 }
