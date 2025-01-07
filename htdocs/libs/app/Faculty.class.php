@@ -8,9 +8,23 @@ class Faculty
     private $faculty_id;
     private $conn;
 
-    public function __construct()
+    public function __construct($facultyId = null)
     {
-        $this->faculty_id = Session::getUser()->getFacultyId();
+
+        $this->conn = Database::getConnection();
+        if ($facultyId !== null) {
+        
+            // check for faculty id in the database
+            $faculty = $this->conn->faculties->findOne(['faculty_id' => $facultyId]);
+
+            if (!$faculty) {
+                throw new Exception('Faculty not found.');
+            }
+
+            $this->faculty_id = $facultyId;
+        } else {
+            $this->faculty_id = Session::getUser()->getFacultyId();
+        }
         $this->conn = Database::getConnection();
     }
 

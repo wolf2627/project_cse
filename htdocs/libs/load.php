@@ -17,6 +17,7 @@ include_once 'app/essentials.class.php';
 include_once 'app/Admin.class.php';
 
 include_once 'app/Classes.class.php';
+include_once 'app/TimeTable.class.php';
 include_once 'app/Test.class.php';
 
 include_once 'app/Faculty.class.php';

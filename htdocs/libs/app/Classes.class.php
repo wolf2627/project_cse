@@ -44,11 +44,19 @@ class Classes
         try {
             $cursor = $collection->findOne(
                 ['faculty_id' => $faculty_id, 'subject_code' => $subject_code, 'batch' => $batch, 'semester' => $semester],
-                ['projection' => ['_id' => 0]]
+               // ['projection' => ['_id' => 0]]
+               ['projection' => ['created_at' => 0]]
             );
 
             if($cursor) {
                 $result = iterator_to_array($cursor);
+
+                foreach ($result as $key => $value) {
+                    if ($key == '_id') {
+                        $result['class_id'] = (string)$value;
+                        unset($result['_id']);
+                    }
+                }
             } else {
                 $result = false;
                 throw new Exception('Record not found.');
@@ -112,7 +120,46 @@ class Classes
         }
     }
 
+    public static function getFaculties($subject_code, $batch){
+        $collection = Database::getConnection()->classes;
 
+        try {
+            $cursor = $collection->distinct('faculty_id', ['subject_code' => $subject_code, 'batch' => $batch]);
+
+            $faculties = array_map(fn($faculty_id) => ['faculty_id' => $faculty_id], $cursor);
+
+
+            $facultyDetails = [];
+
+            foreach ($faculties as $faculty) {
+               // echo "Faculty ID: " . $faculty['faculty_id'] . "<br>";
+                $facultyObj = new Faculty($faculty['faculty_id']); // For other user to get faculty details
+                $facultyDetail = $facultyObj->getFacultyDetails($faculty['faculty_id']);
+                $facultyDetails[] = [
+                    'name' => $facultyDetail['name'],
+                    'department' => $facultyDetail['department'],
+                    'id' => $facultyDetail['faculty_id']
+                ];
+            }
+
+            return $facultyDetails ?: false;
+
+        } catch (Exception $e) {
+            error_log('Error fetching faculties: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function getBatch($subject_code){
+        $collection = Database::getConnection()->classes;
+
+        try {
+            $cursor = $collection->distinct('batch', ['subject_code' => $subject_code]);
+
+            return $cursor ?: false;
+        } catch (Exception $e) {
+            error_log('Error fetching batch: ' . $e->getMessage());
+            return false;
+        }
+    }
 }
-
-
