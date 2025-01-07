@@ -133,71 +133,103 @@ $(document).ready(function () {
         event.preventDefault();
 
         // Form validation
-        const form = document.getElementById('timetable-form');
+        const form = $('#timetable-form')[0];
         if (!form.checkValidity()) {
-            form.classList.add('was-validated');
+            $(form).addClass('was-validated');
             return;
         }
 
         // Gather form data
-        var department = $('#tt-department').val();
-        var subject_code = $('#tt-subject_code').val();
-        var batch = $('#tt-batch').val();
-        var semester = $('#tt-semester').val();
-        var faculty_id = $('#tt-faculty').val();
-        var class_id = $('#tt-class_id').val();
-        var section = $('#tt-section').val();
-        var day = $('#tt-day').val();
-        var department = $('#tt-class-department').val();
-        var room = $('#tt-room').val();
-        var slot = $('#tt-slot').val();
+        const formData = new FormData(form);
 
-        var class_room = department + room;
+        // Get dynamically added days and slots as key-value pairs
+        const daySlotPairs = [];
+        $('#day-slot-container .input-group').each(function () {
+            const day = $(this).find('select[name="days[]"]').val();
+            const slot = $(this).find('select[name="slots[]"]').val();
+            if (day && slot) {
+                daySlotPairs.push({ day: day, slot: slot });
+            }
+        });
 
-        console.log(subject_code, batch, semester, faculty_id, class_id, section, day, slot, class_room);
+        // Append day-slot pairs to the formData
+        formData.append('daySlotPairs', JSON.stringify(daySlotPairs));
 
-        // Prepare form data for submission
+        // Add combined class_room value
+        const classRoom = $('#tt-class-department').val() + $('#tt-room').val();
+        formData.append('class_room', classRoom);
 
+        console.log("Form Data [new] :", formData);
 
-        var formData = new FormData();
-        formData.append('department', department);
-        formData.append('subject_code', subject_code);
-        formData.append('batch', batch);
-        formData.append('semester', semester);
-        formData.append('faculty_id', faculty_id);
-        formData.append('class_id', class_id);
-        formData.append('section', section);
-        formData.append('day', day);
-        formData.append('slot', slot);
-        formData.append('class_room', class_room);
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
 
-
-        console.log("Form Data Loaded");
-
-        // AJAX request
+        //AJAX request
         $.ajax({
-            url: '/api/app/get/tt/assignslot', // Update the endpoint as needed
+            url: '/api/app/get/tt/assignslot', // Update with your API endpoint
             data: formData,
             type: 'POST',
             processData: false, // Prevent jQuery from processing the FormData object
             contentType: false, // Prevent jQuery from setting the content type
             success: function (response) {
                 // Success feedback
-                var ttToast = new Toast("now", "success", "Timetable Slot Added");
+                const ttToast = new Toast("now", "success", "Timetable Slot Added");
                 ttToast.show();
-
                 console.log("Response:", response);
             },
             error: function (xhr, error) {
                 // Error feedback
-                var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "Error Adding Timetable Slot";
-                var ttToast = new Toast("now", "error", errorMessage);
+                const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "Error Adding Timetable Slot";
+                const ttToast = new Toast("now", "error", errorMessage);
                 ttToast.show();
-
                 console.error("Error:", error);
             }
         });
-
     });
 
+
+
+
+
+    $('#add-slot-btn').on('click', function () {
+        const container = document.getElementById('day-slot-container');
+
+        // Create a new row
+        const newRow = document.createElement('div');
+        newRow.className = 'input-group mb-2';
+
+        // Clone day select template
+        const daySelectTemplate = document.getElementById('day-slot-template');
+        const daySelect = daySelectTemplate.cloneNode(true);
+        daySelect.className = 'form-select';
+        daySelect.name = 'days[]';
+        daySelect.required = true;
+        daySelect.classList.remove('d-none');
+
+        // Clone slot select template
+        const slotTemplate = document.getElementById('slot-template');
+        const slotSelect = slotTemplate.cloneNode(true);
+        slotSelect.className = 'form-select';
+        slotSelect.name = 'slots[]';
+        slotSelect.required = true;
+        slotSelect.classList.remove('d-none');
+
+        // Add remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-danger';
+        removeBtn.innerHTML = '<i class="bi bi-dash-circle"></i>';
+        removeBtn.addEventListener('click', function () {
+            container.removeChild(newRow);
+        });
+
+        // Append elements to the new row
+        newRow.appendChild(daySelect);
+        newRow.appendChild(slotSelect);
+        newRow.appendChild(removeBtn);
+
+        // Append the new row to the container
+        container.appendChild(newRow);
+    });
 });

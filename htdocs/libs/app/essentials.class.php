@@ -153,7 +153,7 @@ class Essentials
     }
 
 
-    public static function timeTableSlots()
+    public static function loadtimeTableSlots()
     {
         $slots = [
             '1' => '08:45-09:40',

@@ -10,7 +10,7 @@ class TimeTable
         $this->conn = Database::getConnection();
     }
 
-    public function assignSlot($department, $subject_code, $batch, $semester, $faculty_id, $class_id, $section, $day, $slot, $class_room)
+    public function assignSlotOld($department, $subject_code, $batch, $semester, $faculty_id, $class_id, $section, $day, $slot, $class_room)
     {
         $timetable = $this->conn->timetable;
 
@@ -56,12 +56,55 @@ class TimeTable
     }
 
 
-    public function assignSlotNew($department, $subject_code, $batch, $semester, $faculty_id, $class_id, $section, $day, $slot, $class_room)
+    public function assignSlot($department, $subject_code, $batch, $semester, $faculty_id, $class_id, $section, $class_room, $dayslots)
     {
         $timetable = $this->conn->timetable;
 
-        // Check if the timetable document exists
-        $existingDocument = $timetable->findOne([
+        // Validate input parameters
+        if (
+            empty($department) || empty($subject_code) || empty($batch) || empty($semester) ||
+            empty($faculty_id) || empty($class_id) || empty($section) || empty($class_room) || empty($dayslots)
+        ) {
+            throw new Exception('All fields are required.');
+        }
+
+        // Decode dayslots if it is a JSON string
+        if (is_string($dayslots)) {
+            $dayslots = json_decode($dayslots, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new Exception('Invalid JSON format for dayslots.');
+            }
+        }
+
+        // Group slots by day
+        $slots = [];
+        foreach ($dayslots as $entry) {
+            $day = $entry['day'] ?? null;
+            $slot = $entry['slot'] ?? null;
+
+            if (!$day || !$slot) {
+                throw new Exception('Invalid day or slot in input.');
+            }
+
+            // Check if the slot is already assigned
+
+            //TODO: Needs improvement on checking and handling slot conflicts
+            $slotExists = $timetable->findOne([
+                'class_id' => $class_id,
+                "dayslots.$day" => ['$in' => [$slot]]
+            ]);
+
+            if ($slotExists) {
+                throw new Exception("Slot already assigned on $day at $slot for class $class_id.");
+            }
+
+            // Add the slot to the appropriate day
+            $slots[$day][] = $slot;
+        }
+
+        // Insert the document
+        $result = $timetable->insertOne([
             'department' => $department,
             'subject_code' => $subject_code,
             'batch' => $batch,
@@ -69,38 +112,13 @@ class TimeTable
             'faculty_id' => $faculty_id,
             'class_id' => $class_id,
             'section' => $section,
-            'class_room' => $class_room
+            'class_room' => $class_room,
+            'dayslots' => $slots // Save grouped slots as an array of arrays
         ]);
 
-        if ($existingDocument) {
-            // Check if the slot already exists for the given day
-            if (isset($existingDocument['slots'][$day]) && in_array($slot, $existingDocument['slots'][$day])) {
-                throw new Exception('Slot already assigned for this day and time');
-            }
-
-            // Append the new slot to the appropriate day
-            $existingDocument['slots'][$day][] = $slot;
-
-            // Update the document in the database
-            $timetable->updateOne(
-                ['_id' => $existingDocument['_id']],
-                ['$set' => ['slots' => $existingDocument['slots']]]
-            );
-        } else {
-            // Create a new timetable document
-            $timetable->insertOne([
-                'department' => $department,
-                'subject_code' => $subject_code,
-                'batch' => $batch,
-                'semester' => $semester,
-                'faculty_id' => $faculty_id,
-                'class_id' => $class_id,
-                'section' => $section,
-                'slots' => [
-                    $day => [$slot]
-                ],
-                'class_room' => $class_room
-            ]);
+        // Ensure insertion was successful
+        if (!$result->getInsertedCount()) {
+            throw new Exception('Failed to assign slot.');
         }
 
         return true;
