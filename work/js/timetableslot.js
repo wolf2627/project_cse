@@ -106,28 +106,87 @@ $(document).ready(function () {
 
 
         $.ajax({
-            url: '/api/app/get/tt/class',
+            url: '/api/app/get/tt/facultysections',
             data: { faculty_id: faculty_id, subject_code: subject_code, batch: batch, semester: semester },
             type: 'POST',
             success: function (data) {
 
-                console.log(data);
+            console.log(data);
 
-                var classToast = new Toast("now", "success", "Class Loaded");
-                classToast.show();
+            var classToast = new Toast("now", "success", "Class Loaded");
+            classToast.show();
 
-                $('#tt-section').val(data.classes.section);
-                $('#tt-class_id').val(data.classes.class_id);
+            $('#tt-section').val(data.Sections[0]);
+            var sectionSelect = $('#tt-section');
+            sectionSelect.empty();
 
+            sectionSelect.append($('<option>', {
+                value: '',
+                text: 'Select the Section'
+            }));
+
+            $.each(data.Sections, function (_, section) {
+                sectionSelect.append($('<option>', {
+                value: section,
+                text: section
+                }));
+            });
 
             },
-            error: function (data) {
-                var classToast = new Toast("now", "error", "No Class Found. Please Assign the Subject to the Class");
-                classToast.show();
+            error: function (xhr, error) {
+            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "No Class Found. Please Assign the Subject to the Class";
+            var classToast = new Toast("now", "error", errorMessage);
+            classToast.show();
+            console.error("Error:", errorMessage);
             }
         });
 
     });
+
+
+    $('#tt-section').on('change', function () {
+
+        var subject_code = $('#tt-subject_code').val();
+        var batch = $('#tt-batch').val();
+        var semester = $('#tt-semester').val();
+        var faculty_id = $('#tt-faculty').val();
+        var section = $(this).val();
+        var department = $('#tt-department').val();
+
+        var formData = new FormData();
+
+        formData.append('faculty_id', faculty_id);
+        formData.append('department', department);
+        formData.append('subject_code', subject_code);
+        formData.append('batch', batch);
+        formData.append('semester', semester);
+        formData.append('section', section);
+
+        $.ajax({
+            url: '/api/app/get/tt/classid',
+            data: formData,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+            console.log(data);
+
+            var classToast = new Toast("now", "success", "Class ID Loaded");
+            classToast.show();
+
+            $('#tt-class_id').val(data.class_id);
+            },
+            error: function (xhr, error) {
+            // Error feedback
+            const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "Error Loading Class ID";
+            const classToast = new Toast("now", "error", errorMessage);
+            classToast.show();
+            console.error("Error:", error);
+            }
+        });
+
+    });
+
 
     $('#tt-submit-btn').on('click', function (event) {
         event.preventDefault();

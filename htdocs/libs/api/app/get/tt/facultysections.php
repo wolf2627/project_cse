@@ -13,27 +13,36 @@ ${basename(__FILE__, '.php')} = function () {
         $faculty_id = $this->_request['faculty_id'];
         $batch = $this->_request['batch'];
         $semester = $this->_request['semester'];
+        try {
+            $faculty = new Faculty($faculty_id);
+            $result = $faculty->getSections($subject_code, $batch, $semester, $faculty_id);
 
-
-        $result = Classes::getClasses($subject_code, $faculty_id, $batch, $semester);
-
-        if (!$result) {
+            if (!$result) {
             $this->response(
                 $this->json([
-                    'success' => false,
-                    'message' => 'No classes found.'
+                'success' => false,
+                'message' => 'No Sections found.'
                 ]),
-                404 // Internal Server Error
+                404 // Not Found
+            );
+            } else {
+            $this->response(
+                $this->json([
+                'success' => true,
+                'Sections' => $result
+                ]),
+                200
+            );
+            }
+        } catch (Exception $e) {
+            $this->response(
+            $this->json([
+                'success' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ]),
+            500 // Internal Server Error
             );
         }
-
-        $this->response(
-            $this->json([
-                'success' => true,
-                'classes' => $result
-            ]),
-            200
-        );
     } else {
         // Bad request response Missing Parameters
         $this->response(

@@ -10,52 +10,6 @@ class TimeTable
         $this->conn = Database::getConnection();
     }
 
-    public function assignSlotOld($department, $subject_code, $batch, $semester, $faculty_id, $class_id, $section, $day, $slot, $class_room)
-    {
-        $timetable = $this->conn->timetable;
-
-        // Validate input parameters
-        if (
-            empty($department) || empty($subject_code) || empty($batch) || empty($semester) ||
-            empty($faculty_id) || empty($class_id) || empty($section) || empty($day) || empty($slot) || empty($class_room)
-        ) {
-            throw new Exception('All fields are required');
-        }
-
-        // Check if the slot is already assigned
-        $slotExists = $timetable->findOne([
-            'class_id' => $class_id,
-            'day' => $day,
-            'time' => $slot
-        ]);
-
-        if ($slotExists) {
-            throw new Exception("Slot already assigned on $day at $slot for class $class_id");
-        }
-
-        // Insert new slot into the timetable
-        $result = $timetable->insertOne([
-            'department' => $department,
-            'subject_code' => $subject_code,
-            'batch' => $batch,
-            'semester' => $semester,
-            'faculty_id' => $faculty_id,
-            'class_id' => $class_id,
-            'section' => $section,
-            'day' => $day,
-            'time' => $slot,
-            'class_room' => $class_room
-        ]);
-
-        // Check for insertion success
-        if ($result->getInsertedCount() == 0) {
-            throw new Exception('Failed to assign slot');
-        }
-
-        return true;
-    }
-
-
     public function assignSlot($department, $subject_code, $batch, $semester, $faculty_id, $class_id, $section, $class_room, $dayslots)
     {
         $timetable = $this->conn->timetable;
@@ -77,6 +31,26 @@ class TimeTable
             }
         }
 
+        // Check for faculty existence
+        if (!$this->conn->faculties->findOne(['faculty_id' => $faculty_id])) {
+            throw new Exception('Faculty not found.');
+        }
+
+        // Check for class existence
+        if (!$this->conn->classes->findOne(['_id' => new MongoDB\BSON\ObjectId($class_id)])) {
+            throw new Exception('Class not found.');
+        }
+
+        // Check if the faculty is already assigned to the class
+        $facultyAssigned = $timetable->findOne([
+            'faculty_id' => $faculty_id,
+            'class_id' => new MongoDB\BSON\ObjectId($class_id)
+        ]);
+
+        if ($facultyAssigned) {
+            throw new Exception('Faculty already assigned to the class. Remove or update the existing assignment.');
+        }
+
         // Group slots by day
         $slots = [];
         foreach ($dayslots as $entry) {
@@ -91,12 +65,22 @@ class TimeTable
 
             //TODO: Needs improvement on checking and handling slot conflicts
             $slotExists = $timetable->findOne([
-                'class_id' => $class_id,
+                'class_id' => new MongoDB\BSON\ObjectId($class_id),
                 "dayslots.$day" => ['$in' => [$slot]]
             ]);
 
             if ($slotExists) {
                 throw new Exception("Slot already assigned on $day at $slot for class $class_id.");
+            }
+
+            // Check for faculty availability
+            $facultyExists = $timetable->findOne([
+                'faculty_id' => $faculty_id,
+                "dayslots.$day" => ['$in' => [$slot]]
+            ]);
+
+            if ($facultyExists) {
+                throw new Exception("Faculty already assigned on $day at $slot.");
             }
 
             // Add the slot to the appropriate day
@@ -110,7 +94,7 @@ class TimeTable
             'batch' => $batch,
             'semester' => $semester,
             'faculty_id' => $faculty_id,
-            'class_id' => $class_id,
+            'class_id' => new MongoDB\BSON\ObjectId($class_id),
             'section' => $section,
             'class_room' => $class_room,
             'dayslots' => $slots // Save grouped slots as an array of arrays

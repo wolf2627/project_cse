@@ -60,7 +60,9 @@
         <!-- Section -->
         <div class="mb-3">
             <label for="tt-section" class="form-label">Section</label>
-            <input type="text" class="form-control" id="tt-section" name="section" placeholder="Enter Section" required readonly>
+            <select class="form-select" id="tt-section" name="section" required>
+                <option value="">Select Section</option>
+            </select>
             <div class="invalid-feedback">Please enter a section.</div>
         </div>
 

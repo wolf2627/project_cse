@@ -216,4 +216,35 @@ class Faculty
             return false;
         }
     }
+
+
+
+    public function getSections($subjectCode, $batch, $semester, $faculty_id = false)
+    {
+        $classCollection = $this->conn->classes;
+
+        if (!$faculty_id) {
+            $faculty_id = $this->faculty_id;
+        }
+
+        try {
+            $cursor = $classCollection->distinct('section', [
+                'faculty_id' => $faculty_id,
+                'subject_code' => $subjectCode,
+                'batch' => $batch,
+                'semester' => $semester
+            ]);
+
+            $sections = array_map(fn($section) => ['section' => $section], $cursor);
+
+            //convert to single array
+            $sections = array_column($sections, 'section');
+
+            return $sections ?: false;
+        } catch (Exception $e) {
+            error_log('Error fetching sections: ' . $e->getMessage());
+            return false;
+        }
+    }
+
 }
