@@ -73,6 +73,22 @@ $listOfLinks = [
         'name' => 'Assign Role',
         'icon' => 'file-earmark-text',
         'href' => '/user-role-manage'
+    ],
+    [
+        'name' => 'Time Table',
+        'icon' => 'calendar3',
+        'subLinks' => [
+            [
+                'name' => 'Create',
+                'icon' => 'calendar2-plus',
+                'href' => '/createtimetable'
+            ],
+            [
+                'name' => 'Manage',
+                'icon' => 'calendar-minus',
+                'href' => '/managetimetable'
+            ],
+        ]
     ]
 ];
 
