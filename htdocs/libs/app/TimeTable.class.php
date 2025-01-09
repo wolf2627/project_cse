@@ -62,8 +62,6 @@ class TimeTable
             }
 
             // Check if the slot is already assigned
-
-            //TODO: Needs improvement on checking and handling slot conflicts
             $slotExists = $timetable->findOne([
                 'class_id' => new MongoDB\BSON\ObjectId($class_id),
                 "dayslots.$day" => ['$in' => [$slot]]
@@ -109,55 +107,112 @@ class TimeTable
     }
 
 
-    public function getTimeTable($student_id)
+    public function getFacultyTimeTable($faculty_id)
     {
-        $studentsCollection = $this->conn->students;
-        $enrollmentsCollection = $this->conn->enrollments;
-        $timetableCollection = $this->conn->timetable;
+        $timetable = $this->conn->timetable;
 
-
-        $student = $studentsCollection->findOne([
-            'reg_no' => $student_id
-        ]);
-
-        if (!$student) {
-            throw new Exception('Student not found');
+        // Validate input parameters
+        if (empty($faculty_id)) {
+            throw new Exception('Faculty ID is required.');
         }
 
-        $enrollments = $enrollmentsCollection->find([
-            'student_id' => $student_id
-        ]);
-
-        $timetable = [];
-
-        foreach ($enrollments as $enrollment) {
-            $class = $this->conn->classes->findOne([
-                '_id' => $enrollment['class_id']
-            ]);
-
-            $slots = $timetableCollection->find([
-                'class_id' => $enrollment['class_id']
-            ]);
-
-            $timetable[] = [
-                'subject_code' => $class['subject_code'],
-                'subject_name' => $class['subject_name'],
-                'faculty_name' => $class['faculty_name'],
-                'section' => $class['section'],
-                'slots' => iterator_to_array($slots)
-            ];
+        // Check for faculty existence
+        if (!$this->conn->faculties->findOne(['faculty_id' => $faculty_id])) {
+            throw new Exception('Faculty not found.');
         }
 
-        return $timetable;
+        // Find timetable entries for the faculty
+        $cursor = $timetable->find(['faculty_id' => $faculty_id]);
+
+        // Initialize an empty array to store the day-wise timetable
+        $dayWiseTimetable = [];
+
+        // Iterate over the cursor
+        foreach ($cursor as $entry) {
+            foreach ($entry['dayslots'] as $day => $slots) {
+                foreach ($slots as $timeSlot) {
+                    $dayWiseTimetable[$day][] = [
+                        'class' => $entry['class_room'],
+                        'semester' => $entry['semester'],
+                        'batch' => $entry['batch'],
+                        'section' => $entry['section'],
+                        'subject_code' => $entry['subject_code'],
+                        'department' => $entry['department'],
+                        'time' => $timeSlot,
+                    ];
+                }
+            }
+        }
+
+        return $dayWiseTimetable;
     }
-}
 
-// {
-//     "_id": { "$oid": "timetable123" },
-//     "class_id": "673aa6bff8cb080248004c22",  // Reference to the Classes collection
-//     "day": "Monday",                        // Day of the week
-//     "time": "09:00 - 10:00",                // Time slot
-//     "subject_code": "HS2121",               // Cached from Classes collection
-//     "faculty_name": "John Doe",             // Cached from Classes collection
-//     "section": "A"                          // Cached from Classes collection
-//   }
+    public function getStudentTimeTable($student_id)
+    {
+        // Initialize the Student object
+        $student = new Student($student_id);
+    
+        // Get the enrolled classes for the student
+        $enrolled_classes = $student->getEnrolledClasses();
+
+       // print_r($enrolled_classes);
+    
+        // Initialize an empty array to store the overall timetable
+        $dayWiseTimetable = [];
+    
+        // Iterate through each enrolled class
+        foreach ($enrolled_classes as $class) {
+            $timetable = $this->conn->timetable;
+    
+            // Ensure class_id is converted to ObjectId
+            $class_id = new MongoDB\BSON\ObjectId($class['class_id']);
+
+            // print_r($class_id);
+    
+            // Fetch timetable entries for the current class
+            $cursor = $timetable->find(['class_id' => $class_id]);
+    
+            // Convert cursor to array for processing
+            $entries = iterator_to_array($cursor);
+    
+            // If no timetable entries are found for the class, skip it
+            if (empty($entries)) {
+
+                echo "<br>No timetable entries found for class $class_id <br>";
+
+                continue;
+            }
+    
+
+            // Process each timetable entry
+            foreach ($entries as $entry) {
+    
+                foreach ($entry['dayslots'] as $day => $slots) {
+                    foreach ($slots as $timeSlot) {
+                        $dayWiseTimetable[$day][] = [
+                            'class' => $entry['class_room'],
+                            'semester' => $entry['semester'],
+                            'batch' => $entry['batch'],
+                            'section' => $entry['section'],
+                            'subject_code' => $entry['subject_code'],
+                            'department' => $entry['department'],
+                            'time' => $timeSlot,
+                        ];
+                    }
+                }
+
+               //  echo $class_id;
+
+
+            }
+        }
+
+        // If no timetable entries are found for any class, throw an exception
+        if (empty($dayWiseTimetable)) {
+            throw new Exception('No timetable found for the student.');
+        }
+    
+        return $dayWiseTimetable;
+    }
+    
+}
