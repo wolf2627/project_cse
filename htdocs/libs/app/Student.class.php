@@ -73,7 +73,7 @@ class Student
         return $result;
     }
 
-    public function getEnrolledClasses()
+    public function getEnrolledClasses($status = 'active')
     {
         // Default to the logged-in user's registration number if no student_id is provided
         $student_id = $this->student_id;
@@ -91,6 +91,7 @@ class Student
                 'semester' => $class['semester'],
                 'batch' => $class['batch'],
                 'section' => $class['section'],
+                'status' => $status
             ]);
 
             if ($class_details) {

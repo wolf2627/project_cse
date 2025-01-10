@@ -11,8 +11,8 @@ ${basename(__FILE__, '.php')} = function () {
         $regNo = $this->_request['regNo'];
 
         try {
-            $student = new Student();
-            $result = $student->getStudentDetails($regNo);
+            $student = new Student($regNo);
+            $result = $student->getStudentDetails();
 
             $this->response($this->json($result), 200);
         } catch (Exception $e) {

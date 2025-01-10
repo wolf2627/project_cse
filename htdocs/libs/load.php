@@ -26,6 +26,7 @@ include_once 'app/Creator.class.php';
 include_once 'app/Role.class.php';
 include_once 'app/Marks.class.php';
 include_once 'app/Permission.class.php';
+include_once 'app/Attendance.class.php';
 
 include_once 'app/Access.class.php';
 

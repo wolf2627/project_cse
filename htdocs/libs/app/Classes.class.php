@@ -21,7 +21,7 @@ class Classes
     /**
      * Fetch class details for a specific subject.
      */
-    public static function getClass($subject_code, $faculty_id, $batch, $semester)
+    public static function getClass($subject_code, $faculty_id, $batch, $semester, $status = 'active')
     {
         $collection = Database::getConnection()->classes;
 
@@ -43,7 +43,7 @@ class Classes
 
         try {
             $cursor = $collection->findOne(
-                ['faculty_id' => $faculty_id, 'subject_code' => $subject_code, 'batch' => $batch, 'semester' => $semester],
+                ['faculty_id' => $faculty_id, 'subject_code' => $subject_code, 'batch' => $batch, 'semester' => $semester, 'status' => $status],
                // ['projection' => ['_id' => 0]]
                ['projection' => ['created_at' => 0]]
             );
@@ -70,7 +70,7 @@ class Classes
     }
 
 
-    public static function getClassId($batch, $semester, $subject_code, $section, $department, $faculty_id)
+    public static function getClassId($batch, $semester, $subject_code, $section, $department, $faculty_id, $status = 'active')
     {
         $collection = Database::getConnection()->classes;
 
@@ -82,7 +82,8 @@ class Classes
                     'semester' => $semester,
                     'subject_code' => $subject_code,
                     'section' => $section,
-                    'department' => $department
+                    'department' => $department,
+                    'status' => $status
                 ],
                 ['projection' => ['_id' => 1]]
             );
@@ -103,13 +104,13 @@ class Classes
     /**
      * Fetch classes handled by the faculty.
      */
-    public static function getClasses($faculty_id)
+    public static function getClasses($faculty_id, $status = 'active')
     {
         $collection = Database::getConnection()->classes;
 
         try {
             $cursor = $collection->find(
-                ['faculty_id' => $faculty_id],
+                ['faculty_id' => $faculty_id, 'status' => $status],
                 ['projection' => ['_id' => 0]]
             );
 
@@ -120,11 +121,11 @@ class Classes
         }
     }
 
-    public static function getFaculties($subject_code, $batch){
+    public static function getFaculties($subject_code, $batch, $status = 'active'){
         $collection = Database::getConnection()->classes;
 
         try {
-            $cursor = $collection->distinct('faculty_id', ['subject_code' => $subject_code, 'batch' => $batch]);
+            $cursor = $collection->distinct('faculty_id', ['subject_code' => $subject_code, 'batch' => $batch, 'status' => $status]);
 
             $faculties = array_map(fn($faculty_id) => ['faculty_id' => $faculty_id], $cursor);
 
@@ -150,11 +151,11 @@ class Classes
         }
     }
 
-    public static function getBatch($subject_code){
+    public static function getBatch($subject_code, $status = 'active'){
         $collection = Database::getConnection()->classes;
 
         try {
-            $cursor = $collection->distinct('batch', ['subject_code' => $subject_code]);
+            $cursor = $collection->distinct('batch', ['subject_code' => $subject_code, 'status' => $status]);
 
             return $cursor ?: false;
         } catch (Exception $e) {
