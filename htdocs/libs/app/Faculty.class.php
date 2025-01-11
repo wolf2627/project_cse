@@ -28,6 +28,19 @@ class Faculty
         $this->conn = Database::getConnection();
     }
 
+
+    /**
+     * Verify if a faculty exists.
+     * @param string $facultyId
+     */
+    public static function verify($facultyId)
+    {
+        $facultyCollection = Database::getConnection()->faculties;
+        $faculty = $facultyCollection->findOne(['faculty_id' => $facultyId]);
+
+        return $faculty ? true : false;
+    }
+
     public function getFacultyId()
     {
         return $this->faculty_id;
@@ -57,6 +70,9 @@ class Faculty
         return $result;
     }
 
+    /**
+     * Fetch batches assigned to the faculty.
+     */
     public function getBatches()
     {
         $collection = $this->conn->classes;
@@ -163,7 +179,7 @@ class Faculty
     /**
      * Fetch students assigned to a faculty and subject.
      */
-    public function getAssignedStudents($subjectCode, $batch, $semester, $facultyId = null)
+    public function getAssignedStudents($subjectCode, $batch, $semester, $section ,$department ,$facultyId = null)
     {
         $classCollection = $this->conn->classes;
         $enrollmentCollection = $this->conn->enrollments;
@@ -179,7 +195,9 @@ class Faculty
                 'faculty_id' => $facultyId,
                 'subject_code' => $subjectCode,
                 'batch' => $batch,
-                'semester' => $semester
+                'semester' => $semester,
+                'section' => $section,
+                'department' => $department
             ]);
 
             if (!$class) {

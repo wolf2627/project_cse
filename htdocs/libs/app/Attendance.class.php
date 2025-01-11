@@ -22,7 +22,8 @@ class Attendance
         }
 
         // Step 2: Check or Create Attendance Session
-
+    
+        error_log("Department: $department" . " Faculty ID: $facultyId" . " Date: $date" . " Day: $day" . " Subject Code: $subjectCode" . " Section: $section" . " Timeslot: $timeslot" . " Batch: $batch" . " Semester: $semester");
         //step 2.1: Get class id
         $class_id = Classes::getClassId($batch, $semester, $subjectCode, $section, $department, $facultyId);
 
@@ -62,6 +63,7 @@ class Attendance
                 'class_id' => $class_id,
                 'marked_at' => new MongoDB\BSON\UTCDateTime(new DateTime()),
                 'students_marked' => false,
+                'status' => 'on-going'
             ];
 
             $result = $attSession->insertOne($attendanceSession);
@@ -110,7 +112,7 @@ class Attendance
             // Mark attendance session as completed
             $updateResult = $attSession->updateOne(
                 ['_id' => $sessionId],
-                ['$set' => ['students_marked' => true]]
+                ['$set' => ['students_marked' => true, 'status' => $edit ? 'modified' : 'marked']]
             );
 
             if (empty($updateResult->getModifiedCount())) {
@@ -243,24 +245,39 @@ class Attendance
         return $attendance;
     }
 
-    // Needs to updated as per the new schema
+   /**
+    * Get pending attendance sessions for a faculty.
+    * @param string $facultyId
+    */
     public function getPendingAttendance($facultyId)
     {
+
+        if(!Faculty::verify($facultyId)) {
+            throw new Exception("Faculty not found.");
+        }
+
         $attendanceSession = $this->conn->attendance_session;
 
         $pendingSessions = $attendanceSession->find([
             'faculty_id' => $facultyId,
             'students_marked' => false,
-            'date' => ['$lte' => new MongoDB\BSON\UTCDateTime()]
+            //'date' => ['$lte' => new MongoDB\BSON\UTCDateTime()]
         ]);
 
         $pending = [];
         foreach ($pendingSessions as $session) {
-            $pending[] = $session;
+            $pending[] = [
+            '_id' => (string)$session['_id'],
+            'faculty_id' => (string)$session['faculty_id'],
+            'date' => (string)$session['date'],
+            'day' => (string)$session['day'],
+            'timeslot' => (string)$session['timeslot'],
+            'class_id' => (string)$session['class_id'],
+            ];
         }
 
         if(empty($pending)) {
-            throw new Exception("No pending attendance sessions found.");
+            throw new Exception("No pending attendance found.");
         }
 
         return $pending;

@@ -2,20 +2,23 @@
 
 ${basename(__FILE__, '.php')} = function () {
 
-    if ($this->paramsExists(['subject_code', 'faculty_id', 'batch', 'semester'])) {
+    if ($this->paramsExists(['faculty_id'])) {
 
 
         if (!Session::isAuthenticated()) {
             $this->response($this->json(['message' => 'Unauthorized']), 401);
         }
 
-        $subject_code = $this->_request['subject_code'];
         $faculty_id = $this->_request['faculty_id'];
-        $batch = $this->_request['batch'];
-        $semester = $this->_request['semester'];
+
+        if (!isset($this->_request['status'])) {
+            $status = 'active';
+        } else {
+            $status = $this->_request['status'];
+        }
 
 
-        $result = Classes::getClasses($subject_code, $faculty_id, $batch, $semester);
+        $result = Classes::getClasses($faculty_id, $status);
 
         if (!$result) {
             $this->response(

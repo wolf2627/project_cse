@@ -14,7 +14,15 @@ class Classes
     {
         $class = $this->conn->classes->findOne(['_id' => new MongoDB\BSON\ObjectId($class_id)]);
 
-        return $class;
+        if(!$class) {
+            throw new Exception('Class not found.');
+        }
+
+        $classArray = iterator_to_array($class);
+        
+        $result = Essentials::convertArray($classArray);
+        
+        return $result;
     }
 
 
@@ -110,11 +118,23 @@ class Classes
 
         try {
             $cursor = $collection->find(
-                ['faculty_id' => $faculty_id, 'status' => $status],
-                ['projection' => ['_id' => 0]]
+            ['faculty_id' => $faculty_id, 'status' => $status]
             );
 
-            return $cursor->toArray();
+            $result = [];
+            foreach ($cursor as $document) {
+                $documentArray = iterator_to_array($document);
+                if (isset($documentArray['_id'])) {
+                    $documentArray['class_id'] = (string)$documentArray['_id'];
+                    unset($documentArray['_id']);
+                }
+                if (isset($documentArray['student_sections']) && $documentArray['student_sections'] instanceof MongoDB\Model\BSONArray) {
+                    $documentArray['student_sections'] = $documentArray['student_sections']->getArrayCopy();
+                }
+                $result[] = $documentArray;
+            }
+
+            return $result;
         } catch (Exception $e) {
             error_log('Error fetching classes: ' . $e->getMessage());
             return false;

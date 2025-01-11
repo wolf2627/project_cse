@@ -51,6 +51,9 @@ $att = new Attendance();
 // }
 
 // try {
+
+//     $att = new Attendance();
+
 //     // Notify faculty of pending attendances
 //     $pending = $att->getPendingAttendance("1012");
 //     echo "<br>Pending Attendance for 1012: <br>";
@@ -60,31 +63,31 @@ $att = new Attendance();
 // }
 
 
-try {
-    // get marked sessions
+// try {
+//     // get marked sessions
 
-    $att = new Attendance();
+//     $att = new Attendance();
 
-    $marked = $att->getMarkedSessions("1012");
-    echo "<br>Marked Sessions for 1012: <br>";
-    print_r($marked);
+//     $marked = $att->getMarkedSessions("1012");
+//     echo "<br>Marked Sessions for 1012: <br>";
+//     print_r($marked);
 
-    echo "<br>============================================================<br>";
-
-
-    foreach($marked as $session) {
-        $result = $att->getAttendance($session['_id']);
-
-        echo "<br>Attendance for session: {$session['_id']}<br>";
-
-        print_r($result);
-
-    }
+//     echo "<br>============================================================<br>";
 
 
-} catch (Exception $e) {
-    echo $e->getMessage();
-}
+//     foreach($marked as $session) {
+//         $result = $att->getAttendance($session['_id']);
+
+//         echo "<br>Attendance for session: {$session['_id']}<br>";
+
+//         print_r($result);
+
+//     }
+
+
+// } catch (Exception $e) {
+//     echo $e->getMessage();
+// }
 
 // try {
 //     // Calculate overall attendance percentage
@@ -94,11 +97,7 @@ try {
 //     echo $e->getMessage();
 // }
 
-
-
-
-
-// $student = new Student('92132213026');
+// $student= new Student('92132213026');
 
 // $result = $student->getStudentDetails('92132213026');
 
@@ -109,6 +108,35 @@ try {
 // $enrolled_classes = $student->getEnrolledClasses('active');
 // print_r($enrolled_classes);
 
+
+
+// $class = new Classes();
+
+// try {
+//     $result = $class->getClasses('1012');
+//     print_r($result);
+// } catch (Exception $e) {
+//     echo $e->getMessage();
+// }
+
+
+$faculty = new Faculty();
+$facultyId = $faculty->getFacultyId(); // Assume this fetches the logged-in faculty's ID.
+
+$att = new Attendance();
+$pending = $att->getPendingAttendance($facultyId);
+
+$combinedData = [];
+
+foreach($pending as $class) {
+    $cls = new Classes();
+    $details = $cls->getClassDetails($class['class_id']);
+    $class['class_details'] = $details;
+    $combinedData[] = $class;
+}
+
+
+print_r($combinedData);
 
 ?>
 </pre>

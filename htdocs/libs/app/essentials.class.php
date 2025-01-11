@@ -16,6 +16,22 @@ class Essentials
         $this->conn = Database::getConnection();
     }
 
+    public static function convertArray($paramArray)
+    {
+        $convertedArray = [];
+        foreach ($paramArray as $key => $value) {
+            if ($value instanceof MongoDB\BSON\ObjectId) {
+            $convertedArray[$key] = (string)$value;
+            } elseif ($value instanceof MongoDB\Model\BSONArray) {
+            $convertedArray[$key] = $value->getArrayCopy();
+            } elseif ($value instanceof MongoDB\BSON\UTCDateTime) {
+            $convertedArray[$key] = $value->toDateTime()->format('Y-m-d H:i:s');
+            } else {
+            $convertedArray[$key] = $value;
+            }
+        }
+        return $convertedArray;
+    }
 
     public static function loadSemesters()
     {

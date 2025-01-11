@@ -31,6 +31,12 @@ ${basename(__FILE__, '.php')} = function () {
             error_log("Edit: $edit");
         }
 
+
+        error_log("Department: $department" . " Faculty ID: $facultyId" . " Date: $date" . " Day: $day" . " Subject Code: $subjectCode" . " Section: $section" . " Timeslot: $timeslot" . " Batch: $batch" . " Semester: $semester" . " Attendance Data: $attendanceData");
+
+        // Converting the attendance data to an array
+        $attendanceData = json_decode($attendanceData, true);
+
         $att = new Attendance();
 
         try {
