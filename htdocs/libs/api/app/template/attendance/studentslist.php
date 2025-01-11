@@ -14,6 +14,10 @@ ${basename(__FILE__, '.php')} = function () {
         $semester = $this->_request['semester'];
         $section = $this->_request['section'];
         $department = $this->_request['department'];
+        $timeSlot = $this->_request['timeslot'];
+        $date = $this->_request['date'];
+        $day = $this->_request['day'];
+
 
         if (isset($this->_request['facultyId'])) {
             $facultyId = $this->_request['facultyId'];
@@ -22,7 +26,7 @@ ${basename(__FILE__, '.php')} = function () {
         }
 
         $faculty = new Faculty();
-        $result = $faculty->getAssignedStudents($subjectCode, $batch, $semester, $section, $department ,$facultyId);
+        $result = $faculty->getAssignedStudents($subjectCode, $batch, $semester, $section, $department, $facultyId);
 
 
         if (!$result) { ?>
@@ -31,8 +35,45 @@ ${basename(__FILE__, '.php')} = function () {
             </div>
         <? } else { ?>
 
+            <div class="container mt-4">
+                <!-- Date, Day, and Time Slot -->
+                <div class="d-flex justify-content-between mb-3">
+
+                    <h5 class="d-inline-block">
+                        Date: <?= $date ?>
+                    </h5>
+                    <h5 class="d-inline-block">
+                        Day: <?= $day ?>
+                    </h5>
+
+                    <h5 class="d-inline-block">
+                        Time Slot: <?= $timeSlot ?>
+                    </h5>
+                </div>
+
+                <!-- Subject, Batch, Semester, Section, Department -->
+                <div class="d-flex justify-content-between mb-3">
+
+                    <h5 class="mr-4 d-inline-block">
+                        Subject: <?= $subjectCode ?>
+                    </h5>
+
+                    <h5 class="mr-4 d-inline-block">
+                        <?= $department . '- '  .$section  ?>
+                    </h5>
+                </div>
+            </div>
+
+            <div class="alert alert-warning" role="alert">
+                Note: Present is defaultly checked. If a student is absent or on duty, then mark accordingly.
+            </div>
+
+            <div>
+                <p> Total Strength: <?= count($result) ?> </p>
+            </div>
+
             <div class="table-responsive">
-                <table class="table table-striped table-hover table-bordered shadow-lg rounded">
+                <table class="table table-striped table-hover table-bordered rounded">
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col">S.No</th>

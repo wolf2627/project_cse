@@ -9,6 +9,11 @@ $listOfLinks = [
         'name' => 'Enter Test Marks',
         'icon' => 'new-folder',
         'subLinks' => []
+    ],
+    [
+        'name' => 'Mark Attendance',
+        'icon' => 'journal-plus',
+        'href' => '/markattendance'
     ]
 ];
 

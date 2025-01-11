@@ -1,4 +1,4 @@
-/* Processed on 11/1/2025 @ 5:55:47 */
+/* Processed on 11/1/2025 @ 9:48:47 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -1214,7 +1214,7 @@ function manageRoleSubmitForm(operation) {
 $('#markAttendance-container').ready(function () {
     console.log('markAttendance-container ready');
 
-    $('#submitAttendanceBtn').hide();
+    //$('#submitAttendanceBtn').hide();
 
     $('#classSelect-att').on('change', function () {
 
@@ -1268,7 +1268,7 @@ $('#markAttendance-container').ready(function () {
 
 
         $.ajax({
-            url: '/api/app/template/attendance/students',
+            url: '/api/app/template/attendance/studentslist',
             type: 'POST',
             data: formData,
             contentType: false,
@@ -1315,18 +1315,22 @@ $('#markAttendance-container').ready(function () {
         console.log('timeslot:', timeslot);
 
         if (!classId) {
-            alert('Please select a slot.');
+            var alertToast = new Toast('Error', 'now', 'Please select a class to mark attendance');
+            alertToast.show();
             return;
         }
 
         var attendanceData = [];
 
         $('#attendanceTemplate tbody tr').each(function () {
+            var studentName = $(this).find('td:eq(2)').text().trim();
+            console.log('studentName:', studentName);
             var studentId = $(this).find('td:eq(1)').text().trim();
             var status = $(this).find('input[type="radio"]:checked').val();
 
             if (studentId && status) {
                 attendanceData.push({
+                    name: studentName,
                     id: studentId,
                     status: status
                 });
@@ -1335,50 +1339,174 @@ $('#markAttendance-container').ready(function () {
 
         console.log('attendanceData:', attendanceData);
 
-        if (attendanceData.length === 0) {
-            alert('Please mark attendance for at least one student.');
-            return;
-        }
 
-        var formData = new FormData();
-        formData.append('department', department);
-        formData.append('facultyId', facultyId);
-        formData.append('date', date);
-        formData.append('day', day);
-        formData.append('subjectCode', subject);
-        formData.append('section', section);
-        formData.append('timeslot', timeslot);
-        formData.append('batch', batch);
-        formData.append('semester', semester);
-        formData.append('attendanceData', JSON.stringify(attendanceData)); // Convert array to JSON string
+        // Check the attendance data and separate the absent students and on duty students
 
-        console.log('Form data prepared.');
+        var absentStudents = [];
+        var onDutyStudents = [];
+        var prensentStudents = [];
 
-        // Uncomment this block to make the AJAX request
-        $.ajax({
-            url: '/api/app/attendance/save', // Replace with your API endpoint
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function (response) {
-                console.log('Response:', response);
-                $('#attendanceAlert').show();
-                $('#attendanceAlert').html('<strong>Success:</strong> Attendance marked successfully!');
-            },
-            error: function (xhr, status, error) {
-                console.error('Error:', error);
-                console.error('Response:', xhr.responseText);
-                $('#attendanceAlert').show();
-                $('#attendanceAlert').html('<strong>Error:</strong> Unable to mark attendance. Please try again.');
+        attendanceData.forEach(function (student) {
+            if (student.status === 'absent') {
+                absentStudents.push(student.id);
+            } else if (student.status === 'on-duty') {
+                onDutyStudents.push(student.id);
+            } else if (student.status === 'present') {
+                prensentStudents.push(student.id);
             }
         });
 
+        var absentStudentsCount = absentStudents.length;
+        var onDutyStudentsCount = onDutyStudents.length;
+        var prensentStudentsCount = prensentStudents.length;
+
+        var totalCount = absentStudentsCount + onDutyStudentsCount + prensentStudentsCount;
+
+        var ConfirmationDialog = new Dialog("Attendance",
+            '<div>' +
+            '<p><strong>Total Students Count:</strong> ' + totalCount + '</p>' +
+            '<p><strong>Present Students Count:</strong> ' + prensentStudentsCount + '</p>' +
+            '<p><strong>Absent Students Count:</strong> ' + absentStudentsCount + '</p>' +
+            (absentStudentsCount > 0 ?
+                '<div class="table-responsive">' +
+                '<table class="table table-bordered">' +
+                '<thead>' +
+                '<tr>' +
+                '<th>S.No</th>' +
+                '<th>Student Name</th>' +
+                '<th>Reg No</th>' +
+                '<th>Status</th>' +
+                '</tr>' +
+                '</thead>' +
+                '<tbody>' +
+                absentStudents.map(function (id, index) {
+                    var student = attendanceData.find(student => student.id === id);
+                    return '<tr><td>' + (index + 1) + '</td><td>' + student.name + '</td><td>' + id + '</td><td>Absent</td></tr>';
+                }).join('') +
+                '</tbody>' +
+                '</table>' : '') +
+                '</div>' +
+            '<p><strong>On Duty Students Count:</strong> ' + onDutyStudentsCount + '</p>' +
+            (onDutyStudentsCount > 0 ?
+                '<div class="table-responsive">' +
+                '<table class="table table-bordered">' +
+                '<thead>' +
+                '<tr>' +
+                '<th>S.No</th>' +
+                '<th>Student Name</th>' +
+                '<th>Student ID</th>' +
+                '<th>Status</th>' +
+                '</tr>' +
+                '</thead>' +
+                '<tbody>' +
+                onDutyStudents.map(function (id, index) {
+                    var student = attendanceData.find(student => student.id === id);
+                    return '<tr><td>' + (index + 1) + '</td><td>' + student.name + '</td><td>' + id + '</td><td>On Duty</td></tr>';
+                }).join('') +
+                '</tbody>' +
+                '</table>' : '') +
+                '</div>' +
+            '</div>'
+        );
+
+        ConfirmationDialog.setButtons([
+            {
+                "name": "Mark Attendance",
+                "class": "btn-success",
+                "onClick": function (event) {
+                    console.log('Marking attendance');
+                    // Send the data to the API using Fetch and FormData
+                    console.log('absentStudents:', absentStudents);
+                    console.log('onDutyStudents:', onDutyStudents);
+
+
+                    if (attendanceData.length === 0) {
+                        alert('Please mark attendance for at least one student.');
+                        return;
+                    }
+
+                    var formData = new FormData();
+                    formData.append('department', department);
+                    formData.append('facultyId', facultyId);
+                    formData.append('date', date);
+                    formData.append('day', day);
+                    formData.append('subjectCode', subject);
+                    formData.append('section', section);
+                    formData.append('timeslot', timeslot);
+                    formData.append('batch', batch);
+                    formData.append('semester', semester);
+                    formData.append('attendanceData', JSON.stringify(attendanceData)); // Convert array to JSON string
+
+                    console.log('Form data prepared.');
+
+                    // Uncomment this block to make the AJAX request
+                    $.ajax({
+                        url: '/api/app/attendance/save', // Replace with your API endpoint
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            console.log('Response:', response);
+
+                            // Save toast data to localStorage
+                            localStorage.setItem('toastData', JSON.stringify({
+                                title: 'Success',
+                                message: 'Attendance marked successfully',
+                                type: 'success'
+                            }));
+
+                            // Reload the page
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                            console.error('Response:', xhr.responseText);
+
+                            // Save toast data to localStorage
+                            localStorage.setItem('toastData', JSON.stringify({
+                                title: 'Failed',
+                                message: xhr.responseText,
+                                type: 'error'
+                            }));
+
+                            // Reload the page
+                            location.reload();
+                        }
+                    });
+
+                    $(event.data.modal).modal('hide');
+                }
+            },
+            {
+                "name": "Cancel",
+                "class": "btn-danger",
+                "onClick": function (event) {
+                    console.log('Attendance marking cancelled');
+                    $(event.data.modal).modal('hide');
+                }
+            }
+        ]);
+
+        ConfirmationDialog.show();
     });
-
-
-
 });
+
+$(document).ready(function () {
+    var toastData = localStorage.getItem('toastData');
+
+    if (toastData) {
+        toastData = JSON.parse(toastData);
+
+        // Display the toast
+        var toast = new Toast(toastData.title, 'now', toastData.message);
+        toast.show();
+
+        // Clear the toast data from localStorage
+        localStorage.removeItem('toastData');
+    }
+});
+
 $(document).ready(function () {
     // Use jQuery to bind the event
     $('#student-select').on('change', function () {

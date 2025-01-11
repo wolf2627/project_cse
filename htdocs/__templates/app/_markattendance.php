@@ -50,6 +50,6 @@ foreach ($pending as $class) {
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary mt-3" id="submitAttendanceBtn">Submit Attendance</button>
+        <button type="submit" class="btn btn-primary mt-3" id="submitAttendanceBtn" style="display: none;">Mark Attendance</button>
     </form>
 </div>

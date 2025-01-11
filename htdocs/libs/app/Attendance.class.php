@@ -10,7 +10,7 @@ class Attendance
         $this->conn = Database::getConnection();
     }
 
-    public function saveAttendance($department, $facultyId, $date, $day ,$subjectCode, $section, $timeslot, $batch, $semester, $attendanceData, $edit = false)
+    public function saveAttendance($department, $facultyId, $date, $day, $subjectCode, $section, $timeslot, $batch, $semester, $attendanceData, $edit = false)
     {
 
         error_log("Edit from func: $edit");
@@ -22,12 +22,12 @@ class Attendance
         }
 
         // Step 2: Check or Create Attendance Session
-    
+
         error_log("Department: $department" . " Faculty ID: $facultyId" . " Date: $date" . " Day: $day" . " Subject Code: $subjectCode" . " Section: $section" . " Timeslot: $timeslot" . " Batch: $batch" . " Semester: $semester");
         //step 2.1: Get class id
         $class_id = Classes::getClassId($batch, $semester, $subjectCode, $section, $department, $facultyId);
 
-        if(!$class_id) {
+        if (!$class_id) {
             throw new Exception("Class not found.");
         }
 
@@ -46,7 +46,7 @@ class Attendance
             'class_id' => $class_id
         ]);
 
-        if(!$edit && $attendanceSession && $attendanceSession['students_marked']) {
+        if (!$edit && $attendanceSession && $attendanceSession['students_marked']) {
             throw new Exception("Attendance already marked for the session.");
         }
 
@@ -112,7 +112,7 @@ class Attendance
             // Mark attendance session as completed
             $updateResult = $attSession->updateOne(
                 ['_id' => $sessionId],
-                ['$set' => ['students_marked' => true, 'status' => $edit ? 'modified' : 'marked']]
+                ['$set' => ['marked_at' => new MongoDB\BSON\UTCDateTime(new DateTime()), 'students_marked' => true, 'status' => $edit ? 'modified' : 'marked']]
             );
 
             if (empty($updateResult->getModifiedCount())) {
@@ -133,14 +133,13 @@ class Attendance
     }
 
 
-    public function isMarked($department ,$facultyId, $date, $day, $subjectCode, $section, $timeslot, $batch, $semester)
+    public function isMarked($department, $facultyId, $date, $day, $subjectCode, $section, $timeslot, $batch, $semester)
     {
         $attSession = $this->conn->attendance_session;
 
-        $class_id = Classes::getClassId($batch, $semester, $subjectCode, $section, $department, $facultyId);
-        ;
+        $class_id = Classes::getClassId($batch, $semester, $subjectCode, $section, $department, $facultyId);;
 
-        if(!$class_id) {
+        if (!$class_id) {
             throw new Exception("Class not found.");
         }
 
@@ -170,14 +169,14 @@ class Attendance
         $markedSessions = [];
         foreach ($sessions as $session) {
             $markedSessions[] = [
-            '_id' => (string)$session['_id'],
-            'faculty_id' => (string)$session['faculty_id'],
-            'date' => (string)$session['date'],
-            'day' => (string)$session['day'],
-            'timeslot' => (string)$session['timeslot'],
-            'class_id' => (string)$session['class_id'],
-            'marked_at' => (string)$session['marked_at'],
-            'students_marked' => (string)$session['students_marked'],
+                '_id' => (string)$session['_id'],
+                'faculty_id' => (string)$session['faculty_id'],
+                'date' => (string)$session['date'],
+                'day' => (string)$session['day'],
+                'timeslot' => (string)$session['timeslot'],
+                'class_id' => (string)$session['class_id'],
+                'marked_at' => (string)$session['marked_at'],
+                'students_marked' => (string)$session['students_marked'],
             ];
         }
 
@@ -245,14 +244,14 @@ class Attendance
         return $attendance;
     }
 
-   /**
-    * Get pending attendance sessions for a faculty.
-    * @param string $facultyId
-    */
+    /**
+     * Get pending attendance sessions for a faculty.
+     * @param string $facultyId
+     */
     public function getPendingAttendance($facultyId)
     {
 
-        if(!Faculty::verify($facultyId)) {
+        if (!Faculty::verify($facultyId)) {
             throw new Exception("Faculty not found.");
         }
 
@@ -267,16 +266,16 @@ class Attendance
         $pending = [];
         foreach ($pendingSessions as $session) {
             $pending[] = [
-            '_id' => (string)$session['_id'],
-            'faculty_id' => (string)$session['faculty_id'],
-            'date' => (string)$session['date'],
-            'day' => (string)$session['day'],
-            'timeslot' => (string)$session['timeslot'],
-            'class_id' => (string)$session['class_id'],
+                '_id' => (string)$session['_id'],
+                'faculty_id' => (string)$session['faculty_id'],
+                'date' => (string)$session['date'],
+                'day' => (string)$session['day'],
+                'timeslot' => (string)$session['timeslot'],
+                'class_id' => (string)$session['class_id'],
             ];
         }
 
-        if(empty($pending)) {
+        if (empty($pending)) {
             throw new Exception("No pending attendance found.");
         }
 
