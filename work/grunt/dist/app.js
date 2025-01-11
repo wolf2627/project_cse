@@ -1,4 +1,4 @@
-/* Processed on 11/1/2025 @ 9:48:47 */
+/* Processed on 11/1/2025 @ 17:5:39 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');

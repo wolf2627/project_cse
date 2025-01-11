@@ -5,7 +5,7 @@ $role = Session::get('role');
 <div class="d-flex flex-column flex-shrink-0 p-2 bg-body-tertiary sidebar-cus border-end">
     <? Session::loadTemplate('sidebar/_user', ['role' => $role]) ?>
 
-    <hr>
+    <!-- <hr> -->
     <ul class="nav nav-pills flex-column mb-auto ps-2">
         <li>
             <a href="/dashboard" class="nav-link link-body-emphasis">
