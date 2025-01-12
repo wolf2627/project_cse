@@ -32,6 +32,8 @@ include_once 'app/Access.class.php';
 
 include_once 'app/reports/ClassReport.class.php';
 
+include_once 'app/Addons.class.php';
+
 global $__site_config;
 
 $wapi = new WebAPI();
