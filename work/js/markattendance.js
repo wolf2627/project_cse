@@ -247,14 +247,18 @@ $('#markAttendance-container').ready(function () {
                             // Reload the page
                             location.reload();
                         },
-                        error: function (xhr, status, error) {
+                        error: function(xhr, status, error) {
                             console.error('Error:', error);
                             console.error('Response:', xhr.responseText);
+
+                            // Print the message alone in JSON
+                            const response = JSON.parse(xhr.responseText);
+                            console.log(JSON.stringify({ message: response.message }));
 
                             // Save toast data to localStorage
                             localStorage.setItem('toastData', JSON.stringify({
                                 title: 'Failed',
-                                message: xhr.responseText,
+                                message: response.message,
                                 type: 'error'
                             }));
 

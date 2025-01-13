@@ -120,23 +120,38 @@ $att = new Attendance();
 // }
 
 
-$faculty = new Faculty();
-$facultyId = $faculty->getFacultyId(); // Assume this fetches the logged-in faculty's ID.
+// $faculty = new Faculty();
+// $facultyId = $faculty->getFacultyId(); // Assume this fetches the logged-in faculty's ID.
+
+// $att = new Attendance();
+// $pending = $att->getPendingAttendance($facultyId);
+
+// $combinedData = [];
+
+// foreach($pending as $class) {
+//     $cls = new Classes();
+//     $details = $cls->getClassDetails($class['class_id']);
+//     $class['class_details'] = $details;
+//     $combinedData[] = $class;
+// }
+
+
+// print_r($combinedData);
+
+
+// $result = Classes::getClasses('1012');
+
+// print_r($result);
+
 
 $att = new Attendance();
-$pending = $att->getPendingAttendance($facultyId);
 
-$combinedData = [];
-
-foreach($pending as $class) {
-    $cls = new Classes();
-    $details = $cls->getClassDetails($class['class_id']);
-    $class['class_details'] = $details;
-    $combinedData[] = $class;
+try {
+    $result = $att->getMarkedFacultyAttendance("1012", '673ae822f8cb080248004c27', '2025-01-10');
+    print_r($result);
+} catch (Exception $e) {
+    echo $e->getMessage();
 }
-
-
-print_r($combinedData);
 
 ?>
 </pre>

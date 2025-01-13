@@ -10,6 +10,17 @@ class Classes
     }
 
 
+    // Verify if a class exists.
+
+    public static function verify($class_id)
+    {
+        $classCollection = Database::getConnection()->classes;
+        $class = $classCollection->findOne(['_id' => new MongoDB\BSON\ObjectId($class_id)]);
+
+        return $class ? true : false;
+    }
+
+
     public function getClassDetails($class_id)
     {
         $class = $this->conn->classes->findOne(['_id' => new MongoDB\BSON\ObjectId($class_id)]);

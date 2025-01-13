@@ -307,4 +307,137 @@ class Attendance
         $result = iterator_to_array($records);
         return !empty($result) ? $result[0]['overall_percentage'] : 0;
     }
+
+
+    public function getMarkedFacultyAttendance($facultyId, $class_id, $date){
+        $attendanceSession = $this->conn->attendance_session;
+
+
+        if(!Faculty::verify($facultyId)){
+            throw new Exception("Faculty not found.");
+        }
+
+        if(!Classes::verify($class_id)){
+            throw new Exception("Class not found.");
+        }
+
+        if(empty($date)){
+            throw new Exception("Invalid date.");
+        }
+
+
+        $markedSessions = $attendanceSession->find([
+            'faculty_id' => $facultyId,
+            'class_id' => new MongoDB\BSON\ObjectId($class_id),
+            'date' => $date,
+            'students_marked' => true
+        ]);
+
+        if(empty($markedSessions)){
+            throw new Exception("No marked attendance found.");
+        }
+
+        $marked = [];
+        foreach ($markedSessions as $session) {
+            $marked[] = [
+                '_id' => (string)$session['_id'],
+                'faculty_id' => (string)$session['faculty_id'],
+                'date' => (string)$session['date'],
+                'day' => (string)$session['day'],
+                'timeslot' => (string)$session['timeslot'],
+                'class_id' => (string)$session['class_id'],
+            ];
+        }
+
+
+        $att = $this->conn->attendance;
+
+        $attendanceData = [];
+
+        foreach ($marked as $session) {
+            $records = $att->find([
+                'attendance_session_id' => new MongoDB\BSON\ObjectId($session['_id'])
+            ]);
+
+            $attendance = [];
+            foreach ($records as $record) {
+                $attendance[] = [
+                    '_id' => (string)$record['_id'],
+                    'student_id' => (string)$record['student_id'],
+                    'attendance_session_id' => (string)$record['attendance_session_id'],
+                    'marked_at' => (string)$record['marked_at'],
+                    'status' => (string)$record['status'],
+                ];
+            }
+
+            usort($attendance, function ($a, $b) {
+                return strcmp($a['student_id'], $b['student_id']);
+            });
+
+            foreach($attendance as $key => $value){
+                $student = new Student($value['student_id']);
+                $studentDetails = $student->getStudentDetails($value['student_id']);
+                $attendance[$key]['student_name'] = $studentDetails['name'];
+            }
+
+            $attendanceData[] = [
+                'session' => $session,
+                'attendance' => $attendance
+            ];
+        }
+
+        if(empty($attendanceData)){
+            throw new Exception("No attendance records found.");
+        }
+
+        return $attendanceData;
+    }
+
+
+    public function getfacultyMarkedClasses($facultyId){
+        $attendanceSession = $this->conn->attendance_session;
+
+        $markedSessions = $attendanceSession->find([
+            'faculty_id' => $facultyId,
+            'students_marked' => true
+        ]);
+
+        if(empty($markedSessions)){
+            throw new Exception("No marked attendance found.");
+        }
+
+        $marked = [];
+        foreach ($markedSessions as $session) {
+            $marked[] = [
+                '_id' => (string)$session['_id'],
+                'faculty_id' => (string)$session['faculty_id'],
+                'date' => (string)$session['date'],
+                'day' => (string)$session['day'],
+                'timeslot' => (string)$session['timeslot'],
+                'class_id' => (string)$session['class_id'],
+            ];
+        }
+
+        return $marked;
+    }
+
+
+    public function getSessionDetails($session_id){
+        
+        $sess = $this->conn->attendance_session;
+
+        $session = $sess->findOne([
+            '_id' => new MongoDB\BSON\ObjectId($session_id)
+        ]);
+
+        if(!$session){
+            throw new Exception("Session not found.");
+        }
+
+        $result = Essentials::convertArray($session);
+
+        return $result;
+
+    }
+
 }

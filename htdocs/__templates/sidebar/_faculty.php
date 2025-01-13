@@ -14,6 +14,11 @@ $listOfLinks = [
         'name' => 'Mark Attendance',
         'icon' => 'journal-plus',
         'href' => '/markattendance'
+    ],
+    [
+        'name' => 'View Attendance',
+        'icon' => 'journal-plus',
+        'href' => '/viewattendance'
     ]
 ];
 
