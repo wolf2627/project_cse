@@ -2,7 +2,9 @@
 
 ${basename(__FILE__, '.php')} = function () {
 
-    if ($this->paramsExists('faculty_id', 'class_id', 'date')) {
+    if ($this->paramsExists(['faculty_id', 'class_id', 'date'])) {
+
+        error_log("attendance fetch API");
 
         if (!Session::isAuthenticated()) {
             $this->response($this->json(['message' => 'Unauthorized']), 401);

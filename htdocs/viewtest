@@ -1,0 +1,105 @@
+
+$(document).ready(function () {
+    const sessionSelect = $('#session-select');
+    let attendanceData = []; // To store the entire API response for use
+
+    // Fetch session and attendance data from the server
+    $.ajax({
+        url: '/api/app/attendance/getSessionsAndAttendance', // Replace with your API endpoint
+        method: 'GET',
+        success: function (response) {
+            // Store the response data
+            attendanceData = response.message;
+
+            // Populate the session dropdown
+            attendanceData.forEach(session => {
+                sessionSelect.append(new Option(
+                    `${session.session.day} ${session.session.timeslot}`,
+                    session.session._id
+                ));
+            });
+
+            // Render attendance for the first session by default
+            if (attendanceData.length > 0) {
+                renderAttendance(attendanceData[0].session._id);
+            }
+        },
+        error: function (xhr) {
+            console.error('Error fetching data:', xhr.responseText);
+            alert('Failed to load data. Please try again.');
+        }
+    });
+
+    // Function to render attendance data for a selected session
+    function renderAttendance(sessionId) {
+        const sessionData = attendanceData.find(session => session.session._id === sessionId);
+        if (!sessionData) return;
+
+        const tbody = $('#attendance-table');
+        tbody.empty(); // Clear existing rows
+
+        sessionData.attendance.forEach(student => {
+            tbody.append(`
+                    <tr data-student-id="${student.student_id}">
+                        <td>${student.student_id}</td>
+                        <td>${student.student_name}</td>
+                        <td>
+                            <span class="read-only">${student.status}</span>
+                            <select class="edit-mode form-control" style="display:none;">
+                                <option value="present" ${student.status === 'present' ? 'selected' : ''}>Present</option>
+                                <option value="absent" ${student.status === 'absent' ? 'selected' : ''}>Absent</option>
+                                <option value="on-duty" ${student.status === 'on-duty' ? 'selected' : ''}>On-Duty</option>
+                            </select>
+                        </td>
+                    </tr>
+                `);
+        });
+
+        // Reset action buttons
+        $('#edit-all').show();
+        $('#save-all').hide();
+    }
+
+    // Handle session selection change
+    sessionSelect.change(function () {
+        const sessionId = this.value;
+        renderAttendance(sessionId);
+    });
+
+    // Handle "Edit All" button click
+    $('#edit-all').click(function () {
+        $('.read-only').hide();
+        $('.edit-mode').show();
+
+        $(this).hide();
+        $('#save-all').show();
+    });
+
+    // Handle "Save All" button click
+    $('#save-all').click(function () {
+        const sessionId = sessionSelect.val();
+        const updates = [];
+
+        $('#attendance-table tr').each(function () {
+            const studentId = $(this).data('student-id');
+            const status = $(this).find('.edit-mode').val();
+
+            updates.push({ id: studentId, status: status });
+        });
+
+        $.ajax({
+            url: '/api/app/attendance/saveedit', // Replace with your API endpoint
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ sessionId: sessionId, updates: updates }),
+            success: function () {
+                alert('Attendance updated successfully');
+                location.reload();
+            },
+            error: function (xhr) {
+                console.error('Error saving attendance:', xhr.responseText);
+                alert('Failed to save attendance.');
+            }
+        });
+    });
+});

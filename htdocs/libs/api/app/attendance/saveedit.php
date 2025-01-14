@@ -4,9 +4,11 @@
 
 ${basename(__FILE__, '.php')} = function () {
 
-    // $params = ['sessionId', 'classId', 'attendanceData'];
+    error_log("Save Edit API");
 
-    if ($this->paramsExists(['sessionId', 'classId', 'attendanceData'])) {
+    $params = ['sessionId', 'classId', 'attendanceData'];
+
+    if ($this->paramsExists($params)) {
 
         if (!Session::isAuthenticated()) {
             $this->response($this->json(['message' => 'Unauthorized']), 401);

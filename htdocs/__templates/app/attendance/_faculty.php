@@ -43,10 +43,32 @@ $classes = Classes::getClasses($facultyId);
         </div>
     </div>
 
-    <!-- Attendance Container -->
+    <div id="attendance-view">
+        <!-- Session Selection Dropdown -->
+        <label for="session-select">Select Session:</label>
+        <select id="session-select" class="form-control">
+            <!-- Options will be dynamically added here -->
+        </select>
 
-    <div id="att-cont-viewatt">
+        <!-- Action Buttons -->
+        <div class="mt-3 bd-grid gap-2 d-md-flex justify-content-md-end">
+            <button id="edit-all" class="btn btn-danger">Edit</button>
+            <button id="save-all" class="btn btn-success" style="display:none;">Save</button>
+        </div>
 
+        <!-- Attendance Table -->
+        <table class="table table-bordered table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Attendance</th>
+                </tr>
+            </thead>
+            <tbody id="attendance-table">
+                <!-- Attendance rows will be dynamically added here -->
+            </tbody>
+        </table>
     </div>
 
 </div>
