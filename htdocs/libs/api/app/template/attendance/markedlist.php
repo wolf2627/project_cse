@@ -14,8 +14,8 @@ ${basename(__FILE__, '.php')} = function () {
 
         try {
             $att = new Attendance();
-            $data = $att->getMarkedFacultyAttendance($faculty_id, $class_id, $date);
-?>
+            $data = $att->getMarkedFacultyAttendance($faculty_id, $class_id, $date); ?>
+            
             <div>
                 <!-- Session Selection Dropdown -->
                 <label for="session-select">Select Session:</label>
@@ -60,18 +60,18 @@ ${basename(__FILE__, '.php')} = function () {
 
                     attendance.forEach(student => {
                         tbody.innerHTML += `
-            <tr data-student-id="${student.student_id}">
-                <td>${student.student_id}</td>
-                <td>${student.student_name}</td>
-                <td>
-                    <span class="read-only">${student.status}</span>
-                    <select class="edit-mode form-control" style="display:none;">
-                        <option value="present" ${student.status === 'present' ? 'selected' : ''}>Present</option>
-                        <option value="absent" ${student.status === 'absent' ? 'selected' : ''}>Absent</option>
-                        <option value="on-duty" ${student.status === 'on-duty' ? 'selected' : ''}>On-Duty</option>
-                    </select>
-                </td>
-            </tr>
+                <tr data-student-id="${student.student_id}">
+                    <td>${student.student_id}</td>
+                    <td>${student.student_name}</td>
+                    <td>
+                        <span class="read-only">${student.status}</span>
+                        <select class="edit-mode form-control" style="display:none;">
+                            <option value="present" ${student.status === 'present' ? 'selected' : ''}>Present</option>
+                            <option value="absent" ${student.status === 'absent' ? 'selected' : ''}>Absent</option>
+                            <option value="on-duty" ${student.status === 'on-duty' ? 'selected' : ''}>On-Duty</option>
+                        </select>
+                    </td>
+                </tr>
             `;
                     });
 
@@ -80,8 +80,7 @@ ${basename(__FILE__, '.php')} = function () {
                     document.getElementById('save-all').style.display = 'none';
                 }
 
-                // Event listener for session selection
-                document.getElementById('session-select').addEventListener('change', function() {
+                $('#session-select').change(function() {
                     renderAttendance(this.value);
                 });
 
@@ -89,7 +88,8 @@ ${basename(__FILE__, '.php')} = function () {
                 renderAttendance(document.getElementById('session-select').value);
 
                 // Handle "Edit All" button click
-                document.getElementById('edit-all').addEventListener('click', function() {
+
+                $('#edit-all').click(function() {
                     document.querySelectorAll('.read-only').forEach(el => el.style.display = 'none');
                     document.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'inline');
 
@@ -98,7 +98,9 @@ ${basename(__FILE__, '.php')} = function () {
                 });
 
                 // Handle "Save All" button click
-                document.getElementById('save-all').addEventListener('click', function() {
+
+                $('#save-all').click(function() {
+
                     const sessionId = document.getElementById('session-select').value;
                     const sessionData = data.find(session => session.session._id === sessionId);
 
@@ -148,7 +150,9 @@ ${basename(__FILE__, '.php')} = function () {
 
                             // Print the message alone in JSON
                             const response = JSON.parse(xhr.responseText);
-                            console.log(JSON.stringify({ message: response.message }));
+                            console.log(JSON.stringify({
+                                message: response.message
+                            }));
 
                             // Save toast data to localStorage
                             localStorage.setItem('toastData', JSON.stringify({
