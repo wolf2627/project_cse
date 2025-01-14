@@ -9,6 +9,8 @@ $(document).ready(function () {
 
     $(document).on('click', '#viewattendancebtn', function () {
 
+        // $('#attendance-view').show();
+
         console.log('viewattendance button clicked');
         classId = $(this).data('class-id');
         console.log('Class ID:', classId);
@@ -20,7 +22,7 @@ $(document).ready(function () {
         var getDetailsDialog = new Dialog('Choose the Date to view or edit the attendance', `
             <div class="form-group">
             <label for="attendanceDate">Choose Date:</label>
-            <input type="date" id="attendanceDate" class="form-control" max="${new Date().toISOString().split('T')[0]}">
+            <input type="date" id="attendanceDate" class="form-control" max="${new Date().toISOString().split('T')[0]}" min="2025-01-01">
             <p id="Day"></p>
             </div>
         `);
@@ -39,6 +41,12 @@ $(document).ready(function () {
                 'name': 'View Attendance',
                 'class': 'btn-success',
                 'onClick': function (event) {
+
+
+                    sessionSelect.empty(); // Clear the session dropdown
+                    $('#attendance-table').empty(); // Clear the attendance table
+
+
                     var date = $('#attendanceDate').val();
                     // var timeSlot = $('#timeSlot').val();
 
@@ -64,7 +72,12 @@ $(document).ready(function () {
                             // $('#att-cont-viewatt').html(''); // Clear the container
                             // $('#att-cont-viewatt').append(response);
 
+                            var SuccessToast = new Toast('Success', 'now', 'Attendance Data Fetched Successfully');
+                            SuccessToast.show();
+
                             attendanceData = response.message;
+
+                            $("#attendance-view").show();
 
                             // Populate the session dropdown
                             attendanceData.forEach(session => {
@@ -129,9 +142,11 @@ $(document).ready(function () {
         const tbody = $('#attendance-table');
         tbody.empty(); // Clear existing rows
 
+        var count = 1;
         sessionData.attendance.forEach(student => {
             tbody.append(`
                     <tr data-student-id="${student.student_id}">
+                        <td>${count++}</td>
                         <td>${student.student_id}</td>
                         <td>${student.student_name}</td>
                         <td>
@@ -209,12 +224,37 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function () {
-                alert('Attendance updated successfully');
+
+                var SuccessToast = new Toast('Success', 'now', 'Attendance Saved Successfully');
+                SuccessToast.show();
+
+                // Save toast data to localStorage
+                localStorage.setItem('toastData', JSON.stringify({
+                    title: 'Success',
+                    message: 'Attendance Saved Successfully.',
+                    type: 'success'
+                }));
+
+                // Reload the page
                 location.reload();
             },
-            error: function (xhr) {
-                console.error('Error saving attendance:', xhr.responseText);
-                alert('Failed to save attendance.');
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                console.error('Response:', xhr.responseText);
+
+                // Print the message alone in JSON
+                const response = JSON.parse(xhr.responseText);
+                console.log(JSON.stringify({ message: response.message }));
+
+                // Save toast data to localStorage
+                localStorage.setItem('toastData', JSON.stringify({
+                    title: 'Failed',
+                    message: response.message,
+                    type: 'error'
+                }));
+
+                // Reload the page
+                // location.reload();
             }
         });
     });

@@ -13,7 +13,13 @@ $classes = Classes::getClasses($facultyId);
 
     <div class='row'>
         <div class='col-md-12'>
-            <h2 class="text-center mb-5"> Handling Classes</h2>
+            <h2 class="text-center mb-3">Attendance Records</h2>
+
+            <!-- Note to the Users -->
+            <div class="alert alert-info" role="alert">
+                <strong>Note:</strong> Click on the "View Attendance" button to view the attendance records of the respective class.
+            </div>
+
             <table class='table table-bordered'>
                 <thead>
                     <tr>
@@ -43,7 +49,7 @@ $classes = Classes::getClasses($facultyId);
         </div>
     </div>
 
-    <div id="attendance-view">
+    <div id="attendance-view" style="display:none;">
         <!-- Session Selection Dropdown -->
         <label for="session-select">Select Session:</label>
         <select id="session-select" class="form-control">
@@ -60,6 +66,7 @@ $classes = Classes::getClasses($facultyId);
         <table class="table table-bordered table-striped mt-3">
             <thead>
                 <tr>
+                    <th>S No.</th>
                     <th>Student ID</th>
                     <th>Student Name</th>
                     <th>Attendance</th>

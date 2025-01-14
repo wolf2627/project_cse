@@ -12,12 +12,12 @@ $listOfLinks = [
     ],
     [
         'name' => 'Mark Attendance',
-        'icon' => 'journal-plus',
+        'icon' => 'person-check-fill',
         'href' => '/markattendance'
     ],
     [
         'name' => 'View Attendance',
-        'icon' => 'journal-plus',
+        'icon' => 'person-lines-fill',
         'href' => '/viewattendance'
     ]
 ];
