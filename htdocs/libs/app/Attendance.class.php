@@ -13,6 +13,64 @@ class Attendance
         $this->conn = Database::getConnection();
     }
 
+
+    public function markSession($facultyId, $date, $day, $timeslot, $class_id) 
+    {
+        $attSession = $this->conn->attendance_session;
+
+        // Step 1: Validate Input
+        if (empty($facultyId) || empty($date) || empty($day) || empty($timeslot) || empty($class_id)) {
+            throw new InvalidArgumentException("Invalid input parameters.");
+        }
+
+        $class = Classes::verify($class_id);
+
+        if (!$class) {
+            throw new Exception("Class not found.");
+        }
+
+        $class_id = new MongoDB\BSON\ObjectId($class_id);
+
+        //step 2.2: Check if attendance session already exists
+
+        $attendanceSession = $attSession->findOne([
+            'faculty_id' => $facultyId,
+            'date' => $date,
+            'day' => $day,
+            'timeslot' => $timeslot,
+            'class_id' => $class_id
+        ]);
+
+        if ($attendanceSession) {
+            throw new Exception("Attendance already marked for the session.");
+        }
+
+
+        $attendanceSession = [
+            'faculty_id' => $facultyId,
+            'date' => $date,
+            'day' => $day,
+            'timeslot' => $timeslot,
+            'class_id' => $class_id,
+            'marked_at' => new MongoDB\BSON\UTCDateTime(new DateTime()),
+            'students_marked' => false,
+            'status' => 'not marked'
+        ];
+
+        $result = $attSession->insertOne($attendanceSession);
+
+        if (empty($result->getInsertedCount())) {
+            throw new Exception("Failed to initialize attendance session.");
+        }
+
+        $attendanceSession['_id'] = $result->getInsertedId();
+
+        return $attendanceSession;
+    }
+
+
+
+
     /**
      * Mark attendance for a session. 
      * edit flag is used to determine if the attendance is being marked for the first time or being edited.
@@ -257,42 +315,6 @@ class Attendance
         return $attendanceData;
     }
 
-    // Needs to updated as per the new schema
-    public function getStudentAttendance($studentId)
-    {
-
-        $individual_attendance = $this->conn->attendance;
-
-        $records = $individual_attendance->aggregate([
-            ['$match' => ['student_id' => $studentId]],
-            [
-                '$group' => [
-                    '_id' => '$subject_code',
-                    'total_classes' => ['$sum' => 1],
-                    'attended' => ['$sum' => ['$cond' => [['$eq' => ['$status', 'Present']], 1, 0]]]
-                ]
-            ],
-            [
-                '$project' => [
-                    'subject_code' => '$_id',
-                    'total_classes' => 1,
-                    'attended' => 1,
-                    'percentage' => ['$multiply' => [['$divide' => ['$attended', '$total_classes']], 100]]
-                ]
-            ]
-        ]);
-
-        $attendance = [];
-        foreach ($records as $record) {
-            $attendance[] = $record;
-        }
-
-        if (empty($attendance)) {
-            throw new Exception("No attendance records found for the student.");
-        }
-
-        return $attendance;
-    }
 
     /**
      * Get pending attendance sessions for a faculty.
@@ -370,19 +392,20 @@ class Attendance
      * @return array
      */
 
-    public function getMarkedFacultyAttendance($facultyId, $class_id, $date){
+    public function getMarkedFacultyAttendance($facultyId, $class_id, $date)
+    {
         $attendanceSession = $this->conn->attendance_session;
 
 
-        if(!Faculty::verify($facultyId)){
+        if (!Faculty::verify($facultyId)) {
             throw new Exception("Faculty not found.");
         }
 
-        if(!Classes::verify($class_id)){
+        if (!Classes::verify($class_id)) {
             throw new Exception("Class not found.");
         }
 
-        if(empty($date)){
+        if (empty($date)) {
             throw new Exception("Invalid date.");
         }
 
@@ -394,7 +417,7 @@ class Attendance
             'students_marked' => true
         ]);
 
-        if(empty($markedSessions)){
+        if (empty($markedSessions)) {
             throw new Exception("No marked attendance found.");
         }
 
@@ -435,7 +458,7 @@ class Attendance
                 return strcmp($a['student_id'], $b['student_id']);
             });
 
-            foreach($attendance as $key => $value){
+            foreach ($attendance as $key => $value) {
                 $student = new Student($value['student_id']);
                 $studentDetails = $student->getStudentDetails($value['student_id']);
                 $attendance[$key]['student_name'] = $studentDetails['name'];
@@ -447,7 +470,7 @@ class Attendance
             ];
         }
 
-        if(empty($attendanceData)){
+        if (empty($attendanceData)) {
             throw new Exception("No attendance records found.");
         }
 
@@ -461,7 +484,8 @@ class Attendance
      * @return array
      */
 
-    public function getfacultyMarkedClasses($facultyId){
+    public function getfacultyMarkedClasses($facultyId)
+    {
         $attendanceSession = $this->conn->attendance_session;
 
         $markedSessions = $attendanceSession->find([
@@ -469,7 +493,7 @@ class Attendance
             'students_marked' => true
         ]);
 
-        if(empty($markedSessions)){
+        if (empty($markedSessions)) {
             throw new Exception("No marked attendance found.");
         }
 
@@ -495,22 +519,29 @@ class Attendance
      * 
      * @return array
      */
-    public function getSessionDetails($session_id){
-        
+    public function getSessionDetails($session_id)
+    {
+
         $sess = $this->conn->attendance_session;
 
         $session = $sess->findOne([
             '_id' => new MongoDB\BSON\ObjectId($session_id)
         ]);
 
-        if(!$session){
+        if (!$session) {
             throw new Exception("Session not found.");
         }
 
         $result = Essentials::convertArray($session);
 
         return $result;
-
     }
 
+    public function getStudentAttendance($studentId)
+    {
+
+        if (!Student::verify($studentId)) {
+            throw new Exception("Student not found.");
+        }
+    }
 }

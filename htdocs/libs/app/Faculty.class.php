@@ -13,7 +13,7 @@ class Faculty
 
         $this->conn = Database::getConnection();
         if ($facultyId !== null) {
-        
+
             // check for faculty id in the database
             $faculty = $this->conn->faculties->findOne(['faculty_id' => $facultyId]);
 
@@ -26,6 +26,30 @@ class Faculty
             $this->faculty_id = Session::getUser()->getFacultyId();
         }
         $this->conn = Database::getConnection();
+    }
+
+
+    public static function getAllFaculties($key=null, $value=null)
+    {
+        $facultyCollection = Database::getConnection()->faculties;
+        $faculties = $facultyCollection->find(
+            $key && $value ? [$key => $value] : [],
+            ['projection' => ['created_at' => 0]]
+        );
+        $result = [];
+
+        foreach ($faculties as $faculty) {
+            $result[] = [
+                'faculty_id' => $faculty['faculty_id'],
+                'name' => $faculty['name'],
+                'email' => $faculty['email'],
+                'department' => $faculty['department'],
+                'designation' => $faculty['designation'],
+                'role' => $faculty['role']
+            ];
+        }
+
+        return $result;
     }
 
 
@@ -46,7 +70,8 @@ class Faculty
         return $this->faculty_id;
     }
 
-    public static function getFacultyName($faculty_id){
+    public static function getFacultyName($faculty_id)
+    {
         $facultyCollection = Database::getConnection()->faculties;
         $faculty = $facultyCollection->findOne(['faculty_id' => $faculty_id]);
         return $faculty ? $faculty['name'] : 'Unknown Faculty';
@@ -61,7 +86,7 @@ class Faculty
             ['projection' => ['created_at' => 0]]
         );
 
-        if(!$faculty) {
+        if (!$faculty) {
             throw new Exception('Faculty not found.');
         }
 
@@ -175,18 +200,18 @@ class Faculty
     }
 
 
-    
+
     /**
      * Fetch students assigned to a faculty and subject.
      */
-    public function getAssignedStudents($subjectCode, $batch, $semester, $section ,$department ,$facultyId = null)
+    public function getAssignedStudents($subjectCode, $batch, $semester, $section, $department, $facultyId = null)
     {
         $classCollection = $this->conn->classes;
         $enrollmentCollection = $this->conn->enrollments;
         $studentCollection = $this->conn->students;
 
-        
-        if(!$facultyId) {
+
+        if (!$facultyId) {
             $facultyId = $this->faculty_id;
         }
 
@@ -264,5 +289,4 @@ class Faculty
             return false;
         }
     }
-
 }

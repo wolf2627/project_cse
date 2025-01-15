@@ -1,6 +1,7 @@
 <?php
 
-include 'vendor/autoload.php';
+//echo $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\BSON\UTCDateTime;
 
 include_once 'includes/WebAPI.class.php';
@@ -33,6 +34,8 @@ include_once 'app/Access.class.php';
 include_once 'app/reports/ClassReport.class.php';
 
 include_once 'app/Addons.class.php';
+
+include_once 'app/Crons.class.php';
 
 global $__site_config;
 

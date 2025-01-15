@@ -1,5 +1,3 @@
-<pre>
-
 <?php
 
 include 'libs/load.php';
@@ -146,12 +144,75 @@ $att = new Attendance();
 
 $att = new Attendance();
 
-try {
-    $result = $att->getSessionDetails('6780c664ac2a783b160fe681');
-    print_r($result);
-} catch (Exception $e) {
-    echo $e->getMessage();
-}
+// try {
+//     $result = $att->getSessionDetails('6780c664ac2a783b160fe681');
+//     print_r($result);
+// } catch (Exception $e) {
+//     echo $e->getMessage();
+// }
+
+// $tt = new TimeTable();
+
+// try {
+//     $result = $tt->getFacultyTimeTable('1012');
+//     print_r($result);
+// } catch (Exception $e) {
+//     echo $e->getMessage();
+// }
+
+
+// try {
+//     $att = new Attendance();
+
+//     // // Mark attendance
+//     // $result = $att->saveAttendance(
+//     //     "CSE",
+//     //     "1012",
+//     //     "2025-01-10",
+//     //     "Monday",
+//     //     "GE2C25",
+//     //     "A",
+//     //     "09:45-10:35",
+//     //     "2022-2026",
+//     //     "5",
+//     //     [
+//     //         ['id' => '92132213026', 'status' => 'Present'],
+//     //         ['id' => '92132213027', 'status' => 'Absent']
+//     //     ]
+//     // );
+
+//     $result = $att->markSession('1012', '2025-01-14', 'Tues', '09:40-10:35','673ae822f8cb080248004c27');
+
+//     print_r($result);
+// } catch (Exception $e) {
+//     echo $e->getMessage();
+// }
+
+// print_r(Faculty::getAllFaculties());
+
+// $cr = new Crons();
+
+// $cr->updateAttendance();
+
+// $tt = new TimeTable();
+// print_r($tt->getFacultyTimeTable('1012', 'Wednesday'));
+// $f = new Faculty('1012');
+// try {
+//     $result = $f->getAssignedStudents('CY2124', '2022-2026', '5', 'A', 'CSE', '1012');
+
+//     print_r($result);
+
+// } catch (Exception $e) {
+//     echo $e->getMessage();
+// }
+
+// $day = date('l');
+// $date = date('Y-m-d');
+
+// $logFile = get_config('absolute_path').'/logs/activity.log';
+// $logEntry = "[test] Date: $date, Day: $day, Time: " . date('H:i:s') . "\n";
+// file_put_contents($logFile, $logEntry, FILE_APPEND);
+
+Log::dolog("Test log message", 'TEST', True);
 
 ?>
-</pre>

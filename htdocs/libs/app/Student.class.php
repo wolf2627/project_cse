@@ -23,6 +23,23 @@ class Student
 
     }
 
+    public static function verify($student_id)
+    {
+        $conn = Database::getConnection();
+
+        $student = $conn->students->findOne([
+            '$or' => [
+            ['reg_no' => $student_id],
+            ['roll_no' => $student_id]
+            ]
+        ]);
+
+        if (!$student) {
+            throw new Exception('Student not found.');
+        }
+
+        return true;
+    }
 
     public function getStudentDetails()
     {

@@ -13,7 +13,7 @@ class Log
     {
         // Normalize log level
         $level = strtoupper($level);
-        $allowedLevels = ['INFO', 'ERROR', 'WARNING', 'DEBUG'];
+        $allowedLevels = ['INFO', 'ERROR', 'WARNING', 'DEBUG', 'CRON', 'TEST'];
 
         if (!in_array($level, $allowedLevels)) {
             $level = 'INFO';
@@ -26,6 +26,12 @@ class Log
         // Prepare timestamp
         $date = new DateTime();
         $timestamp = $date->format('D M d H:i:s.u Y');
+
+        // Create a DateTime object with the current time and set the timezone to IST (Asia/Kolkata)
+        $date = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
+
+        // Format the date as Y-m-d H:i:s
+        $indian_timestamp = $date->format('Y-m-d H:i:s');
 
         // Get client information
         $clientIp = $_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
@@ -40,13 +46,14 @@ class Log
             'client' => "{$clientIp}:{$clientPort}",
             'user_agent' => $userAgent,
             'time' => $timestamp,
+            'indian_time' => $indian_timestamp
         ];
 
-        if($dbup){
+        if ($dbup) {
             // Log to MongoDB
             self::logToDB($logEntry);
         }
-        
+
         // Log to File
         self::logToFile($logEntry);
     }
@@ -82,7 +89,16 @@ class Log
      */
     private static function logToFile(array $logEntry)
     {
-        $logFilePath = $_SERVER['DOCUMENT_ROOT'] . '/../logs/activity.log';
+        $logFilePath = get_config('absolute_path').'/logs/activity.log';
+        // echo $logFilePath;
+
+        if (!file_exists($logFilePath)) {
+            // Create the log file if it doesn't exist
+            if (file_put_contents($logFilePath, '') === false) {
+                error_log('Failed to create log file.');
+                return;
+            }
+        }
 
         try {
             // Prepare log message

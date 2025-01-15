@@ -107,8 +107,11 @@ class TimeTable
     }
 
 
-    public function getFacultyTimeTable($faculty_id)
+    public function getFacultyTimeTable($faculty_id, $find_day = 'all')
     {
+
+        // echo "Faculty ID: $faculty_id <br>";
+        // echo "Day: $find_day <br>";
         $timetable = $this->conn->timetable;
 
         // Validate input parameters
@@ -132,6 +135,7 @@ class TimeTable
             foreach ($entry['dayslots'] as $day => $slots) {
                 foreach ($slots as $timeSlot) {
                     $dayWiseTimetable[$day][] = [
+                        'class_id' => (string) $entry['class_id'],
                         'class' => $entry['class_room'],
                         'semester' => $entry['semester'],
                         'batch' => $entry['batch'],
@@ -143,6 +147,19 @@ class TimeTable
                 }
             }
         }
+
+        // If no timetable entries are found for the faculty, throw an exception
+        if (empty($dayWiseTimetable)) {
+            throw new Exception('No timetable found for the faculty.');
+        }
+
+
+        // if day is specified, filter the timetable for the day
+        if ($find_day !== 'all') {
+            // echo "Day: $find_day <br>";
+            $dayWiseTimetable = $dayWiseTimetable[$find_day] ?? [];
+        }
+
 
         return $dayWiseTimetable;
     }
