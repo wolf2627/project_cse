@@ -147,7 +147,7 @@ $att = new Attendance();
 $att = new Attendance();
 
 try {
-    $result = $att->getMarkedFacultyAttendance("1012", '673ae822f8cb080248004c27', '2025-01-10');
+    $result = $att->getSessionDetails('6780c664ac2a783b160fe681');
     print_r($result);
 } catch (Exception $e) {
     echo $e->getMessage();

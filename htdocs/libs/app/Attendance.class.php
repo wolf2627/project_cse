@@ -5,11 +5,33 @@ class Attendance
 
     private $conn;
 
+    /**
+     * Constructor for the Attendance class.
+     */
     public function __construct()
     {
         $this->conn = Database::getConnection();
     }
 
+    /**
+     * Mark attendance for a session. 
+     * edit flag is used to determine if the attendance is being marked for the first time or being edited.
+     * if edit flag is set to true, the attendance session is marked as modified. which means the attendance session is already marked and is being edited.
+     * 
+     * @param string $department
+     * @param string $facultyId
+     * @param string $date
+     * @param string $day
+     * @param string $subjectCode
+     * @param string $section
+     * @param string $timeslot
+     * @param string $batch
+     * @param string $semester
+     * @param array $attendanceData
+     * @param bool $edit
+     * 
+     * @return array
+     */
     public function saveAttendance($department, $facultyId, $date, $day, $subjectCode, $section, $timeslot, $batch, $semester, $attendanceData, $edit = false)
     {
 
@@ -132,6 +154,20 @@ class Attendance
         ];
     }
 
+    /**
+     * Check if attendance is marked for a session.
+     * @param string $department
+     * @param string $facultyId
+     * @param string $date
+     * @param string $day
+     * @param string $subjectCode
+     * @param string $section
+     * @param string $timeslot
+     * @param string $batch
+     * @param string $semester
+     * 
+     * @return bool
+     */
 
     public function isMarked($department, $facultyId, $date, $day, $subjectCode, $section, $timeslot, $batch, $semester)
     {
@@ -156,7 +192,12 @@ class Attendance
         return $attendanceSession ? $attendanceSession['students_marked'] : false;
     }
 
-
+    /**
+     * Get marked attendance sessions for a faculty.
+     * @param string $facultyId
+     * 
+     * @return array
+     */
     public function getMarkedSessions($facultyId)
     {
         $attSession = $this->conn->attendance_session;
@@ -183,7 +224,12 @@ class Attendance
         return $markedSessions;
     }
 
-    // To be Tested
+    /**
+     * Get attendance records for a session.
+     * @param string $session_id
+     * 
+     * @return array
+     */
     public function getAttendance($session_id)
     {
         $attendance = $this->conn->attendance;
@@ -191,6 +237,10 @@ class Attendance
         $records = $attendance->find([
             'attendance_session_id' => new MongoDB\BSON\ObjectId($session_id)
         ]);
+
+        if (empty($records)) {
+            throw new Exception("No attendance records found.");
+        }
 
         $attendanceData = [];
 
@@ -247,6 +297,8 @@ class Attendance
     /**
      * Get pending attendance sessions for a faculty.
      * @param string $facultyId
+     * 
+     * @return array
      */
     public function getPendingAttendance($facultyId)
     {
@@ -308,6 +360,15 @@ class Attendance
         return !empty($result) ? $result[0]['overall_percentage'] : 0;
     }
 
+
+    /**
+     * Get marked attendance for a faculty.
+     * @param string $facultyId
+     * @param string $class_id
+     * @param string $date
+     * 
+     * @return array
+     */
 
     public function getMarkedFacultyAttendance($facultyId, $class_id, $date){
         $attendanceSession = $this->conn->attendance_session;
@@ -393,6 +454,12 @@ class Attendance
         return $attendanceData;
     }
 
+    /**
+     * Get marked classes for a faculty.
+     * @param string $facultyId
+     * 
+     * @return array
+     */
 
     public function getfacultyMarkedClasses($facultyId){
         $attendanceSession = $this->conn->attendance_session;
@@ -422,6 +489,12 @@ class Attendance
     }
 
 
+    /**
+     * Get attendance records for a session.
+     * @param string $session_id
+     * 
+     * @return array
+     */
     public function getSessionDetails($session_id){
         
         $sess = $this->conn->attendance_session;
