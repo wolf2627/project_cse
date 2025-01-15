@@ -1,4 +1,4 @@
-/* Processed on 14/1/2025 @ 12:43:42 */
+/* Processed on 15/1/2025 @ 2:22:58 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -3046,7 +3046,7 @@ $(document).ready(function () {
                             // $('#att-cont-viewatt').html(''); // Clear the container
                             // $('#att-cont-viewatt').append(response);
 
-                            var SuccessToast = new Toast('Success', 'now', 'Attendance Data Fetched Successfully');
+                            var SuccessToast = new Toast('Success', 'now', 'Attendance Fetched Successfully');
                             SuccessToast.show();
 
                             attendanceData = response.message;

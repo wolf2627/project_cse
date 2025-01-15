@@ -72,7 +72,7 @@ $(document).ready(function () {
                             // $('#att-cont-viewatt').html(''); // Clear the container
                             // $('#att-cont-viewatt').append(response);
 
-                            var SuccessToast = new Toast('Success', 'now', 'Attendance Data Fetched Successfully');
+                            var SuccessToast = new Toast('Success', 'now', 'Attendance Fetched Successfully');
                             SuccessToast.show();
 
                             attendanceData = response.message;
