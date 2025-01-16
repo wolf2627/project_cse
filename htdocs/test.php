@@ -1,3 +1,5 @@
+
+<pre>
 <?php
 
 include 'libs/load.php';
@@ -213,6 +215,29 @@ $att = new Attendance();
 // $logEntry = "[test] Date: $date, Day: $day, Time: " . date('H:i:s') . "\n";
 // file_put_contents($logFile, $logEntry, FILE_APPEND);
 
-Log::dolog("Test log message", 'TEST', True);
+// Log::dolog("Test log message", 'TEST', True);
+
+$att = new Attendance();
+
+try {
+    $result = $att->calculateAttendanceByDate('92132213026');
+    print_r($result);
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+
+$tt = new TimeTable();
+print_r($tt->getStudentTimeTable('92132213026'));
+
+// echo "<br>============================================================<br>";
+// print_r($tt->getStudentTimeTableByDate('92132213026', '2025-01-16'));
+
+
+// $st = new Student('92132213026');
+
+// print_r($st->getStudentDetails());
+// print_r($st->getEnrolledClasses('active'));
 
 ?>
+
+</pre>

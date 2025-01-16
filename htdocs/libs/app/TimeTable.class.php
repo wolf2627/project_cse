@@ -168,30 +168,30 @@ class TimeTable
     {
         // Initialize the Student object
         $student = new Student($student_id);
-    
+
         // Get the enrolled classes for the student
         $enrolled_classes = $student->getEnrolledClasses();
 
-       // print_r($enrolled_classes);
-    
+        // print_r($enrolled_classes);
+
         // Initialize an empty array to store the overall timetable
         $dayWiseTimetable = [];
-    
+
         // Iterate through each enrolled class
         foreach ($enrolled_classes as $class) {
             $timetable = $this->conn->timetable;
-    
+
             // Ensure class_id is converted to ObjectId
             $class_id = new MongoDB\BSON\ObjectId($class['class_id']);
 
             // print_r($class_id);
-    
+
             // Fetch timetable entries for the current class
             $cursor = $timetable->find(['class_id' => $class_id]);
-    
+
             // Convert cursor to array for processing
             $entries = iterator_to_array($cursor);
-    
+
             // If no timetable entries are found for the class, skip it
             if (empty($entries)) {
 
@@ -199,11 +199,11 @@ class TimeTable
 
                 continue;
             }
-    
+
 
             // Process each timetable entry
             foreach ($entries as $entry) {
-    
+
                 foreach ($entry['dayslots'] as $day => $slots) {
                     foreach ($slots as $timeSlot) {
                         $dayWiseTimetable[$day][] = [
@@ -218,7 +218,7 @@ class TimeTable
                     }
                 }
 
-               //  echo $class_id;
+                //  echo $class_id;
 
 
             }
@@ -228,8 +228,34 @@ class TimeTable
         if (empty($dayWiseTimetable)) {
             throw new Exception('No timetable found for the student.');
         }
-    
+
         return $dayWiseTimetable;
     }
-    
+
+    public function getStudentTimeTableByDate($student_id, $date)
+    {
+
+        $dayWiseTimetable = $this->getStudentTimeTable($student_id);
+
+        // Fetch the day from the provided date
+        $day = date('l', strtotime($date)); // 'l' returns the full textual representation of the day
+
+        // Return the timetable for the specific day
+        return $dayWiseTimetable[$day] ?? [];
+    }
+
+    public function getSubjectCodeForTimeSlot($timetable , $timeSlot){
+
+
+        echo "<br>Time Slot: $timeSlot <br>";
+
+        foreach ($timetable as $entry) {
+            if ($entry['time'] === $timeSlot) {
+            return $entry['subject_code'];
+            }
+        }
+
+        // If no matching time slot is found, return null or throw an exception
+        return "Not Assigned";
+    }
 }
