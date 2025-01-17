@@ -244,18 +244,16 @@ class TimeTable
         return $dayWiseTimetable[$day] ?? [];
     }
 
-    public function getSubjectCodeForTimeSlot($timetable , $timeSlot){
-
-
-        echo "<br>Time Slot: $timeSlot <br>";
+    public function getSubjectCodeForTimeSlot($timetable, $timeSlot)
+    {
 
         foreach ($timetable as $entry) {
             if ($entry['time'] === $timeSlot) {
-            return $entry['subject_code'];
+                return $entry['subject_code'];
             }
         }
 
-        // If no matching time slot is found, return null or throw an exception
+        // If no matching time slot is found
         return "Not Assigned";
     }
 }

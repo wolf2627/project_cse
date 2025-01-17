@@ -220,14 +220,14 @@ $att = new Attendance();
 $att = new Attendance();
 
 try {
-    $result = $att->calculateAttendanceByDate('92132213026');
+    $result = $att->calculateAttendanceByDate('92132213026', '2025-01-17');
     print_r($result);
 } catch (Exception $e) {
     echo $e->getMessage();
 }
 
 $tt = new TimeTable();
-print_r($tt->getStudentTimeTable('92132213026'));
+// print_r($tt->getStudentTimeTable('92132213026'));
 
 // echo "<br>============================================================<br>";
 // print_r($tt->getStudentTimeTableByDate('92132213026', '2025-01-16'));

@@ -701,7 +701,7 @@ class Attendance
             if (!isset($dateWiseAttendance[$sessionDate]['sessions'][$timeSlot])) {
                 $dateWiseAttendance[$sessionDate]['sessions'][$timeSlot] = [
                     'time_slot' => $timeSlot,
-                    'subject_code' => $tt->getSubjectCodeForTimeSlot($tt->getStudentTimeTableByDate($studentId, $sessionDate), $timeSlot), //TODO: Check if this works and refactor
+                    'subject_code' => $subjectCode, // Subject Code for the class
                     'status' => 'Not Marked', // Default to "Not Marked"
                     'marked_at' => isset($session['marked_at']) ? $session['marked_at']->toDateTime()->format('Y-m-d H:i:s') : null
                 ];
