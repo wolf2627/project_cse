@@ -217,16 +217,16 @@ $att = new Attendance();
 
 // Log::dolog("Test log message", 'TEST', True);
 
-$att = new Attendance();
+// $att = new Attendance();
 
-try {
-    $result = $att->calculateAttendanceByDate('92132213026', '2025-01-17');
-    print_r($result);
-} catch (Exception $e) {
-    echo $e->getMessage();
-}
+// try {
+//     $result = $att->calculateAttendanceByDate('92132213026', '2025-01-17');
+//     print_r($result);
+// } catch (Exception $e) {
+//     echo $e->getMessage();
+// }
 
-$tt = new TimeTable();
+// $tt = new TimeTable();
 // print_r($tt->getStudentTimeTable('92132213026'));
 
 // echo "<br>============================================================<br>";
@@ -237,6 +237,22 @@ $tt = new TimeTable();
 
 // print_r($st->getStudentDetails());
 // print_r($st->getEnrolledClasses('active'));
+
+
+// Backend: Fetch attendance data
+$studentId = $_GET['student_id'] ?? '92132213026'; // Fetch student ID from query string
+echo $studentId;
+$date = $_GET['date'] ?? null; // Optional date parameter
+
+$att = new Attendance();
+
+// $attendanceData = $att->calculateAttendanceByDate($studentId, $date);
+
+// print_r($attendanceData);
+
+$attendanceData = $att->calculateAttendanceSubjectWise($studentId);
+
+print_r($attendanceData);
 
 ?>
 

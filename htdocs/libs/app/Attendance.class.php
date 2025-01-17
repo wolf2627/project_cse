@@ -1,7 +1,5 @@
 <?php
 
-use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
-
 class Attendance
 {
 
@@ -557,6 +555,10 @@ class Attendance
         $stud = new Student($studentId);
         $enrolledClasses = $stud->getEnrolledClasses();
 
+        if (empty($enrolledClasses)) {
+            throw new Exception("No classes found.");
+        }
+
         // Prepare subject-wise attendance structure
         $subjectAttendance = [];
         foreach ($enrolledClasses as $class) {
@@ -653,6 +655,10 @@ class Attendance
         $cls = new Student($studentId);
         $enrolledClasses = $cls->getEnrolledClasses();
 
+        if (empty($enrolledClasses)) {
+            throw new Exception("No classes found.");
+        }
+
         // Create a map of class IDs to subject codes
         $classToSubjectMap = [];
         foreach ($enrolledClasses as $class) {
@@ -694,8 +700,6 @@ class Attendance
                     ]
                 ];
             }
-
-            $tt = new TimeTable();
 
             // Initialize session if not already present
             if (!isset($dateWiseAttendance[$sessionDate]['sessions'][$timeSlot])) {
