@@ -29,6 +29,9 @@ include_once 'app/Marks.class.php';
 include_once 'app/Permission.class.php';
 include_once 'app/Attendance.class.php';
 
+include_once 'app/YearInCharge.class.php';
+include_once 'app/Tutor.class.php';
+
 include_once 'app/Access.class.php';
 
 include_once 'app/reports/ClassReport.class.php';

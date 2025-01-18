@@ -216,4 +216,32 @@ class Classes
             return false;
         }
     }
+
+
+    /**
+     * Fetch all available department, batch, section for students.
+     */
+    public function fetchStudentsClasses(){
+
+        $studCollection = $this->conn->students;
+
+        $cursor = $studCollection->aggregate([
+            ['$group' => [
+                '_id' => [
+                    'department' => '$department',
+                    'batch' => '$batch',
+                    'section' => '$section'
+                ]
+            ]]
+        ]);
+
+        $result = [];
+
+        foreach ($cursor as $document) {
+            $result[] = $document['_id'];
+        }
+
+        return $result;
+
+    }
 }
