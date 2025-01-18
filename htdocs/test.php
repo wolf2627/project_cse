@@ -239,20 +239,25 @@ $att = new Attendance();
 // print_r($st->getEnrolledClasses('active'));
 
 
-// Backend: Fetch attendance data
-$studentId = $_GET['student_id'] ?? '92132213026'; // Fetch student ID from query string
-echo $studentId;
-$date = $_GET['date'] ?? null; // Optional date parameter
-
 $att = new Attendance();
 
-// $attendanceData = $att->calculateAttendanceByDate($studentId, $date);
+try {
+    $result = $att->fetchStudentAttendanceByDateInterval('2025-01-16','2025-01-17', '92132213026');
 
-// print_r($attendanceData);
+    print_r($result);
 
-$attendanceData = $att->calculateAttendanceSubjectWise($studentId);
+} catch (Exception $e){
+    echo $e->getMessage();
+}
 
-print_r($attendanceData);
+// $cls = new Classes();
+
+// try {
+//     $result = $cls->getClassIdsForBatch('2022-2026');
+//     print_r($result);
+// } catch (Exception $e) {
+//     echo $e->getMessage();
+// }
 
 ?>
 

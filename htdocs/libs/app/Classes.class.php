@@ -194,4 +194,26 @@ class Classes
             return false;
         }
     }
+
+    public static function getClassIdsForBatch($batch, $status="active"){
+        $collection = Database::getConnection()->classes;
+
+        try {
+            $cursor = $collection->find(['batch' => $batch, 'status' => $status], ['projection' => ['_id' => 1]]);
+
+            $result = [];
+            foreach ($cursor as $document) {
+                $result[] = (string)$document->_id;
+            }
+
+            if(!$result) {
+                throw new Exception('No classes found.');
+            }
+
+            return $result;
+        } catch (Exception $e) {
+            error_log('Error fetching classes: ' . $e->getMessage());
+            return false;
+        }
+    }
 }
