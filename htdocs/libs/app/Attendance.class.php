@@ -651,6 +651,120 @@ class Attendance
         ];
     }
 
+    public function calculateAttendanceByDate($studentId, $date = null)
+    {
+        $attendanceCollection = $this->conn->attendance;
+        $attendanceSessionCollection = $this->conn->attendance_session;
+
+        $timeTableSlots = Essentials::loadtimeTableSlots();
+
+        // Get enrolled classes for the student
+        $cls = new Student($studentId);
+        $enrolledClasses = $cls->getEnrolledClasses();
+
+        if (empty($enrolledClasses)) {
+            throw new Exception("No classes found.");
+        }
+
+        // Create a map of class IDs to subject codes
+        $classToSubjectMap = [];
+        foreach ($enrolledClasses as $class) {
+            $classToSubjectMap[(string)$class['class_id']] = $class['subject_code'];
+        }
+
+        // Build the query for attendance sessions
+        $sessionQuery = [
+            'class_id' => ['$in' => array_map(function ($class) {
+                return new MongoDB\BSON\ObjectId($class['class_id']);
+            }, $enrolledClasses)]
+        ];
+        if ($date) {
+            $sessionQuery['date'] = $date; // Filter by date if provided
+        }
+
+        // Fetch all attendance sessions for the enrolled classes
+        $attendanceSessions = $attendanceSessionCollection->find($sessionQuery);
+
+        // Prepare date-wise attendance structure
+        $dateWiseAttendance = [];
+
+        foreach ($attendanceSessions as $session) {
+            $sessionId = (string)$session['_id'];
+            $sessionDate = $session['date']; // Assuming 'date' is in 'Y-m-d' format
+            $timeSlot = $session['timeslot']; // e.g., '08:45-09:40'
+            $classId = (string)$session['class_id'];
+            $subjectCode = $classToSubjectMap[$classId];
+
+            // Initialize date if not already present
+            if (!isset($dateWiseAttendance[$sessionDate])) {
+                $dateWiseAttendance[$sessionDate] = [
+                    'sessions' => [],
+                    'summary' => [
+                        'total_present' => 0,
+                        'total_absent' => 0,
+                        'total_on_duty' => 0,
+                        'total_not_marked' => 0
+                    ]
+                ];
+            }
+
+            // Initialize session if not already present
+            if (!isset($dateWiseAttendance[$sessionDate]['sessions'][$timeSlot])) {
+                $dateWiseAttendance[$sessionDate]['sessions'][$timeSlot] = [
+                    'time_slot' => $timeSlot,
+                    'subject_code' => $subjectCode, // Subject Code for the class
+                    'status' => 'Not Marked', // Default to "Not Marked"
+                    'marked_at' => isset($session['marked_at']) ? $session['marked_at']->toDateTime()->format('Y-m-d H:i:s') : null
+                ];
+            }
+
+            // Fetch the attendance record for the student in this session
+            $attendanceRecord = $attendanceCollection->findOne([
+                'attendance_session_id' => new MongoDB\BSON\ObjectId($sessionId),
+                'student_id' => $studentId
+            ]);
+
+            if ($attendanceRecord) {
+                $status = $attendanceRecord['status'];
+                if ($status === 'present') {
+                    $dateWiseAttendance[$sessionDate]['sessions'][$timeSlot]['status'] = 'Present';
+                    $dateWiseAttendance[$sessionDate]['summary']['total_present']++;
+                } elseif ($status === 'on-duty') {
+                    $dateWiseAttendance[$sessionDate]['sessions'][$timeSlot]['status'] = 'On-Duty';
+                    $dateWiseAttendance[$sessionDate]['summary']['total_on_duty']++;
+                } elseif ($status === 'absent') {
+                    $dateWiseAttendance[$sessionDate]['sessions'][$timeSlot]['status'] = 'Absent';
+                    $dateWiseAttendance[$sessionDate]['summary']['total_absent']++;
+                }
+            } else {
+                $dateWiseAttendance[$sessionDate]['summary']['total_not_marked']++;
+            }
+        }
+
+        // Fill missing sessions for each date using the timetable slots
+        foreach ($dateWiseAttendance as $dateKey => &$attendanceData) {
+            foreach ($timeTableSlots as $slotKey => $slotTime) {
+                // Skip breaks and lunch (if desired)
+                if ($slotKey === 'Break' || $slotKey === 'Lunch') {
+                    continue;
+                }
+
+                // Check if this slot exists, if not, add it as "Not Marked"
+                if (!isset($attendanceData['sessions'][$slotTime])) {
+                    $attendanceData['sessions'][$slotTime] = [
+                        'time_slot' => $slotTime,
+                        'subject_code' => null,
+                        'status' => 'Not Marked',
+                        'marked_at' => null
+                    ];
+                    $attendanceData['summary']['total_not_marked']++;
+                }
+            }
+        }
+
+        return $date ? $dateWiseAttendance[$date] ?? [] : $dateWiseAttendance;
+    }
+
     /**
      * Fetch attendance details for a specific date.
      * @param string $date

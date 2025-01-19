@@ -30,9 +30,9 @@ class YearInCharge
         return $yearInCharge ? true : false;
     }
 
-    public function getAssignedYearIncharges($faculty_id, $dapartment=null, $batch=null)
+    public static function getAssignedYearIncharges($faculty_id = null, $dapartment = null, $batch = null)
     {
-        $yearInChargeCollection = $this->conn->yearincharge;
+        $yearInChargeCollection = Database::getConnection()->yearincharge;
 
         $query = [];
         if ($faculty_id) {
@@ -45,11 +45,16 @@ class YearInCharge
             $query['batch'] = $batch;
         }
 
-        $yearInCharges = $yearInChargeCollection->find(
-            $query,
-            ['projection' => ['_id' => 0]]
-        );
+        if(empty($query)){
+            $yearInCharges = $yearInChargeCollection->find([], ['projection' => ['_id' => 0]]);
+        } else {
+            $yearInCharges = $yearInChargeCollection->find(
+                $query,
+                ['projection' => ['_id' => 0]]
+            );
+        }
 
+       
         $result = [];
 
         foreach ($yearInCharges as $yearInCharge) {
@@ -84,6 +89,14 @@ class YearInCharge
             throw new Exception("Faculty not found.");
         }
 
+        $exisitingTutor = Database::getConnection()->tutors->findOne([
+            "faculty_id" => $faculty_id
+        ]);
+
+        if ($exisitingTutor) {
+            throw new Exception("Faculty is already a tutor.");
+        }
+
 
         $existingYearInCharge = $yearInChargeCollection->findOne([
             "faculty_id" => $faculty_id,
@@ -98,18 +111,27 @@ class YearInCharge
                     "batch" => $batch
                 ]]
             );
+
+            $return = $result->getModifiedCount();
+
+            if ($return == 0) {
+                throw new Exception("Already assigned to the same department and batch.");
+            }
+
         } else {
             $result = $yearInChargeCollection->insertOne([
                 "faculty_id" => $faculty_id,
                 "department" => $dapartment,
                 "batch" => $batch
             ]);
+
+            $return = $result->getInsertedId();
         }
 
-        if ($result->getModifiedCount() || $result->getInsertedId()) {
-            return $result->getModifiedCount() ?: $result->getInsertedId();
+        if ($return) {
+            return $return;
         } else {
-            throw new Exception("Failed to assign year in charge");
+            throw new Exception("Assignment failed.");
         }
     }
 
