@@ -89,6 +89,22 @@ $listOfLinks = [
                 'href' => '/managetimetable'
             ],
         ]
+    ],
+    [
+        'name' => 'Year Incharge',
+        'icon' => 'file-earmark-text',
+        'subLinks' => [
+            [
+                'name' => 'Assign',
+                'icon' => 'file-earmark-text',
+                'href' => '/assignyearincharge'
+            ],
+            [
+                'name' => 'Manage',
+                'icon' => 'file-earmark-text',
+                'href' => '/manageyearincharge'
+            ],
+        ]
     ]
 ];
 

@@ -21,9 +21,13 @@ ${basename(__FILE__, '.php')} = function () {
         try {
             $assigned = YearInCharge::assignYearInCharge($faculty_id, $department, $batch);
             if ($assigned) {
-                $this->response($this->json(['message' => 'Year in charge assigned']), 200);
+                $this->response($this->json([
+                'success' => true,
+                'message' => 'Year in charge assigned']), 200);
             } else {
-                $this->response($this->json(['message' => 'Assignment failed']), 500);
+                $this->response($this->json([
+                    'success' => false,
+                    'message' => 'Assignment failed']), 500);
             }
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();

@@ -45,7 +45,7 @@ class YearInCharge
             $query['batch'] = $batch;
         }
 
-        if(empty($query)){
+        if (empty($query)) {
             $yearInCharges = $yearInChargeCollection->find([], ['projection' => ['_id' => 0]]);
         } else {
             $yearInCharges = $yearInChargeCollection->find(
@@ -54,7 +54,7 @@ class YearInCharge
             );
         }
 
-       
+
         $result = [];
 
         foreach ($yearInCharges as $yearInCharge) {
@@ -102,6 +102,11 @@ class YearInCharge
             "faculty_id" => $faculty_id,
         ]);
 
+        $exitingYearBatch = $yearInChargeCollection->findOne([
+            "department" => $dapartment,
+            "batch" => $batch
+        ]);
+
 
         if ($existingYearInCharge) {
             $result = $yearInChargeCollection->updateOne(
@@ -117,7 +122,19 @@ class YearInCharge
             if ($return == 0) {
                 throw new Exception("Already assigned to the same department and batch.");
             }
+        } else if ($exitingYearBatch) {
+            $result = $yearInChargeCollection->updateOne(
+                ["department" => $dapartment, "batch" => $batch],
+                ['$set' => [
+                    "faculty_id" => $faculty_id
+                ]]
+            );
 
+            $return = $result->getModifiedCount();
+
+            if ($return == 0) {
+                throw new Exception("Already assigned to the same department and batch.");
+            }
         } else {
             $result = $yearInChargeCollection->insertOne([
                 "faculty_id" => $faculty_id,

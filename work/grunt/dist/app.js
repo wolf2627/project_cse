@@ -1,4 +1,4 @@
-/* Processed on 15/1/2025 @ 2:22:58 */
+/* Processed on 20/1/2025 @ 3:38:20 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -132,6 +132,99 @@ function loadAssignRoleForms2(){
 }
 
 
+$(document).ready(function () {
+
+    console.log('assignyearincharge is ready');
+
+    $('#assign-yearincharge-btn').click(function (event) {
+
+        console.log('assign-yearincharge-btn clicked');
+        event.preventDefault();
+
+        var faculty_id = $('#assign-faculty_id').val();
+        var batch = $('#assign-batch').val();
+        var department = $('#assign-department').val();
+
+        $('#assign-faculty_id').css('border-color', '');
+        $('#assign-batch').css('border-color', '');
+        $('#assign-department').css('border-color', '');
+
+        if (faculty_id === '') {
+            //highlight the field
+            $('#assign-faculty_id').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Faculty ID field');
+            errorToast.show();
+            return;
+        }
+        if (department === '') {
+            //highlight the field
+            $('#assign-department').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Department field');
+            errorToast.show();
+            return;
+        }
+        if (batch === '') {
+            //highlight the field
+            $('#assign-batch').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Batch field');
+            errorToast.show();
+            return;
+        }
+
+        $('#assign-faculty_id').css('border-color', 'green');
+        $('#assign-batch').css('border-color', 'green');
+        $('#assign-department').css('border-color', 'green');
+
+
+        console.log('faculty_id: ' + faculty_id);
+        console.log('batch: ' + batch);
+        console.log('department: ' + department);
+
+        var formdata = new FormData();
+
+        formdata.append('faculty_id', faculty_id);
+        formdata.append('batch', batch);
+        formdata.append('department', department);
+
+        $.ajax({
+            url: '/api/app/yearincharge/assign',
+            type: 'POST',
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data);
+                if (data.success) {
+                    var successToast = new Toast('now', 'success', 'Year Incharge Assigned Successfully');
+                    successToast.show();
+                } else {
+                    var errorToast = new Toast('now', 'error', 'Year Incharge Assign Failed: ' + data.message);
+                    errorToast.show();
+                }
+
+                document.getElementById('assign-yearincharge-form').reset();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                var errorMessage = 'Year Incharge Assign Failed: ' + textStatus;
+                if (jqXHR.status === 500) {
+                    errorMessage += ' - ' + jqXHR.responseJSON.message;
+                    document.getElementById('assign-yearincharge-form').reset();
+                } else if (jqXHR.status === 404) {
+                    errorMessage += ' - Resource not found';
+                    document.getElementById('assign-yearincharge-form').reset();
+                }
+                var errorToast = new Toast('now', 'error', errorMessage);
+                errorToast.show();
+            }
+        });
+
+        $('#assign-faculty_id').css('border-color', '');
+        $('#assign-batch').css('border-color', '');
+        $('#assign-department').css('border-color', '');
+
+    });
+
+});
 
 $('#class-wise-year-report-btn').click(function () {
 
@@ -1711,6 +1804,74 @@ $(document).ready(function () {
 });
 
 
+$(document).ready(function () {
+
+    console.log('removeyearincharge is ready');
+
+    function loadyearincharges() {
+        $.ajax({
+            url: '/api/app/yearincharge/get/yearincharge',
+            type: 'POST',
+            success: function (data) {
+                // console.log(data);
+                var yearinchargeTableBody = $('#yearincharge-table tbody');
+                yearinchargeTableBody.empty();
+                for (var i = 0; i < data.yearincharges.length; i++) {
+                    var yearincharge = data.yearincharges[i];
+                    var tr = $('<tr></tr>');
+                    tr.append('<td>' + yearincharge.faculty_id + '</td>');
+                    tr.append('<td>' + yearincharge.department + '</td>');
+                    tr.append('<td>' + yearincharge.batch + '</td>');
+                    tr.append('<td><button class="btn btn-danger remove-yearincharge-btn" data-yearincharge-id="' + yearincharge.faculty_id + '">Remove</button></td>');
+                    yearinchargeTableBody.append(tr);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+                var errorToast = new Toast('now', 'error', 'Error loading year in charges or no year in charges found');
+                errorToast.show();
+                $('#yearincharge-table').hide();
+                $('#remove-yearincharge').append('<p class="alert alert-warning text-center">No year in charges found</p>');
+            }
+        });
+    }
+
+
+    $(document).on('click', '.remove-yearincharge-btn', function () {
+        var yearincharge_id = $(this).data('yearincharge-id');
+        console.log('remove-yearincharge-btn clicked');
+        console.log('yearincharge_id: ' + yearincharge_id);
+
+        var formdata = new FormData();
+        formdata.append('faculty_id', yearincharge_id);
+
+        $.ajax({
+            url: '/api/app/yearincharge/remove',
+            type: 'POST',
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data);
+                var successToast = new Toast('now', 'success', 'Year in charge removed successfully');
+                successToast.show();
+                loadyearincharges();
+            },
+            error: function (data) {
+                console.log(data);
+                var errorToast = new Toast('now', 'error', 'Error removing year in charge');
+                errorToast.show();
+            }
+        });
+
+        loadyearincharges();
+    });
+
+    $('.remove-yearincharge').ready(function () {
+        loadyearincharges();
+    });
+
+});
 $(document).ready(function () {
     console.log('Role Permission Manage JS Loaded [updated]');
 

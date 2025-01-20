@@ -18,8 +18,7 @@ ${basename(__FILE__, '.php')} = function () {
             if ($result) {
                 $this->response($this->json([
                     'success' => true,
-                    'message' => 'Year in charge removed
-                    '
+                    'message' => 'Year in charge removed'
                 ]), 200);
             } else {
                 $this->response($this->json([
