@@ -1,24 +1,24 @@
 $(document).ready(function () {
 
-    console.log("Faculty Timetable JS loaded");
+    console.log("student Timetable JS loaded [updated]");
 
-    if ($('.faculty-timetable-cont').length > 0) {
+    if ($('.student-timetable-cont').length > 0) {
 
-        console.log("Faculty Timetable page detected");
+        console.log("Student Timetable page detected");
 
         // DOM Elements
         const timetableContainer = document.getElementById("weeklyTimetable");
         const showAllButton = document.getElementById("showAllButton");
 
 
-        const facultyId = document.getElementById("faculty_id").value;
+        const student_id = document.getElementById("student_id").value;
 
         // Fetch timetable data from API
         $.ajax({
-            url: "/api/app/get/tt/facultytimetable",
+            url: "/api/app/get/tt/studenttimetable",
             type: "POST",
             data: {
-                faculty_id: facultyId
+                student_id: student_id
             },
             success: function (response) {
                 if (response.success) {
@@ -48,8 +48,9 @@ $(document).ready(function () {
                     dayClasses.forEach((slot) => {
                         classDetails += `
                     <div class="class-details mb-2 bg-dark-light">
-                        <p><strong>${slot.department} - ${slot.class} - ${slot.section}</strong></p>
-                        <p>${slot.time} | Sem: ${slot.semester}</p>
+                        <p><strong>${slot.subject_code} - ${slot.section}</strong></p>
+                        <p><em>${slot.faculty}</em></p>
+                        <p>${slot.time} | ${slot.class}</p>
                     </div>
                 `;
                     });

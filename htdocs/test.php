@@ -3,15 +3,12 @@
 
 include 'libs/load.php';
 
-$tut = new Tutor('1012');
+$student = new Student('92132213245');
 
 try {
-    // $tut = Tutor::AssignTutor('1011', 'CSE', '2024-2028', 'A');
-    // $tut = $tut->getTutorshipStudents();
-
-    $tut = Tutor::getTutors();
-
-    print_r($tut);
+  $tt = new TimeTable();
+    $result = $tt->getStudentTimeTable('92132213245');
+    print_r($result);
 
 } catch (Exception $e) {
     echo $e->getMessage();

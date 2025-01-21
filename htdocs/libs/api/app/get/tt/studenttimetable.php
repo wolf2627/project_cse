@@ -10,7 +10,7 @@ ${basename(__FILE__, '.php')} = function () {
 
         $student_id = $this->_request['student_id'];
 
-        error_log('Faculty ID: ' . $student_id);
+        error_log('Student ID: ' . $student_id);
 
         $tt = new TimeTable();
 

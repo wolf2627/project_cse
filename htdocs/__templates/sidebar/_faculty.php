@@ -6,6 +6,11 @@
 
 $listOfLinks = [
     [
+        'name' => 'Time Table',
+        'icon' => 'calendar3',
+        'href' => '/timetable'
+    ],
+    [
         'name' => 'Enter Test Marks',
         'icon' => 'new-folder',
         'subLinks' => []

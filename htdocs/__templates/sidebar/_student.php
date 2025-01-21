@@ -6,6 +6,11 @@ $listOfLinks = [
         'name' => 'View Test Marks',
         'icon' => 'journal-plus',
         'subLinks' => []
+    ],
+    [
+        'name' => 'Time Table',
+        'icon' => 'calendar3',
+        'href' => '/timetable'
     ]
 ];
 
