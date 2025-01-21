@@ -1,0 +1,161 @@
+.main-content main,
+.main-content footer,
+.main-content header {
+    width: calc(100 - 80px);
+    /* Adjust width to account for sidebar */
+    width: calc(-webkit-fill-available - 80px);
+    /* Adjust width for webkit browsers */
+    margin-left: 80px;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+/* TODO: Adjust the height of the main */
+
+@media (max-width: 768px) {
+
+    .btn-collapse {
+        /*Needs to be tested*/
+        /* Button to collapse the sidebar change the default class*/
+        position: absolute;
+        top: 10px;
+        /* Adjusted for better placement */
+        right: -40px;
+        /* background-color: #f8f9fa; */
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 10000;
+        /* Ensure button is above the sidebar */
+    }
+
+    .main-content {
+        position: relative;
+        z-index: 1;
+        filter: none;
+    }
+
+
+    .main-content main,
+    .main-content footer,
+    .main-content header {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    #banner-text,
+    .footer-text {
+        display: inline-block;
+        width: 80;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+}
+
+/* General styles for body and html */
+body {
+    min-height: 100%;
+    min-height: -webkit-fill-available;
+}
+
+html {
+    height: -webkit-fill-available;
+}
+
+.dropdown-toggle {
+    outline: 0;
+}
+
+/* Button toggle styles */
+.btn-toggle {
+    padding: .25rem .5rem;
+    font-weight: 600;
+    color: var(--bs-emphasis-color);
+    background-color: transparent;
+}
+
+.btn-toggle:hover,
+.btn-toggle:focus {
+    color: rgba(var(--bs-emphasis-color-rgb), .85);
+    background-color: var(--bs-tertiary-bg);
+}
+
+.btn-toggle::before {
+    width: 1.25em;
+    line-height: 0;
+    content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+    transition: transform .35s ease;
+    transform-origin: .5em 50%;
+}
+
+[data-bs-theme="dark"] .btn-toggle::before {
+    content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%28255,255,255,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+}
+
+.btn-toggle[aria-expanded="true"] {
+    color: rgba(var(--bs-emphasis-color-rgb), .85);
+}
+
+.btn-toggle[aria-expanded="true"]::before {
+    transform: rotate(90deg);
+}
+
+.btn-toggle-nav a {
+    padding: .1875rem .5rem;
+    margin-top: .125rem;
+    margin-left: 1.25rem;
+}
+
+.btn-toggle-nav a:hover,
+.btn-toggle-nav a:focus {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.scrollarea {
+    overflow-y: auto;
+}
+
+
+/* Mobile-specific adjustments */
+
+@media (max-width: 640px) {
+    #banner-text {
+        display: inline-block !important;
+        /* Display banner text on small screens */
+        width: 300px;
+        /* Limit the text to four characters */
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Mobile-specific padding */
+@media (max-width: 576px) {
+
+    .main-content header,
+    .main-content footer {
+        padding: 0 10px !important;
+    }
+
+    #banner-text {
+        display: inline-block !important;
+        /* Display banner text on small screens */
+        width: 100px;
+        /* Limit the text to four characters */
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .footer-text {
+        /* truncate the text */
+        display: inline-block;
+        width: 100;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+}

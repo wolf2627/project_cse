@@ -1,0 +1,4 @@
+#info-card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Light shadow for the card */
+    border-radius: 10px; /* Rounded corners */
+  }

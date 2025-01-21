@@ -1,20 +1,26 @@
-<div class="container mt-5">
-    <? // print_r($data);
-    ?>
-    <!-- Row with justify-content-center to center the card -->
+<!-- Marquee -->
+<div>
     <div class="row">
-        <!-- Column for the card with increased padding and centered card -->
-        <div class="col-md-6">
-            <!-- Card Component with extra padding and margin -->
-            <div class="card p-4" id="info-card" style="width: 100%; max-width: fit-content;">
-                <div class="card-body">
-                    <h5 class="card-title">Welcome, <?= $data['0'] ?></h5>
-                    <h6 class="card-subtitle mb-3 text-muted"><?= $data['1'] ?></h6>
-                    <p class="card-text">Designation: <?= $data['4'] ?></p>
-                    <p class="card-text">Id: <?= $data['5'] ?></p>
-                    <p class="card-text">Department: <?= $data['3'] ?></p>
-                    <p class="card-text">Email: <?= $data['2'] ?></p>
-                </div>
+        <div class="col-md-12">
+            <!-- Marquee -->
+            <marquee behavior="scroll" direction="left" class="text-warning small p-2 border rounded">
+                <strong>Welcome to the site. This Site Is Under Development.</strong>
+            </marquee>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <!-- Left edge box with title -->
+        <div class="card border-primary">
+            <div class="card-header text-white bg-primary">
+                <strong>Welcome, <?= $data['0'] ?> </strong>
+            </div>
+            <div class="card-body">
+                <p> Role: <?= $data['1'] ?></p>
+                <p class="card-text">Designation: <?= $data['4'] ?></p>
+                <p class="card-text">Id: <?= $data['5'] ?></p>
+                <p class="card-text">Department: <?= $data['3'] ?></p>
+                <p class="card-text">Email: <?= $data['2'] ?></p>
             </div>
         </div>
     </div>

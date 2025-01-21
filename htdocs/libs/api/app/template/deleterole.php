@@ -22,7 +22,7 @@ ${basename(__FILE__, '.php')} = function () {
                     <?php } ?>
                 </select>
             </div>
-            <button type="button" class="btn btn-danger" onclick="submitForm('delete')">Delete</button>
+            <button type="button" class="btn btn-danger" onclick="manageRoleSubmitForm('delete')">Delete</button>
         </form>
 <? } else {
         $this->response($this->json(['message' => 'bad request']), 400);

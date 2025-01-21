@@ -41,7 +41,7 @@ class Test {
 
             return $result;
         } catch (Exception $e) {
-            error_log('Error fetching tests: ' . $e->getMessage());
+            // error_log('Error fetching tests: ' . $e->getMessage());
             return false; // Return false if an exception occurs
         }
     }

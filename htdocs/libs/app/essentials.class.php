@@ -1,6 +1,6 @@
 <?php
 
-require 'vendor/autoload.php';
+// require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -16,6 +16,22 @@ class Essentials
         $this->conn = Database::getConnection();
     }
 
+    public static function convertArray($paramArray)
+    {
+        $convertedArray = [];
+        foreach ($paramArray as $key => $value) {
+            if ($value instanceof MongoDB\BSON\ObjectId) {
+            $convertedArray[$key] = (string)$value;
+            } elseif ($value instanceof MongoDB\Model\BSONArray) {
+            $convertedArray[$key] = $value->getArrayCopy();
+            } elseif ($value instanceof MongoDB\BSON\UTCDateTime) {
+            $convertedArray[$key] = $value->toDateTime()->format('Y-m-d H:i:s');
+            } else {
+            $convertedArray[$key] = $value;
+            }
+        }
+        return $convertedArray;
+    }
 
     public static function loadSemesters()
     {
@@ -45,6 +61,11 @@ class Essentials
                 'type' => $subject['type']
             ];
         }
+
+        // sort the subjects by subject code
+        usort($subjects, function ($a, $b) {
+            return strcmp($a['subject_code'], $b['subject_code']);
+        });
 
         return $subjects;
     }
@@ -139,5 +160,46 @@ class Essentials
             error_log($e->getMessage());
             return []; // Return an empty array in case of error
         }
+    }
+
+
+    public static function loadDays()
+    {
+        return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    }
+
+
+    public static function loadtimeTableSlots()
+    {
+        $slots = [
+            '1' => '08:45-09:40',
+            '2' => '09:40-10:35',
+            'Break' => '10:35-10:55',
+            '3' => '10:55-11:45',
+            '4' => '11:45-12:35',
+            'Lunch' => '12:35-01:45',
+            '5' => '01:45-02:35',
+            '6' => '02:35-03:25',
+            '7' => '03:25-04:15'
+        ];
+
+        return $slots;
+    }
+
+    public static function loadClassPlace()
+    {
+
+        return array_merge(
+            array_map(function ($num) {
+                return "$num";
+            }, range(101, 116)),
+            array_map(function ($num) {
+                return "$num";
+            }, range(201, 216)),
+            array_map(function ($num) {
+                return "$num";
+            }, range(301, 316)),
+            ['GF Lab', 'FF Lab', 'SF Lab', 'Software Lab', 'IOT Lab']
+        );
     }
 }

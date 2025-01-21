@@ -1,6 +1,6 @@
 <?php
 
-require 'vendor/autoload.php';
+// require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -57,6 +57,15 @@ class AppUser
                 $document = array_combine($this->headers, $row);
                 // print_r($document);
                 // Try creating a user profile
+                // Check if the user already exists
+                $existingUser = $this->collection->findOne(['email' => $document['email']]);
+
+                if ($existingUser) {
+                    // Skip existing user
+                    $failureCount++;
+                    continue;
+                }
+
                 $result = $this->createUserProfile($document);
 
                 if ($result) {
@@ -128,5 +137,56 @@ class AppUser
             // Handle any errors that may occur when creating user login
             throw new Exception("Error creating user login: " . $e->getMessage());
         }
+    }
+
+
+    public static function createAdmin($username, $password, $email){
+
+        try {
+            $conn = Database::getConnection();
+            $authCollection = $conn->Auth;
+            $adminCollection = $conn->admins;
+
+
+            $result = $adminCollection->findOne(['name' => $username]);
+
+            if ($result) {
+                throw new Exception("Admin already exists");
+            }
+
+            $result = $authCollection->findOne(['username' => $username]);
+
+            if ($result) {
+                throw new Exception("Admin login already exists");
+            }
+
+            // Create new Admin Profile
+            $data = [
+                'name' => $username,
+                'email' => $email,
+                'role' => 'admin'
+            ];
+
+            $result = $adminCollection->insertOne($data);
+
+            $password = password_hash($password, PASSWORD_BCRYPT, ['cost' => 9]);
+
+            $data = [
+                'user_id' => new MongoDB\BSON\ObjectId($result->getInsertedId()),
+                'username' => $username,
+                'password' => $password,
+                'role' => 'admin'
+            ];
+
+            // Insert login details into the database
+            $result = $authCollection->insertOne($data);
+
+            return ['username' => $username, 'password' => $password];
+
+        } catch (Exception $e) {
+            // Handle any errors that may occur when creating user login
+            throw new Exception("Error creating user login: " . $e->getMessage());
+        }
+
     }
 }

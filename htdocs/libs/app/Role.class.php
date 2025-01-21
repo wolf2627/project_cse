@@ -9,7 +9,7 @@ class Role
         $this->conn = Database::getConnection();
     }
 
-    public function createRole($roleName, $description)
+    public function createRole($roleName, $roleCategory, $description)
     {
         $rolesCollection = $this->conn->roles;
 
@@ -27,6 +27,7 @@ class Role
         // Proceed with creating the new role
         $result = $rolesCollection->insertOne([
             "role_name" => $roleName,
+            "role_category" => $roleCategory,
             "description" => $description
         ]);
 
@@ -77,23 +78,120 @@ class Role
         return $result->getDeletedCount();
     }
 
-    public function getRoles()
+    public function getRoles($roleCategory = null)
     {
-
         $rolesCollection = $this->conn->roles;
 
-        $roles = $rolesCollection->find()->toArray();
+        if ($roleCategory) {
+            $roles = $rolesCollection->find(["role_category" => $roleCategory]);
+        } else {
+            $roles = $rolesCollection->find();
+        }
 
-        return $roles;
+        $rolesArray = [];
+        foreach ($roles as $role) {
+            $rolesArray[] = $role;
+        }
+
+        return $rolesArray;
     }
 
     public function getRoleName($roleId)
     {
+        $rolesCollection = $this->conn->roles;
+        $role = $rolesCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($roleId)]);
+        return $role['role_name'];
+    }
 
+    public function getAssignedRoles($userId)
+    {
+        $UserRoleCollection = $this->conn->user_roles; // Assuming 'users' collection
+
+        $userRoles = $UserRoleCollection->findOne(["user_id" => $userId]);
+
+        if ($userRoles) {
+            return $userRoles['roles'];
+        }
+
+        return [];
+    }
+
+    public function assignOtherRoles($roleCategory, $userId, $rolesId)
+    {
+        $userRoleCollection = $this->conn->user_roles;
         $rolesCollection = $this->conn->roles;
 
-        $role = $rolesCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($roleId)]);
+        //TODO: Check for User Existence
 
-        return $role['role_name'];
+        if (empty($rolesId)) {
+            if ($this->unassignAllRoles($userId)) {
+                return [];
+            }
+        }
+
+        //validate the roles
+        $validatedRoles = [];
+        foreach ($rolesId as $roleId) {
+            try {
+                $roleObjId = new MongoDB\BSON\ObjectId($roleId);
+            } catch (Exception $e) {
+                throw new Exception( $roleId . 'id is Invalid');
+            }
+
+            if ($rolesCollection->findOne(['_id' => $roleObjId])) {
+                $validatedRoles[] = $roleObjId;
+            } else {
+                throw new Exception($roleId . ' not found');
+            }
+        }
+
+        //update the roles to the user
+        $userRoleCollection->updateOne(
+            ["category" => $roleCategory, 'user_id' => $userId],
+            ['$set' => ["roles" => $validatedRoles]],
+            ['upsert' => true] // Create the document if it doesn't exist
+        );
+
+
+        $updatedUserDoc = $userRoleCollection->findOne(['user_id' => $userId]);
+
+        $finalRoles = isset($updatedUserDoc['roles'])
+            ? array_map('strval', (array) $updatedUserDoc['roles'])
+            : [];
+
+        $finalResult = [];
+
+        foreach ($finalRoles as $role) {
+            $roleDoc = $rolesCollection->findOne(['_id' => new MongoDB\BSON\ObjectId($role)]);
+            if ($roleDoc) {
+                $finalResult[] = [
+                    'id' => (string) $roleDoc['_id'],
+                    'name' => $roleDoc['role_name'],
+                    'category' => $roleDoc['role_category'],
+                    'description' => $roleDoc['description']
+                ];
+            }
+        }
+
+        return $finalResult;
+    }
+
+
+    public function unassignAllRoles($userId)
+    {
+        $userRoleCollection = $this->conn->user_roles;
+
+        if (!$userRoleCollection->findOne(['user_id' => $userId])) {
+            //throw new Exception('No roles assigned to the user');
+            return true;
+        }
+
+        $result = $userRoleCollection->deleteOne(['user_id' => $userId]);
+
+        if ($result->getDeletedCount() === 0) {
+            throw new Exception('Failed to unassign roles');
+        }
+
+        return true;
     }
 }

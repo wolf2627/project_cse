@@ -1,5 +1,7 @@
-<h2>User Creation</h2>
 <section class="py-5 container">
+
+    <h2 class="text-center mb-4">User Creation</h2>
+
     <div class="input-group mb-4">
         <label class="form-label fw-bold me-3">User Type:</label>
         <div class="form-check form-check-inline">
@@ -25,13 +27,13 @@
     </div>
 
     <div class="mb-4">
-        <label for="formFile" class="form-label">Upload Excel File</label>
-        <input class="form-control" type="file" id="formFile" accept=".xlsx, .xls">
+        <label for="formFile-usercreate" class="form-label">Upload Excel File</label>
+        <input class="form-control" type="file" id="formFile-usercreate" accept=".xlsx, .xls">
     </div>
 
 
     <div class="d-flex justify-content-start">
         <button class="btn btn-success me-3" id="create-users">Create User</button>
-        <button class="btn btn-secondary" id="clear">Clear</button>
+        <button class="btn btn-secondary" id="create-users-clear">Clear</button>
     </div>
 </section>

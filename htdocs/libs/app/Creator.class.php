@@ -2,7 +2,7 @@
 
 
 //TODO: Check and Remove these Lines
-require 'vendor/autoload.php';
+// require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -260,13 +260,20 @@ class Creator {
                 'section' => $section,
                 'student_sections' => $student_sections,
                 'year' => $year,
+                'status' => 'active',  // Set the initial status
                 'created_at' => Date('Y-m-d H:i:s')
             ];
 
             // Insert data into the collection
             $result = $collection->insertOne($insertData);
 
-            return "Faculty Assigned successfully";
+            if($result->getInsertedCount() === 1) {
+                return "Faculty Assigned successfully";
+            } else {
+                throw new Exception("Faculty assignment failed.");
+            }
+
+            // return "Faculty Assigned successfully";
         } catch (Exception $e) {
             error_log("Error uploading Assigning Faculty: " . $e->getMessage());
             return false;

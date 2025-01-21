@@ -1,18 +1,21 @@
 <pre>
-
 <?php
 
 include 'libs/load.php';
 
+$tut = new Tutor('1012');
 
-// $classreport = new ClassReport();
+try {
+    // $tut = Tutor::AssignTutor('1011', 'CSE', '2024-2028', 'A');
+    // $tut = $tut->getTutorshipStudents();
 
-// // Example usage
-// $test_id = '673b3494bf7730ef8c0612b3'; // Test ID to be passed
-// $report = $classreport->getSectionWiseReport($test_id);
+    $tut = Tutor::getTutors();
 
-// print_r($report);
+    print_r($tut);
 
-print_r(Test::getTests());
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
 
 ?>
+</pre>

@@ -1,0 +1,28 @@
+.section-header {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    margin-top: 20px;
+}
+
+[data-bs-theme="dark"] .section-header {
+    background-color: #343a40;
+    color: white;
+}
+
+.section-table {
+    margin-top: 15px;
+}
+
+.table th,
+.table td {
+    text-align: center;
+}
+
+#special-algin {
+    text-align: left;
+}
+
+.modal-body {
+    max-height: 600px;
+    overflow-y: auto;
+}

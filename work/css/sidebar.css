@@ -1,0 +1,245 @@
+/* Adjust margin when sidebar is expanded */
+.sidebar-cus:hover+.main-content main,
+.sidebar-cus:hover+.main-content footer,
+.sidebar-cus:hover+.main-content header {
+    margin-left: 280px;
+}
+
+.sidebar-cus {
+    position: fixed;
+    width: 80px;
+    height: 100%;
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    justify-content: space-between;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: #888 #e0e0e0;
+    /* Firefox */
+}
+
+.sidebar-cus::-webkit-scrollbar {
+    width: 5px;
+    /* Width of the scrollbar */
+}
+
+.sidebar-cus::-webkit-scrollbar-track {
+    background: #e0e0e0;
+    /* Background of the scrollbar track */
+}
+
+.sidebar-cus::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Color of the scrollbar thumb */
+    border-radius: 10px;
+    /* Roundness of the scrollbar thumb */
+    border: 2px solid #e0e0e0;
+    /* Padding around the scrollbar thumb */
+}
+
+
+.sidebar-cus ul {
+    white-space: nowrap;
+    margin-right: 0;
+}
+
+.sidebar-cus ul li p {
+    white-space: nowrap;
+    display: none;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+}
+
+.sidebar-cus ul h6 {
+    display: none;
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 0px;
+}
+
+.sidebar-cus:hover ul li p {
+    display: block;
+    display: inline;
+    opacity: 1;
+}
+
+/* .sidebar-user-image strong,
+.sidebar-user-image small {
+    display: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+} */
+
+.sidebar-logo span {
+    display: none;
+}
+
+.sidebar-cus .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-cus .sidebar-bottom-banner {
+    display: none;
+}
+
+/* TODO: Add Sidebar side heading for classification */
+.sidebar-cus .sidebar-heading {
+    display: none !important;
+    transition: 0.3s ease-in-out;
+}
+
+.sidebar-cus:hover .sidebar-heading {
+    display: block !important;
+}
+
+
+.sidebar-cus:hover .sidebar-bottom-banner {
+    display: flex;
+}
+
+.sidebar-cus:hover {
+    width: 280px;
+    backdrop-filter: blur(5px);
+}
+
+
+.sidebar-cus:hover ul h6 {
+    display: block;
+}
+
+/* .sidebar-cus:hover .sidebar-user-image strong,
+.sidebar-cus:hover .sidebar-user-image small {
+    display: block;
+} */
+
+/* .sidebar-cus:hover .sidebar-user-image .sidebar-user-info {
+    display: block;
+  } */
+
+
+.sidebar-user-image .main-logo-sidebar {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    max-width: 100%;
+}
+
+.sidebar-cus:hover .sidebar-user-image .main-logo-sidebar {
+    display: flex;
+}
+
+
+.sidebar-cus .icon-logo-sidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-cus:hover .icon-logo-sidebar {
+    display: none;
+}
+
+.sidebar-cus:hover .sidebar-logo span {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .sidebar-cus {
+        transform: translateX(-100%);
+        transition: transform 0.4s ease-in-out;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100%;
+        background-color: rgba(192, 192, 192, 0.555);
+        z-index: 9999;
+        overflow-y: auto;
+    }
+
+    .sidebar-cus.visible {
+        transform: translateX(0);
+        /* Show sidebar when toggled */
+    }
+
+    .sidebar-cus .sidebar-user-image .main-logo-sidebar {
+        display: flex;
+    }
+
+    .sidebar-cus .icon-logo-sidebar {
+        display: none;
+    }
+
+    .sidebar-cus.visible .sidebar-user-image .main-logo-sidebar {
+        display: flex;
+    }
+
+    .sidebar-cus.visible .icon-logo-sidebar {
+        display: none;
+    }
+
+    /*Test this*/
+    .sidebar-cus .sidebar-bottom-banner {
+        display: flex !important;
+    }
+
+    .sidebar-cus .sidebar-heading {
+        display: block !important;
+    }
+
+    .sidebar-cus.visible~.main-content {
+        filter: blur(5px);
+        pointer-events: none;
+        touch-action: none;
+        /* Block the touch */
+    }
+
+    .sidebar-cus ul li p,
+    .sidebar-cus ul h6,
+    .sidebar-cus .sidebar-logo span,
+    .sidebar-cus strong,
+    .sidebar-cus ul,
+    .sidebar-cus small {
+        display: block;
+        /* Show all sidebar elements */
+        opacity: 1;
+    }
+
+    .sidebar-cus ul li p {
+        display: inline;
+        /* Show text */
+        opacity: 1;
+    }
+
+    /* Backdrop overlay */
+    .sidebar-overlay {
+        /*Needs to be tested*/
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Semi-transparent black */
+        z-index: 9998;
+        /* Below the sidebar but above the content */
+    }
+
+    /* Show the overlay when sidebar is visible */
+    .sidebar-cus.visible+.sidebar-overlay {
+        /*Needs to be tested*/
+        display: block;
+        /* Show overlay */
+    }
+}

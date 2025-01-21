@@ -1,0 +1,9 @@
+.input-group .form-select,
+.input-group .form-control {
+    flex: 1 1 auto;
+}
+
+.addSubjectBtn,
+.removeSubjectBtn {
+    min-width: 40px;
+}

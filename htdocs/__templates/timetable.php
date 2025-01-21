@@ -1,5 +1,13 @@
-<div class="container">
-    <h1 class="mt-5">Time Table!</h1>
-    <p class="lead">The Page that you are trying to load is under Construction.</p>
-    <p><a href="/dashboard">Go Home!</a></p>
-</div>
+<?php
+
+if (Session::getUser()->getRole() === 'admin') {
+    Session::loadTemplate('app/timetable/_admin');
+} else if (Session::getUser()->getRole() === 'faculty') {
+    Session::loadTemplate('app/timetable/_faculty');
+} else if (Session::getUser()->getRole() === 'student') {
+    Session::loadTemplate('app/timetable/_student');
+} 
+
+else {
+    Session::loadTemplate('app/timetable/_timetable');
+}

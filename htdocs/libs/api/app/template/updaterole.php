@@ -22,7 +22,7 @@ ${basename(__FILE__, '.php')} = function () {
                 <label for="description" class="form-label">Description:</label>
                 <textarea id="description" class="form-control" placeholder="Enter new description"></textarea>
             </div>
-            <button type="button" class="btn btn-primary" onclick="submitForm('update')">Submit</button>
+            <button type="button" class="btn btn-primary" onclick="manageRoleSubmitForm('update')">Submit</button>
         </form>
 <? } else {
         $this->response($this->json(['message' => 'bad request']), 400);
