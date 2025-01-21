@@ -1,6 +1,6 @@
 <head>
-    <script src="<?= get_config("base_path")?>assets/js/color-modes.js"></script>
-    
+    <script src="<?= get_config("base_path") ?>assets/js/color-modes.js"></script>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -18,8 +18,11 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
+    <!-- Masonry JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js"></script>
+
     <!-- load css -->
-    <link href="<?= get_config("base_path")?>css/style.min.css" rel="stylesheet">
-    <link href="<?= get_config("base_path")?>css/app.min.css" rel="stylesheet">
+    <link href="<?= get_config("base_path") ?>css/style.min.css" rel="stylesheet">
+    <link href="<?= get_config("base_path") ?>css/app.min.css" rel="stylesheet">
 
 </head>
