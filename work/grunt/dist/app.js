@@ -1,4 +1,4 @@
-/* Processed on 20/1/2025 @ 3:38:20 */
+/* Processed on 21/1/2025 @ 2:1:13 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -1831,6 +1831,7 @@ $(document).ready(function () {
                 var errorToast = new Toast('now', 'error', 'Error loading year in charges or no year in charges found');
                 errorToast.show();
                 $('#yearincharge-table').hide();
+                $('#remove-yearincharge').empty();
                 $('#remove-yearincharge').append('<p class="alert alert-warning text-center">No year in charges found</p>');
             }
         });
@@ -1867,9 +1868,9 @@ $(document).ready(function () {
         loadyearincharges();
     });
 
-    $('.remove-yearincharge').ready(function () {
+    if ($('#remove-yearincharge-container').length) {
         loadyearincharges();
-    });
+    }
 
 });
 $(document).ready(function () {

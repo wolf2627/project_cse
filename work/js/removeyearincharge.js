@@ -25,6 +25,7 @@ $(document).ready(function () {
                 var errorToast = new Toast('now', 'error', 'Error loading year in charges or no year in charges found');
                 errorToast.show();
                 $('#yearincharge-table').hide();
+                $('#remove-yearincharge').empty();
                 $('#remove-yearincharge').append('<p class="alert alert-warning text-center">No year in charges found</p>');
             }
         });
@@ -61,8 +62,8 @@ $(document).ready(function () {
         loadyearincharges();
     });
 
-    $('.remove-yearincharge').ready(function () {
+    if ($('#remove-yearincharge-container').length) {
         loadyearincharges();
-    });
+    }
 
 });

@@ -1,4 +1,4 @@
-<div class="container mt-5 remove-yearincharge">
+<div class="container mt-5" id="remove-yearincharge-container">
     <div class="row justify-content-center">
         <div class="col-md-6 mx-auto">
             <h4 class="text-center">Remove Year in Charge</h4>
