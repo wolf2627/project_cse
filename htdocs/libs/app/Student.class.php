@@ -87,6 +87,8 @@ class Student
             ];
         }
 
+        error_log(json_encode($result));
+
         return $result;
     }
 
@@ -107,13 +109,16 @@ class Student
                 'subject_code' => $class['subject_code'],
                 'semester' => $class['semester'],
                 'batch' => $class['batch'],
-                'section' => $class['section'],
+                //'section' => $class['section'],
+                'student_sections' => $class['section'],
+                'year' => $class['year'],
                 'status' => $status
             ]);
 
             if ($class_details) {
                 $result[] = [
                     'class_id' => (string) $class_details['_id'],
+                    'faculty' => Faculty::getFacultyName($class_details['faculty_id']),
                     'subject_code' => $class_details['subject_code'],
                     'department' => $class_details['department'],
                     'semester' => $class_details['semester'],

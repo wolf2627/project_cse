@@ -172,7 +172,7 @@ class TimeTable
         // Get the enrolled classes for the student
         $enrolled_classes = $student->getEnrolledClasses();
 
-        // print_r($enrolled_classes);
+        error_log(json_encode($enrolled_classes));
 
         // Initialize an empty array to store the overall timetable
         $dayWiseTimetable = [];
@@ -194,9 +194,6 @@ class TimeTable
 
             // If no timetable entries are found for the class, skip it
             if (empty($entries)) {
-
-                echo "<br>No timetable entries found for class $class_id <br>";
-
                 continue;
             }
 
@@ -207,6 +204,7 @@ class TimeTable
                 foreach ($entry['dayslots'] as $day => $slots) {
                     foreach ($slots as $timeSlot) {
                         $dayWiseTimetable[$day][] = [
+                            'faculty' => Faculty::getFacultyName($entry['faculty_id']),
                             'class' => $entry['class_room'],
                             'semester' => $entry['semester'],
                             'batch' => $entry['batch'],

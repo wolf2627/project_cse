@@ -1,4 +1,4 @@
-/* Processed on 21/1/2025 @ 2:1:13 */
+/* Processed on 22/1/2025 @ 3:1:19 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -624,6 +624,60 @@ $('#create-users-clear').on('click', function () {
     $('#formFile-usercreate').val('');
 });
 
+$(document).ready(function () {
+
+    if ($('#date-wise-stud-atten').length > 0) {
+
+        // Attendance Chart Data
+        const attendanceData = JSON.parse(document.getElementById('attendanceData').value);
+
+        const attendanceChartData = {
+            labels: ['Present', 'Absent', 'On-Duty', 'Not Marked'],
+            datasets: [{
+                data: [
+                    attendanceData.summary.total_present ?? 0,
+                    attendanceData.summary.total_absent ?? 0,
+                    attendanceData.summary.total_on_duty ?? 0,
+                    attendanceData.summary.total_not_marked ?? 0
+                ],
+                backgroundColor: ['#28a745', '#dc3545', '#ffc107', '#6c757d'],
+                hoverOffset: 4
+            }]
+        };
+
+        // Config for Attendance Chart
+        const attendanceChartConfig = {
+            type: 'pie',
+            data: attendanceChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Ensure it resizes correctly
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                const value = context.raw;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Render Attendance Chart
+        const attendanceChart = new Chart(
+            document.getElementById('attendanceChart'),
+            attendanceChartConfig
+        );
+    }
+});
 
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
@@ -713,6 +767,118 @@ $('#fetch-students-btn').on('click', function (event) {
     d.show();
 });
 
+$(document).ready(function () {
+
+    console.log("Faculty Timetable JS loaded");
+
+    if ($('.faculty-timetable-cont').length > 0) {
+
+        console.log("Faculty Timetable page detected");
+
+        // DOM Elements
+        const timetableContainer = document.getElementById("weeklyTimetable");
+        const showAllButton = document.getElementById("showAllButton");
+
+
+        const facultyId = document.getElementById("faculty_id").value;
+
+        // Fetch timetable data from API
+        $.ajax({
+            url: "/api/app/get/tt/facultytimetable",
+            type: "POST",
+            data: {
+                faculty_id: facultyId
+            },
+            success: function (response) {
+                if (response.success) {
+                    const timetableData = response.timetable;
+                    populateTimetable(timetableData);
+                } else {
+                    console.error("Failed to fetch timetable data");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error occurred while fetching timetable:", error);
+            }
+        });
+
+        // Populate timetable
+        function populateTimetable(timetableData) {
+            const daysOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const today = new Date().toLocaleString("en-US", {
+                weekday: "long"
+            });
+
+            daysOrder.forEach((day, index) => {
+                const dayClasses = timetableData[day] || [];
+                let classDetails = "";
+
+                if (dayClasses.length > 0) {
+                    dayClasses.forEach((slot) => {
+                        classDetails += `
+                    <div class="class-details mb-2 bg-dark-light">
+                        <p><strong>${slot.department} - ${slot.class} - ${slot.section}</strong></p>
+                        <p>${slot.time} | Sem: ${slot.semester}</p>
+                    </div>
+                `;
+                    });
+                } else {
+                    classDetails = `<p class="no-classes">No classes scheduled</p>`;
+                }
+
+                timetableContainer.innerHTML += `
+            <div class="col" data-order="${index}">
+                <div class="card day-card shadow-sm ${day === today ? "current-day" : ""}" data-day="${day}">
+                    <div class="day-header">
+                        <i class="icon fa-solid fa-calendar-day"></i>
+                        <div>${day}</div>
+                    </div>
+                    <div class="card-body">
+                        ${classDetails}
+                    </div>
+                </div>
+            </div>
+        `;
+            });
+
+            // Sort and reinitialize Masonry
+            const elements = Array.from(timetableContainer.children);
+            elements.sort((a, b) => a.getAttribute("data-order") - b.getAttribute("data-order"));
+            elements.forEach((element) => timetableContainer.appendChild(element));
+
+            const msnry = new Masonry(timetableContainer, {
+                itemSelector: ".col",
+                columnWidth: ".col",
+                percentPosition: true
+            });
+
+            // Initially blur other days
+            toggleShowAll(msnry);
+        }
+
+        // Toggle between showing all days and only the current day
+        function toggleShowAll(msnry) {
+            const dayCards = document.querySelectorAll(".day-card");
+            const isShowingAll = showAllButton.textContent === "Show All";
+
+            dayCards.forEach((card) => {
+                if (!card.classList.contains("current-day")) {
+                    if (isShowingAll) {
+                        card.classList.remove("blurred");
+                    } else {
+                        card.classList.add("blurred");
+                    }
+                }
+            });
+
+            showAllButton.textContent = isShowingAll ? "Show Only Today" : "Show All";
+            msnry.layout();
+        }
+
+        window.toggleShowAll = toggleShowAll;
+
+    }
+});
 $(document).ready(function () {
     setInterval(function () {
         var text1 = $('#footer-text-1');
@@ -2116,6 +2282,229 @@ $(document).ready(function () {
         console.log('tooltipTriggerEl:', tooltipTriggerEl)
     })
 })()
+$(document).ready(function () {
+
+    console.log("student Timetable JS loaded [updated]");
+
+    if ($('.student-timetable-cont').length > 0) {
+
+        console.log("Student Timetable page detected");
+
+        // DOM Elements
+        const timetableContainer = document.getElementById("weeklyTimetable");
+        const showAllButton = document.getElementById("showAllButton");
+
+
+        const student_id = document.getElementById("student_id").value;
+
+        // Fetch timetable data from API
+        $.ajax({
+            url: "/api/app/get/tt/studenttimetable",
+            type: "POST",
+            data: {
+                student_id: student_id
+            },
+            success: function (response) {
+                if (response.success) {
+                    const timetableData = response.timetable;
+                    populateTimetable(timetableData);
+                } else {
+                    console.error("Failed to fetch timetable data");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error occurred while fetching timetable:", error);
+            }
+        });
+
+        // Populate timetable
+        function populateTimetable(timetableData) {
+            const daysOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const today = new Date().toLocaleString("en-US", {
+                weekday: "long"
+            });
+
+            daysOrder.forEach((day, index) => {
+                const dayClasses = timetableData[day] || [];
+                let classDetails = "";
+
+                if (dayClasses.length > 0) {
+                    dayClasses.forEach((slot) => {
+                        classDetails += `
+                    <div class="class-details mb-2 bg-dark-light">
+                        <p><strong>${slot.subject_code} - ${slot.section}</strong></p>
+                        <p><em>${slot.faculty}</em></p>
+                        <p>${slot.time} | ${slot.class}</p>
+                    </div>
+                `;
+                    });
+                } else {
+                    classDetails = `<p class="no-classes">No classes scheduled</p>`;
+                }
+
+                timetableContainer.innerHTML += `
+            <div class="col" data-order="${index}">
+                <div class="card day-card shadow-sm ${day === today ? "current-day" : ""}" data-day="${day}">
+                    <div class="day-header">
+                        <i class="icon fa-solid fa-calendar-day"></i>
+                        <div>${day}</div>
+                    </div>
+                    <div class="card-body">
+                        ${classDetails}
+                    </div>
+                </div>
+            </div>
+        `;
+            });
+
+            // Sort and reinitialize Masonry
+            const elements = Array.from(timetableContainer.children);
+            elements.sort((a, b) => a.getAttribute("data-order") - b.getAttribute("data-order"));
+            elements.forEach((element) => timetableContainer.appendChild(element));
+
+            const msnry = new Masonry(timetableContainer, {
+                itemSelector: ".col",
+                columnWidth: ".col",
+                percentPosition: true
+            });
+
+            // Initially blur other days
+            toggleShowAll(msnry);
+        }
+
+        // Toggle between showing all days and only the current day
+        function toggleShowAll(msnry) {
+            const dayCards = document.querySelectorAll(".day-card");
+            const isShowingAll = showAllButton.textContent === "Show All";
+
+            dayCards.forEach((card) => {
+                if (!card.classList.contains("current-day")) {
+                    if (isShowingAll) {
+                        card.classList.remove("blurred");
+                    } else {
+                        card.classList.add("blurred");
+                    }
+                }
+            });
+
+            showAllButton.textContent = isShowingAll ? "Show Only Today" : "Show All";
+            msnry.layout();
+        }
+
+        window.toggleShowAll = toggleShowAll;
+
+    }
+});
+// Detailed View Pagination
+$(document).ready(function () {
+
+    console.log('summaryattstudent.js loaded');
+
+    if ($('#summary-attendance').length > 0) {
+
+        const rowsPerPage = 5;
+
+        document.querySelectorAll('tbody[id^="detailsBody-"]').forEach(body => {
+            const rows = Array.from(body.children);
+            const subjectCode = body.id.split('-')[1];
+            const pagination = document.getElementById(`pagination-${subjectCode}`);
+
+            function renderTable(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                rows.forEach((row, index) => {
+                    row.style.display = index >= start && index < end ? '' : 'none';
+                });
+            }
+
+            function renderPagination() {
+                const totalPages = Math.ceil(rows.length / rowsPerPage);
+                pagination.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.className = 'page-item';
+                    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                    li.addEventListener('click', () => {
+                        renderTable(i);
+                        pagination.querySelectorAll('.page-item').forEach(el => el.classList.remove('active'));
+                        li.classList.add('active');
+                    });
+                    pagination.appendChild(li);
+                }
+                if (pagination.firstChild) pagination.firstChild.classList.add('active');
+                renderTable(1);
+            }
+
+            renderPagination();
+        });
+
+        // Bar Chart Data
+        const barChartData = {
+            labels: JSON.parse($('#summ-subjects').val()),
+            datasets: [{
+                label: 'Attendance Percentage',
+                data: JSON.parse($('#summ-percentages').val()),
+                backgroundColor: '#4e73df',
+                borderColor: '#375a7f',
+                borderWidth: 1
+            }]
+        };
+
+        // Bar Chart Config
+        const barChartConfig = {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Subjects'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Attendance (%)'
+                        },
+                        max: 100
+                    }
+                }
+            }
+        };
+
+        // Pie Chart Data
+        const pieChartData = {
+            labels: JSON.parse($('#summ-subjects').val()),
+            datasets: [{
+                label: 'Subject Contribution',
+                data: JSON.parse($('#summ-percentages').val()),
+                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69']
+            }]
+        };
+
+        // Pie Chart Config
+        const pieChartConfig = {
+            type: 'pie',
+            data: pieChartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.raw}%`
+                        }
+                    }
+                }
+            }
+        };
+
+        // Render Charts
+        new Chart(document.getElementById('attendanceBarChart'), barChartConfig);
+        new Chart(document.getElementById('attendancePieChart'), pieChartConfig);
+    }
+});
 // $(document).ready(function () {
 //     console.log('Role Permission Manage JS Loaded [updated]');
 //     let permissionsData = [];
