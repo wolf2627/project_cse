@@ -11,13 +11,13 @@ Session::set('mode', 'web');
 if (isset($_POST['email']) and isset($_POST['password'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
-    // echo $email;
     $result = UserSession::authenticate($email, $password);
     $login_page = false;
 }
 
 if (!$login_page) {
     if ($result) {
+        Log::dolog("Login Success: $email", "LOGIN", true);
         $should_redirect = Session::get('_redirect');
         $redirect_to =  get_config('base_path') . "dashboard";
         if (isset($should_redirect)) {
@@ -30,6 +30,7 @@ if (!$login_page) {
         </script>
     <?
     } else {
+        Log::dolog("Login Failed: $email", "LOGIN", true);
     ?>
         <script>
             window.location.href = "/login?error=1";
