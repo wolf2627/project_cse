@@ -21,6 +21,9 @@
     <!-- Masonry JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js"></script>
 
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- load css -->
     <link href="<?= get_config("base_path") ?>css/style.min.css" rel="stylesheet">
     <link href="<?= get_config("base_path") ?>css/app.min.css" rel="stylesheet">

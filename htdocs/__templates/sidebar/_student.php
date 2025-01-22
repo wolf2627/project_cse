@@ -11,6 +11,22 @@ $listOfLinks = [
         'name' => 'Time Table',
         'icon' => 'calendar3',
         'href' => '/timetable'
+    ],
+    [
+        'name' => 'Attendance',
+        'icon' => 'calendar2-check',
+        'subLinks' => [
+            [
+                'name' => 'Summary',
+                'icon' => 'person-lines-fill',
+                'href' => '/attendance?atye=' . base64_encode('sw')
+            ],
+            [
+                'name' => 'Date Wise',
+                'icon' => 'person-check-fill',
+                'href' => '/attendance?atye=' . base64_encode('at')
+            ]
+        ]
     ]
 ];
 
@@ -30,7 +46,7 @@ foreach ($listOfLinks as $link) {
                     <p>{$name}</p>
                 </a>
                 <div class='collapse' id='{$name}Collapse'>
-                    <ul class='list-unstyled ps-3'>";
+                    <ul class='list-unstyled ps-0'>";
         foreach ($subLinks as $subLink) {
             $subHref = $subLink['href'] ?? '#';
             $subIcon = $subLink['icon'] ?? '';
