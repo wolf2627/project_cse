@@ -1,18 +1,8 @@
-<section class="py-5 text-center container">
-    <div class="row py-lg-5">
-        <div class="col-lg-6 col-md-8 mx-auto">
-            <img class="mb-4 img-fluid" id="psna-logo" src="" alt="" width="" height="">
-            <h1 class="fw-light">welcome to the Portal</h1>
-            <p class="lead text-body-secondary">Management is not an easy task</p>
-            <p>
-                <a href="/login" class="btn btn-success my-2">Login</a>
-            </p>
+<section class="d-flex justify-content-center align-items-center vh-100">
+        <div class="text-center">
+            <img class="mb-4 img-fluid" src="https://www.psnacet.edu.in/images/logo-white.png" alt="Portal Logo" width="" height="">
+            <h1 class="h3 fw-bold text-warning">Welcome to the Portal</h1>
+            <p class="text-muted mb-4">Effortless management starts here.</p>
+            <a href="/login" class="btn btn-success w-50 py-2">Login</a>
         </div>
-    </div>
 </section>
-
-<!-- <footer class="footer mt-auto py-3 position-fixed bottom-0" >
-    <div class="container">
-        <span class="text-body-secondary">Developed by Yuheswari, Aswin & Mentored by Dr.M.Buvana @CSE, PSNA </span>
-    </div>
-</footer>  -->
