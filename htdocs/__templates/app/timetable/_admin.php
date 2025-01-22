@@ -47,16 +47,16 @@
     }
 
     .show-all-btn {
-        position: fixed;
+        /* position: relative; */
         /* top: 20px;
         right: 20px;
         z-index: 1000; */
         /* background-color: #007bff; */
         /* color: white; */
-        padding: 10px 15px;
-        border: none;
+        /* padding: 10px 15px; */
+        /* border: none;
         border-radius: 5px;
-        cursor: pointer;
+        cursor: pointer; */
         transition: background-color 0.3s;
     }
 
@@ -66,13 +66,13 @@
 </style>
 
 
-<div class="container mt-4">
+<div class="mt-2">
     <!-- Show All Button -->
-    <button class="show-all-btn btn btn-primary" id="showAllButton" onclick="toggleShowAll()">Show All</button>
     <h1 class="text-center mb-4 fw-bold">Weekly Timetable</h1>
+    <button class="show-all-btn btn btn-primary mb-2 mt-2" id="showAllButton" onclick="toggleShowAll()">Show All</button>
 
     <!-- Weekly Timetable Cards -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="weeklyTimetable">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-6 g-6" id="weeklyTimetable">
         <!-- Dynamic day cards -->
     </div>
 </div>
@@ -85,105 +85,86 @@
 <!-- Dynamic Content Script -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const timetableData = {
-            Monday: [{
-                    class: "CSE112",
-                    semester: "5",
-                    batch: "2022-2026",
-                    section: "A",
-                    time: "08:45-09:40"
-                },
-                {
-                    class: "CSE203",
-                    semester: "1",
-                    batch: "2024-2028",
-                    section: "B",
-                    time: "02:35-03:25"
-                }
-            ],
-            Tuesday: [{
-                class: "CSE112",
-                semester: "5",
-                batch: "2022-2026",
-                section: "A",
-                time: "09:40-10:35"
-            }],
-            Wednesday: [{
-                class: "CSE112",
-                semester: "5",
-                batch: "2022-2026",
-                section: "A",
-                time: "10:55-11:45"
-            }],
-            Thursday: [],
-            Friday: [{
-                class: "CSE204",
-                semester: "2",
-                batch: "2024-2028",
-                section: "C",
-                time: "01:00-01:50"
-            }],
-            Saturday: [],
-            Sunday: []
-        };
-
-        const daysOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        const today = new Date().toLocaleString("en-US", {
-            weekday: "long"
-        });
+        // DOM Elements
         const timetableContainer = document.getElementById("weeklyTimetable");
         const showAllButton = document.getElementById("showAllButton");
 
-        // Populate timetable
-        daysOrder.forEach((day, index) => {
-            const dayClasses = timetableData[day];
-            let classDetails = "";
-
-            if (dayClasses.length > 0) {
-                dayClasses.forEach((slot) => {
-                    classDetails += `
-                            <div class="class-details mb-2 bg-dark-light">
-                                <p><strong>Class:</strong> ${slot.class}</p>
-                                <p><strong>Time:</strong> ${slot.time}</p>
-                                <p><strong>Semester:</strong> ${slot.semester}</p>
-                                <p><strong>Batch:</strong> ${slot.batch}</p>
-                                <p><strong>Section:</strong> ${slot.section}</p>
-                            </div>
-                        `;
-                });
-            } else {
-                classDetails = `<p class="no-classes">No classes scheduled</p>`;
+        // Fetch timetable data from API
+        $.ajax({
+            url: "/api/app/get/tt/facultytimetable?faculty_id=1011",
+            type: "POST",
+            data: {
+                faculty_id: 1011
+            },
+            success: function(response) {
+                if (response.success) {
+                    const timetableData = response.timetable;
+                    populateTimetable(timetableData);
+                } else {
+                    console.error("Failed to fetch timetable data");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error occurred while fetching timetable:", error);
             }
+        });
 
-            timetableContainer.innerHTML += `
-                    <div class="col" data-order="${index}">
-                        <div class="card day-card shadow-sm ${day === today ? 'current-day' : ''}" data-day="${day}">
-                            <div class="day-header">
-                                <i class="icon fa-solid fa-calendar-day"></i>
-                                <div>${day}</div>
-                            </div>
-                            <div class="card-body">
-                                ${classDetails}
-                            </div>
+        // Populate timetable
+        function populateTimetable(timetableData) {
+            const daysOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            const today = new Date().toLocaleString("en-US", {
+                weekday: "long"
+            });
+
+            daysOrder.forEach((day, index) => {
+                const dayClasses = timetableData[day] || [];
+                let classDetails = "";
+
+                if (dayClasses.length > 0) {
+                    dayClasses.forEach((slot) => {
+                        classDetails += `
+                        <div class="class-details mb-2 bg-dark-light">
+                            <p><strong>${slot.department} - ${slot.class} - ${slot.section}</strong></p>
+                            <p>${slot.time} | Sem: ${slot.semester}</p>
+                        </div>
+                    `;
+                    });
+                } else {
+                    classDetails = `<p class="no-classes">No classes scheduled</p>`;
+                }
+
+                timetableContainer.innerHTML += `
+                <div class="col" data-order="${index}">
+                    <div class="card day-card shadow-sm ${day === today ? "current-day" : ""}" data-day="${day}">
+                        <div class="day-header">
+                            <i class="icon fa-solid fa-calendar-day"></i>
+                            <div>${day}</div>
+                        </div>
+                        <div class="card-body">
+                            ${classDetails}
                         </div>
                     </div>
-                `;
-        });
+                </div>
+            `;
+            });
 
-        // Sort elements by data-order attribute
-        const elements = Array.from(timetableContainer.children);
-        elements.sort((a, b) => a.getAttribute('data-order') - b.getAttribute('data-order'));
-        elements.forEach(element => timetableContainer.appendChild(element));
+            // Sort and reinitialize Masonry
+            const elements = Array.from(timetableContainer.children);
+            elements.sort((a, b) => a.getAttribute("data-order") - b.getAttribute("data-order"));
+            elements.forEach((element) => timetableContainer.appendChild(element));
 
-        // Initialize Masonry
-        const msnry = new Masonry(timetableContainer, {
-            itemSelector: '.col',
-            columnWidth: '.col',
-            percentPosition: true
-        });
+            const msnry = new Masonry(timetableContainer, {
+                itemSelector: ".col",
+                columnWidth: ".col",
+                percentPosition: true
+            });
+
+            // Initially blur other days
+            toggleShowAll(msnry);
+        }
 
         // Toggle between showing all days and only the current day
-        function toggleShowAll() {
+        function toggleShowAll(msnry) {
             const dayCards = document.querySelectorAll(".day-card");
             const isShowingAll = showAllButton.textContent === "Show All";
 
@@ -202,8 +183,5 @@
         }
 
         window.toggleShowAll = toggleShowAll;
-
-        // Initially blur other days
-        toggleShowAll();
     });
 </script>

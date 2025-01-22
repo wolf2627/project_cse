@@ -1,0 +1,50 @@
+.day-card {
+    min-height: 200px;
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
+}
+
+.day-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.blurred {
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+.blurred:hover {
+    filter: none;
+    pointer-events: auto;
+}
+
+.day-header {
+    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+    color: #fff;
+    border-radius: 15px 15px 0 0;
+    padding: 10px;
+    text-align: center;
+}
+
+.current-day {
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    color: #fff;
+}
+
+.class-details {
+    padding: 10px;
+    border: 1px dashed #ddd;
+    border-radius: 10px;
+    /* background: #f9f9f9; */
+}
+
+.no-classes {
+    color: #888;
+    font-style: italic;
+}
+
+.show-all-btn {
+    transition: background-color 0.3s;
+}

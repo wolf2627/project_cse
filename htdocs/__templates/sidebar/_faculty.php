@@ -6,6 +6,11 @@
 
 $listOfLinks = [
     [
+        'name' => 'Time Table',
+        'icon' => 'calendar3',
+        'href' => '/timetable'
+    ],
+    [
         'name' => 'Enter Test Marks',
         'icon' => 'new-folder',
         'subLinks' => []
@@ -37,7 +42,7 @@ if (!empty($tests)) {
             $encodedBatch = base64_encode(implode(", ", $details['batches']));
             $encodedSemester = base64_encode(implode(", ", $details['semesters']));
 
-            $listOfLinks[0]['subLinks'][] = [
+            $listOfLinks[1]['subLinks'][] = [
                 'name' => $testName,
                 'icon' => 'journal-plus',
                 'href' => "/markentry?code={$encodedSubjectCode}&testname={$encodedTestName}&batch={$encodedBatch}&semester={$encodedSemester}&maxmark={$details['maxmark']}"
@@ -45,7 +50,7 @@ if (!empty($tests)) {
         }
     }
 } else {
-    $listOfLinks[] = [
+    $listOfLinks[1]['subLinks'][] = [
         'name' => 'No tests found',
         'icon' => 'journal-plus',
         'href' => '#'
