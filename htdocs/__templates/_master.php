@@ -12,7 +12,16 @@ Session::loadTemplate('_head'); // load head
 
     <?
     if (Session::currentScript() == 'login' || Session::currentScript() == 'index' || Session::$isError) {
-        Session::loadTemplate('_otherheader'); // load signin header
+
+    ?> <style>
+            body {
+                background: url('<?= get_config('base_path') ?>required/2022-09-22.jpg') no-repeat center center fixed;
+                background-size: cover;
+                backdrop-filter: blur(10px);
+            }
+        </style>
+    <?
+        //Session::loadTemplate('_otherheader'); // load signin header
         Session::loadTemplate(Session::currentScript());
     } else { ?>
         <div class="sidebar-overlay"></div>

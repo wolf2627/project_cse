@@ -30,5 +30,5 @@ $role = Session::get('role');
 
     </ul>
 
-    <? Session::loadTemplate("sidebar/_bottomimg") ?>
+    <? //Session::loadTemplate("sidebar/_bottomimg") ?>
 </div>

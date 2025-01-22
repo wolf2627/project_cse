@@ -2,11 +2,11 @@
 <?php
 
 $listOfLinks = [
-    [
-        'name' => 'View Test Marks',
-        'icon' => 'journal-plus',
-        'subLinks' => []
-    ],
+    // [
+    //     'name' => 'View Test Marks',
+    //     'icon' => 'journal-plus',
+    //     'subLinks' => []
+    // ],
     [
         'name' => 'Time Table',
         'icon' => 'calendar3',
@@ -45,7 +45,7 @@ foreach ($listOfLinks as $link) {
                     </svg>
                     <p>{$name}</p>
                 </a>
-                <div class='collapse' id='{$name}Collapse'>
+                <div class='collapse' id='{$name}Collapse' style='background-color:rgb(116, 116, 116, 0.1)'>
                     <ul class='list-unstyled ps-0'>";
         foreach ($subLinks as $subLink) {
             $subHref = $subLink['href'] ?? '#';
