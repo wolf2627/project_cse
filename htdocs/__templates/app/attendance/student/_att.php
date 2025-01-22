@@ -10,7 +10,7 @@ $attendanceData = $att->calculateAttendanceByDate($studentId, $date); // Fetch a
 
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4" id="date-wise-stud-atten">
     <h2 class="text-center">Date Wise Attendance</h2>
 
     <!-- Date Filter -->
@@ -32,6 +32,8 @@ $attendanceData = $att->calculateAttendanceByDate($studentId, $date); // Fetch a
         return;
     }
     ?>
+
+    <input type="hidden" id="attendanceData" value='<?= json_encode($attendanceData) ?>'>
 
     <!-- Attendance Summary -->
     <div class="row mb-4">
@@ -95,50 +97,5 @@ $attendanceData = $att->calculateAttendanceByDate($studentId, $date); // Fetch a
 </div>
 
 <script>
-    // Attendance Chart Data
-    const attendanceChartData = {
-        labels: ['Present', 'Absent', 'On-Duty', 'Not Marked'],
-        datasets: [{
-            data: [
-                <?= $attendanceData['summary']['total_present'] ?? 0 ?>,
-                <?= $attendanceData['summary']['total_absent'] ?? 0 ?>,
-                <?= $attendanceData['summary']['total_on_duty'] ?? 0 ?>,
-                <?= $attendanceData['summary']['total_not_marked'] ?? 0 ?>
-            ],
-            backgroundColor: ['#28a745', '#dc3545', '#ffc107', '#6c757d'],
-            hoverOffset: 4
-        }]
-    };
-
-    // Config for Attendance Chart
-    const attendanceChartConfig = {
-        type: 'pie',
-        data: attendanceChartData,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false, // Ensure it resizes correctly
-            plugins: {
-                legend: {
-                    position: 'right',
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            const value = context.raw;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = ((value / total) * 100).toFixed(2);
-                            return `${label}: ${value} (${percentage}%)`;
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    // Render Attendance Chart
-    const attendanceChart = new Chart(
-        document.getElementById('attendanceChart'),
-        attendanceChartConfig
-    );
+    
 </script>
