@@ -58,7 +58,7 @@ class Crons
                 }
             } catch (Exception $e) {
                 error_log($e->getMessage());
-                Log::dolog("{$faculty['faculty_id']}:  {$e->getMessage()} - {$entry['time']}", 'cron', true);
+                Log::dolog("Attendance not marked for faculty:{$faculty['faculty_id']}:  {$e->getMessage()} - {$entry['time']}", 'cron', true);
                 continue;
             }
         }
