@@ -8,6 +8,7 @@
                 <thead>
                     <tr>
                         <th>Faculty ID</th>
+                        <th>Faculty Name</th>
                         <th>Department</th>
                         <th>Batch</th>
                         <th>Action</th>
