@@ -44,7 +44,7 @@ $listOfLinks = [
             [
                 'name' => 'Assign Role',
                 'icon' => 'file-earmark-text',
-                'href' => '/assignrole'
+                'href' => '/user-role-manage'
             ],
             [
                 'name' => 'Manage Role',
@@ -68,11 +68,6 @@ $listOfLinks = [
         'name' => 'Grant Permission',
         'icon' => 'file-earmark-text',
         'href' => '/role-permission-manage'
-    ],
-    [
-        'name' => 'Assign Role',
-        'icon' => 'file-earmark-text',
-        'href' => '/user-role-manage'
     ],
     [
         'name' => 'Time Table',

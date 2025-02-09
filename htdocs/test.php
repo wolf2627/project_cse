@@ -1,19 +1,21 @@
 <pre>
 <?php
 
-include 'libs/load.php';
+// include 'libs/load.php';
 
-$faculty_id = '1012';
+// $faculty_id = '1012';
 
-$tutor = new Tutor($faculty_id);
+// $tutor = new Tutor($faculty_id);
 
-$assignedClass = $tutor->getAssingedClass();
+// $assignedClass = $tutor->getAssingedClass();
 
-print_r($assignedClass);
+// print_r($assignedClass);
 
-$assignedStudents = $tutor->getTutorshipStudents();
+// $assignedStudents = $tutor->getTutorshipStudents();
 
-print_r($assignedStudents);
+// print_r($assignedStudents);
+
+print_r($_SERVER);
 
 ?>
 </pre>

@@ -2,7 +2,7 @@
 <html lang="en" data-bs-theme="auto">
 
 <?
-Session::loadTemplate('_head'); // load head 
+Session::loadTemplate('_head', ['title' => explode('/', $_SERVER['REQUEST_URI'])['1']]); // load head 
 ?>
 
 <body>
