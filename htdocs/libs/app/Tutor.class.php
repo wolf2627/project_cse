@@ -99,83 +99,117 @@ class Tutor
 
         $students = iterator_to_array($students);
 
+        foreach ($students as $key => $student) {
+            $students[$key] = iterator_to_array($student);
+        }
+
         return $students;
     }
 
-
-    public static function assignTutor($faculty_id, $department, $batch, $section)
+    public static function assignTutor($faculty_id, $department, $batch, $section, $status = 'active')
     {
         $tutorsCollection = Database::getConnection()->tutors;
-        $yearinchargeCollection = Database::getConnection()->yearincharge;
 
-        // Check if the faculty exists
+
         if (!Faculty::verify($faculty_id)) {
             error_log("Faculty '$faculty_id' not found.");
             throw new Exception("Faculty '$faculty_id' not found.");
         }
 
-        // Check if the tutor already exists
-        $tutor = $tutorsCollection->findOne(["faculty_id" => $faculty_id]);
-
-        if ($tutor) {
-            error_log("Tutor '$faculty_id' already assigned to department : $tutor->department batch : $tutor->batch and section $tutor->section");
-            throw new Exception("Tutor '$faculty_id' already assigned to department : $tutor->department batch : $tutor->batch and section $tutor->section");
+        if (YearInCharge::verify($faculty_id)) {
+            error_log("Tutor '$faculty_id' is already assigned as Year In Charge.");
+            throw new Exception("Tutor '$faculty_id' is already assigned as Year In Charge.");
         }
 
+        $tutor = $tutorsCollection->findOne(['faculty_id' => $faculty_id]);
 
-        // check if faculty is assigned as year in charge
-
-        $yearInCharge = $yearinchargeCollection->findOne(["faculty_id" => $faculty_id]);
-
-        if ($yearInCharge) {
-            error_log("Faculty '$faculty_id' is already assigned as year in charge for department : $yearInCharge->department and batch : $yearInCharge->batch");
-            throw new Exception("Faculty '$faculty_id' is already assigned as year in charge for department : $yearInCharge->department and batch : $yearInCharge->batch");
-        }
-
-
-        $classCount = $tutorsCollection->countDocuments(["department" => $department, "batch" => $batch, "section" => $section]);
-
-        if ($classCount >= 2) {
-            error_log("Class already assigned to two tutors");
-            throw new Exception("Class already assigned to two tutors");
-        }
-
-
-        $result = $tutorsCollection->insertOne([
-            "faculty_id" => $faculty_id,
+        $exisitingClass = $tutorsCollection->findOne([
             "department" => $department,
             "batch" => $batch,
-            "section" => $section
+            "section" => $section,
+            "status" => $status
         ]);
 
-        if ($result->getInsertedId()) {
-            return $result->getInsertedId();
+        if ($tutor) {
+            $result = $tutorsCollection->updateOne(
+                ['faculty_id' => $faculty_id],
+                ['$set' => [
+                    'department' => $department,
+                    'batch' => $batch,
+                    'section' => $section
+                ]]
+            );
+
+            return $result->getModifiedCount() > 0 ? true : true;
+        } else if ($exisitingClass) {
+
+            $result = $tutorsCollection->updateOne(
+                [
+                    "department" => $department,
+                    "batch" => $batch,
+                    "section" => $section,
+                    "status" => $status
+                ],
+                ['$set' => [
+                    'faculty_id' => $faculty_id
+                ]]
+            );
+
+            return $result->getModifiedCount() > 0 ? true : true;
         } else {
-            throw new Exception("Failed to assign tutor");
+            $tutorsCollection->insertOne([
+                'faculty_id' => $faculty_id,
+                'department' => $department,
+                'batch' => $batch,
+                'section' => $section,
+                'status' => $status
+            ]);
+
+            return true;
         }
     }
 
-    public static function removeTutor($faculty_id)
+
+    public static function unassignTutor($faculty_id)
     {
         $tutorsCollection = Database::getConnection()->tutors;
 
-        $tutor = $tutorsCollection->findOne(["faculty_id" => $faculty_id]);
+        if (!Faculty::verify($faculty_id)) {
+            error_log("Faculty '$faculty_id' not found.");
+            throw new Exception("Faculty '$faculty_id' not found.");
+        }
+
+        $tutor = $tutorsCollection->findOne(['faculty_id' => $faculty_id]);
 
         if (!$tutor) {
             error_log("Tutor '$faculty_id' not found.");
             throw new Exception("Tutor '$faculty_id' not found.");
         }
 
-        $result = $tutorsCollection->deleteOne(["faculty_id" => $faculty_id]);
+        $result = $tutorsCollection->deleteOne(['faculty_id' => $faculty_id]);
 
-        return $result->getDeletedCount();
+        return $result->getDeletedCount() > 0;
     }
 
-    public static function getTutors()
+    public static function getTutors($batch = null, $section = null, $department = null)
     {
         $tutorsCollection = Database::getConnection()->tutors;
 
-        $tutors = $tutorsCollection->find([], [
+        $query = [];
+
+        if ($batch) {
+            $query['batch'] = $batch;
+        }
+
+        if ($section) {
+            $query['section'] = $section;
+        }
+
+        if ($department) {
+            $query['department'] = $department;
+        }
+
+        $tutors = $tutorsCollection->find($query, [
             'projection' => [
                 '_id' => 0,
                 'faculty_id' => 1,
@@ -188,89 +222,10 @@ class Tutor
         $tutors = iterator_to_array($tutors);
 
         foreach ($tutors as $key => $tutor) {
-            $tutors[$key] = (array)$tutor;
+            $tutors[$key] = iterator_to_array($tutor);
             $tutors[$key]['faculty_name'] = Faculty::getFacultyName($tutor['faculty_id']);
         }
 
-        return $tutors;
-    }
-
-    public static function changeClass($faculty_id, $department, $batch, $section)
-    {
-        $tutorsCollection = Database::getConnection()->tutors;
-
-        // Check if the faculty exists
-        if (!Faculty::verify($faculty_id)) {
-            error_log("Faculty '$faculty_id' not found.");
-            throw new Exception("Faculty '$faculty_id' not found.");
-        }
-
-        // Check if the tutor already exists
-        $tutor = $tutorsCollection->findOne(["faculty_id" => $faculty_id]);
-
-        if (!$tutor) {
-            error_log("Tutor '$faculty_id' not found to change.");
-            throw new Exception("Tutor '$faculty_id' not found to change.");
-        }
-
-        $result = $tutorsCollection->updateOne(
-            ["faculty_id" => $faculty_id],
-            ['$set' => [
-                "department" => $department,
-                "batch" => $batch,
-                "section" => $section
-            ]]
-        );
-
-        if ($result->getModifiedCount()) {
-            return $result->getModifiedCount();
-        } else {
-            throw new Exception("Failed to change tutor");
-        }
-    }
-
-    public static function changeTutor($faculty_id, $new_faculty_id, $department, $batch, $section)
-    {
-
-        $tutorsCollection = Database::getConnection()->tutors;
-
-        // Check if the faculty exists
-        if (!Faculty::verify($faculty_id)) {
-            error_log("Faculty '$faculty_id' not found.");
-            throw new Exception("Faculty '$faculty_id' not found.");
-        }
-
-        // Check if the new faculty exists
-        if (!Faculty::verify($new_faculty_id)) {
-            error_log("Faculty '$new_faculty_id' not found.");
-            throw new Exception("Faculty '$new_faculty_id' not found.");
-        }
-
-        // Check if the tutor already exists
-        $tutor = $tutorsCollection->findOne(["faculty_id" => $faculty_id]);
-
-        if (!$tutor) {
-            error_log("Tutor '$faculty_id' not found to change.");
-            throw new Exception("Tutor '$faculty_id' not found
-            to change.");
-        }
-
-        $result = $tutorsCollection->updateOne(
-            [
-                "faculty_id" => $faculty_id,
-                "department" => $department,
-                "batch" => $batch,
-                "section" => $section
-            ],
-            ['$set' => [
-                "faculty_id" => $new_faculty_id
-            ]]
-        );
-
-        if ($result->getModifiedCount()) {
-            return $result->getModifiedCount();
-        } else {
-            throw new Exception("Failed to change tutor");
-        }
+        return $tutors ? $tutors : false;
     }
 }

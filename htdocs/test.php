@@ -3,16 +3,17 @@
 
 include 'libs/load.php';
 
-$student = new Student('92132213245');
+$faculty_id = '1012';
 
-try {
-  $tt = new TimeTable();
-    $result = $tt->getStudentTimeTable('92132213245');
-    print_r($result);
+$tutor = new Tutor($faculty_id);
 
-} catch (Exception $e) {
-    echo $e->getMessage();
-}
+$assignedClass = $tutor->getAssingedClass();
+
+print_r($assignedClass);
+
+$assignedStudents = $tutor->getTutorshipStudents();
+
+print_r($assignedStudents);
 
 ?>
 </pre>
