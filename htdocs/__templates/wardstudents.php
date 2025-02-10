@@ -40,16 +40,21 @@ $assignedStudents = $tutor->getTutorshipStudents();
                 <?php $i = 1; ?>
                 <?php foreach ($assignedStudents as $student) : ?>
                     <tr>
-                        <td><?= $i++?></td>
+                        <td><?= $i++ ?></td>
                         <td><?= htmlspecialchars($student['reg_no']) ?></td>
                         <td><?= htmlspecialchars($student['name']) ?></td>
                         <td><?= htmlspecialchars($student['roll_no']) ?></td>
                         <?php $attendance = new Attendance(); ?>
                         <td><?= htmlspecialchars($attendance->calculateAttendanceSubjectWise($student['reg_no'])['overallAttendancePercentage']) ?></td>
                         <td>
-                            <a href="/attendance?atye=<?= base64_encode('sw') ?>&student_id=<?=$student['reg_no']?>" class="btn btn-sm btn-outline-primary">
+                            <a href="/attendance?atye=<?= base64_encode('sw') ?>&student_id=<?= $student['reg_no'] ?>" class="btn btn-sm btn-outline-primary">
                                 View Attendance
                             </a>
+                            <button type="button" class="btn btn-sm btn-outline-primary view-student-detail-tutor"
+                                data-student_id="<?= $student['reg_no'] ?>">
+                                View Details
+                            </button>
+
                         </td>
                     </tr>
                 <?php endforeach; ?>

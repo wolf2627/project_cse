@@ -3,17 +3,11 @@
 
 include 'libs/load.php';
 
-$faculty_id = Session::getUser()->getFacultyId();
+$Student = new Student('92132213026');
 
-$tutor = new Tutor($faculty_id);
 
-$assignedClass = $tutor->getAssingedClass();
+print_r($Student->getStudentDetails());
 
-print_r($assignedClass);
-
-$assignedStudents = $tutor->getTutorshipStudents();
-
-print_r($assignedStudents);
-
+print_r($Student->getEnrolledClasses());
 ?>
 </pre>
