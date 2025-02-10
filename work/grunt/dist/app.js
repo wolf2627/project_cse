@@ -1,4 +1,4 @@
-/* Processed on 5/2/2025 @ 23:38:29 */
+/* Processed on 10/2/2025 @ 1:49:47 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -132,6 +132,111 @@ function loadAssignRoleForms2(){
 }
 
 
+$(document).ready(function () {
+
+    console.log('assigntutor is ready');
+
+    $('#assign-tutor-btn').click(function (event) {
+
+        console.log('assign-tutor-btn clicked');
+        event.preventDefault();
+
+        var faculty_id = $('#assign-faculty_id').val();
+        var batch = $('#assign-batch').val();
+        var department = $('#assign-department').val();
+        var section = $('#assign-section').val();
+
+        $('#assign-faculty_id').css('border-color', '');
+        $('#assign-batch').css('border-color', '');
+        $('#assign-department').css('border-color', '');
+        $('#assign-section').css('border-color', '');
+
+        if (faculty_id === '') {
+            //highlight the field
+            $('#assign-faculty_id').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Faculty ID field');
+            errorToast.show();
+            return;
+        }
+        if (department === '') {
+            //highlight the field
+            $('#assign-department').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Department field');
+            errorToast.show();
+            return;
+        }
+        if (batch === '') {
+            //highlight the field
+            $('#assign-batch').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Batch field');
+            errorToast.show();
+            return;
+        } if (section === '') {
+            //highlight the field
+            $('#assign-section').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Section field');
+            errorToast.show();
+            return;
+        }
+
+        $('#assign-faculty_id').css('border-color', 'green');
+        $('#assign-batch').css('border-color', 'green');
+        $('#assign-department').css('border-color', 'green');
+        $('#assign-section').css('border-color', 'green');
+
+
+        console.log('faculty_id: ' + faculty_id);
+        console.log('batch: ' + batch);
+        console.log('department: ' + department);
+        console.log('section: ' + section);
+
+        var formdata = new FormData();
+
+        formdata.append('faculty_id', faculty_id);
+        formdata.append('batch', batch);
+        formdata.append('department', department);
+        formdata.append('section', section);
+
+        $.ajax({
+            url: '/api/app/tutor/assign',
+            type: 'POST',
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data);
+                if (data.success) {
+                    var successToast = new Toast('now', 'success', 'Tutor Assigned Successfully');
+                    successToast.show();
+                } else {
+                    var errorToast = new Toast('now', 'error', 'Tutor Assign Failed: ' + data.message);
+                    errorToast.show();
+                }
+
+                document.getElementById('assign-tutor-form').reset();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                var errorMessage = 'Tutor Assign Failed: ' + textStatus;
+                if (jqXHR.status === 500) {
+                    errorMessage += ' - ' + jqXHR.responseJSON.message;
+                    document.getElementById('assign-tutor-form').reset();
+                } else if (jqXHR.status === 404) {
+                    errorMessage += ' - Resource not found';
+                    document.getElementById('assign-tutor-form').reset();
+                }
+                var errorToast = new Toast('now', 'error', errorMessage);
+                errorToast.show();
+            }
+        });
+
+        $('#assign-faculty_id').css('border-color', '');
+        $('#assign-batch').css('border-color', '');
+        $('#assign-department').css('border-color', '');
+        $('#assign-section').css('border-color', '');
+
+    });
+
+});
 $(document).ready(function () {
 
     console.log('assignyearincharge is ready');
@@ -1469,6 +1574,77 @@ function manageRoleSubmitForm(operation) {
 
 
 
+$(document).ready(function () {
+
+    console.log('removetutor is ready');
+
+    function loadtutors() {
+        $.ajax({
+            url: '/api/app/tutor/get/tutors',
+            type: 'POST',
+            success: function (data) {
+                // console.log(data);
+                var tutorTableBody = $('#tutor-table tbody');
+                tutorTableBody.empty();
+                for (var i = 0; i < data.tutors.length; i++) {
+                    var tutor = data.tutors[i];
+                    var tr = $('<tr></tr>');
+                    tr.append('<td>' + tutor.faculty_id + '</td>');
+                    tr.append('<td>' + tutor.faculty_name + '</td>');
+                    tr.append('<td>' + tutor.department + '</td>');
+                    tr.append('<td>' + tutor.batch + '</td>');
+                    tr.append('<td>' + tutor.section + '</td>');
+                    tr.append('<td><button class="btn btn-danger remove-tutor-btn" data-tutor-id="' + tutor.faculty_id + '"> Unassign </button></td>');
+                    tutorTableBody.append(tr);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+                var errorToast = new Toast('now', 'error', 'Error loading Tutors or no Tutors found');
+                errorToast.show();
+                $('#tutor-table').hide();
+                $('#remove-tutor').empty();
+                $('#remove-tutor').append('<p class="alert alert-warning text-center">No Tutors found</p>');
+            }
+        });
+    }
+
+
+    $(document).on('click', '.remove-tutor-btn', function () {
+        var tutor_id = $(this).data('tutor-id');
+        console.log('remove-tutor-btn clicked');
+        console.log('tutor_id: ' + tutor_id);
+
+        var formdata = new FormData();
+        formdata.append('faculty_id', tutor_id);
+
+        $.ajax({
+            url: '/api/app/tutor/unassign',
+            type: 'POST',
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data);
+                var successToast = new Toast('now', 'success', 'Tutor unassigned successfully');
+                successToast.show();
+                loadtutors();
+            },
+            error: function (data) {
+                console.log(data);
+                var errorToast = new Toast('now', 'error', 'Error unassigning Tutor');
+                errorToast.show();
+            }
+        });
+
+        loadtutors();
+    });
+
+    if ($('#remove-tutor-container').length) {
+        loadtutors();
+    }
+
+});
 
 $('#markAttendance-container').ready(function () {
     console.log('markAttendance-container ready');

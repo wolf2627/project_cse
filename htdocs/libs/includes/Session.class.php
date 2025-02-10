@@ -135,9 +135,9 @@ class Session
      *
      * @return void
      */
-    public static function renderPage()
+    public static function renderPage($data = [])
     {
-        Session::loadTemplate('_master');
+        Session::loadTemplate('_master', $data);
     }
 
     /**

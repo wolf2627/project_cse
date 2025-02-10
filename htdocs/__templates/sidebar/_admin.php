@@ -87,7 +87,7 @@ $listOfLinks = [
     ],
     [
         'name' => 'Year Incharge',
-        'icon' => 'file-earmark-text',
+        'icon' => 'new-folder',
         'subLinks' => [
             [
                 'name' => 'Assign',
@@ -100,7 +100,25 @@ $listOfLinks = [
                 'href' => '/manageyearincharge'
             ],
         ]
+    ],
+    [
+        'name' => 'Tutor',
+        'icon' => 'new-folder',
+        'subLinks' => [
+            [
+                'name' => 'Assign',
+                'icon' => 'file-earmark-text',
+                'href' => '/assigntutor'
+            ],
+            [
+                'name' => 'Manage',
+                'icon' => 'file-earmark-text',
+                'href' => '/managetutor'
+            ],
+        ]
+    
     ]
+
 ];
 
 

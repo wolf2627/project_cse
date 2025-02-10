@@ -226,6 +226,14 @@ class Tutor
             $tutors[$key]['faculty_name'] = Faculty::getFacultyName($tutor['faculty_id']);
         }
 
+        // sort by batch and section
+        usort($tutors, function ($a, $b) {
+            if ($a['batch'] == $b['batch']) {
+                return $a['section'] <=> $b['section'];
+            }
+            return $a['batch'] <=> $b['batch'];
+        });
+
         return $tutors ? $tutors : false;
     }
 }
