@@ -103,6 +103,11 @@ class Tutor
             $students[$key] = iterator_to_array($student);
         }
 
+        // Sort by reg_no 
+        usort($students, function ($a, $b) {
+            return $a['reg_no'] <=> $b['reg_no'];
+        });
+
         return $students;
     }
 

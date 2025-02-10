@@ -24,6 +24,11 @@ $listOfLinks = [
         'name' => 'View Attendance',
         'icon' => 'person-lines-fill',
         'href' => '/viewattendance'
+    ],
+    [
+        'name' => 'View Ward Students',
+        'icon' => 'people-fill',
+        'href' => '/wardstudents'
     ]
 ];
 
