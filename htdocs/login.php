@@ -6,4 +6,4 @@ if(Session::isAuthenticated()){
     header("Location: /dashboard");
     die();
 }
-Session::renderPage();
+Session::renderPage(['title' => 'Login']);

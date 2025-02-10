@@ -2,4 +2,4 @@
 include 'libs/load.php';
 
 
-Session::renderPage();
+Session::renderPage(['title' => 'Welcome']);
