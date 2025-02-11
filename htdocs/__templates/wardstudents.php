@@ -47,7 +47,7 @@ $assignedStudents = $tutor->getTutorshipStudents();
                         <?php $attendance = new Attendance(); ?>
                         <td><?= htmlspecialchars($attendance->calculateAttendanceSubjectWise($student['reg_no'])['overallAttendancePercentage']) ?></td>
                         <td>
-                            <a href="/attendance?atye=<?= base64_encode('sw') ?>&student_id=<?= $student['reg_no'] ?>" class="btn btn-sm btn-outline-primary">
+                            <a href="/attendance?atye=<?= base64_encode('sw') ?>&student_id=<?= $student['reg_no'] ?>" class="btn btn-sm btn-outline-primary" target="_blank">
                                 View Attendance
                             </a>
                             <button type="button" class="btn btn-sm btn-outline-primary view-student-detail-tutor"

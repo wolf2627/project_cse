@@ -41,17 +41,15 @@ $(document).ready(function () {
             <div class="row">
                 <div class="col-md-6">
                     <p><strong>Faculty:</strong> ${classInfo.faculty}</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Subject Code:</strong> ${classInfo.subject_code}</p>
                     <p><strong>Department:</strong> ${classInfo.department}</p>
                 </div>
                 <div class="col-md-6">
+                    <p><strong>Subject Code:</strong> ${classInfo.subject_code}</p>
                     <p><strong>Semester:</strong> ${classInfo.semester}</p>
-                    <p><strong>Batch:</strong> ${classInfo.batch}</p>
                 </div>
                 <div class="col-md-6">
                     <p><strong>Section:</strong> ${classInfo.section}</p>
+                     <p><strong>Batch:</strong> ${classInfo.batch}</p>
                 </div>
             </div>
         </div>
@@ -61,7 +59,7 @@ $(document).ready(function () {
                 detailsHtml += `</div></div>`;
 
 
-                var d = new Dialog(studentId, detailsHtml);
+                var d = new Dialog("Student Details ("+ studentId + ")" , detailsHtml, {'size': 'large'});
                 d.show();
             }
         });
