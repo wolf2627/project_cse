@@ -9,7 +9,7 @@
         </div>
     </div>
 
-    <div class="col-md-2">
+    <div class="col-md-3">
         <!-- Left edge box with title -->
         <div class="card border-primary">
             <div class="card-header text-white bg-primary">

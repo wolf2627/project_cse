@@ -59,7 +59,7 @@ $(document).ready(function () {
                 }
 
                 timetableContainer.innerHTML += `
-            <div class="col" data-order="${index}">
+            <div class="col mt-2" data-order="${index}">
                 <div class="card day-card shadow-sm ${day === today ? "current-day" : ""}" data-day="${day}">
                     <div class="day-header">
                         <i class="icon fa-solid fa-calendar-day"></i>

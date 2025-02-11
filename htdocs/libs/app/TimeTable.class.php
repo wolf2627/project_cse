@@ -172,7 +172,7 @@ class TimeTable
         // Get the enrolled classes for the student
         $enrolled_classes = $student->getEnrolledClasses();
 
-        error_log(json_encode($enrolled_classes));
+        // error_log(json_encode($enrolled_classes));
 
         // Initialize an empty array to store the overall timetable
         $dayWiseTimetable = [];
@@ -197,10 +197,11 @@ class TimeTable
                 continue;
             }
 
+            // sort the timetable by time
+            $timeSlotsOrder = Essentials::loadtimeTableSlots();
 
             // Process each timetable entry
             foreach ($entries as $entry) {
-
                 foreach ($entry['dayslots'] as $day => $slots) {
                     foreach ($slots as $timeSlot) {
                         $dayWiseTimetable[$day][] = [
@@ -214,11 +215,13 @@ class TimeTable
                             'time' => $timeSlot,
                         ];
                     }
+
+                    // Sort the timetable based on time slot order
+                    usort($dayWiseTimetable[$day], function ($a, $b) use ($timeSlotsOrder) {
+                        return array_search($a['time'], array_values($timeSlotsOrder)) -
+                            array_search($b['time'], array_values($timeSlotsOrder));
+                    });
                 }
-
-                //  echo $class_id;
-
-
             }
         }
 
@@ -230,8 +233,12 @@ class TimeTable
         return $dayWiseTimetable;
     }
 
-    public function getStudentTimeTableByDate($student_id, $date)
+    public function getStudentTimeTableByDate($student_id, $date = null)
     {
+        // If no date is provided, use the current date
+        if ($date === null) {
+            $date = date('Y-m-d');
+        }
 
         $dayWiseTimetable = $this->getStudentTimeTable($student_id);
 

@@ -1,4 +1,4 @@
-/* Processed on 11/2/2025 @ 2:44:15 */
+/* Processed on 11/2/2025 @ 3:29:56 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -2520,7 +2520,7 @@ $(document).ready(function () {
                 }
 
                 timetableContainer.innerHTML += `
-            <div class="col" data-order="${index}">
+            <div class="col mt-2" data-order="${index}">
                 <div class="card day-card shadow-sm ${day === today ? "current-day" : ""}" data-day="${day}">
                     <div class="day-header">
                         <i class="icon fa-solid fa-calendar-day"></i>
