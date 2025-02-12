@@ -37,6 +37,51 @@ class Contest
     }
 
 
+    public static function showContests($status = 'upcoming')
+    {
+        $db = Database::getConnection();
+
+        // Find contests with sorting and exclude 'rounds' field
+        $cursor = $db->contests->find(
+            ['status' => $status],
+            [
+                'sort' => ['start_time' => 1],
+                //'projection' => ['rounds' => 0] // Exclude 'rounds'
+            ]
+        );
+
+        // Convert MongoDB Cursor to an array
+        $contests = iterator_to_array($cursor);
+
+        // Helper function to convert BSON date fields
+        $convertDate = fn($date) => $date instanceof MongoDB\BSON\UTCDateTime ? $date->toDateTime()->format('Y-m-d H:i:s') : null;
+
+        foreach ($contests as &$contest) {
+            $contest['_id'] = (string) $contest['_id'];
+            $contest['start_time'] = $convertDate($contest['start_time']);
+            $contest['end_time'] = $convertDate($contest['end_time']);
+            $contest['registration_deadline'] = $convertDate($contest['registration_deadline']);
+            $contest['created_at'] = $convertDate($contest['created_at']);
+
+            // Convert BSON arrays to PHP arrays
+            foreach (['registered_users', 'participants', 'jury', 'coordinators', 'winners'] as $field) {
+                if (isset($contest[$field]) && $contest[$field] instanceof MongoDB\Model\BSONArray) {
+                    $contest[$field] = $contest[$field]->getArrayCopy();
+                }
+            }
+
+            // Convert BSON ObjectIds to strings for rounds
+
+            if (isset($contest['rounds']) && $contest['rounds'] instanceof MongoDB\Model\BSONArray) {
+                $contest['rounds'] = array_map(fn($round) => (string) $round, $contest['rounds']->getArrayCopy());
+            }
+            
+        }
+
+        return $contests;
+    }
+
+
     public static function createContest($title, $description, $contestType, $startTime, $endTime, $registrationDeadline, $facultyId, $coordinators = [])
     {
 

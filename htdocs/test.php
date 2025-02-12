@@ -45,7 +45,9 @@ try {
 
     // $result = ContestQuestions::removeQuestionsFromRound("67ab889266a1577e120eb4a3", 1, ["67ab8f334ba64c5dcf0481e5"]);
 
-    $result = ContestRegistration::showRegistrations('67acb97986833c02da0e1eea');
+   // $result = ContestRegistration::showRegistrations('67acb97986833c02da0e1eea');
+
+   $result = Contest::showContests('upcoming');
 
    echo "<pre>";
    print_r($result);
