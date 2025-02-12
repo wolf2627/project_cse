@@ -7,7 +7,7 @@ class ContestQuestions
     {
 
         $collection = Database::getConnection()->contest_rounds;
-       
+
         try {
             $collection->updateOne(
                 ["contest_id" => new MongoDB\BSON\ObjectId($contestId), "_id" => new MongoDB\BSON\ObjectId($roundId)],
@@ -24,15 +24,21 @@ class ContestQuestions
     {
         $db = Database::getConnection();
 
-        $result = $db->contests->updateOne(
-            ["_id" => new MongoDB\BSON\ObjectId($contestId), "rounds.round_number" => $roundNumber],
+        $result = $db->contest_rounds->updateOne(
             [
-                '$pull' => ["rounds.$.questions" => ['$in' => array_map(fn($id) => new MongoDB\BSON\ObjectId($id), $questionIds)]]
+                "contest_id" => new MongoDB\BSON\ObjectId($contestId),
+                "round_number" => $roundNumber
+            ],
+            [
+                '$pull' => [
+                    "questions" => ['$in' => array_map(fn($id) => new MongoDB\BSON\ObjectId($id), $questionIds)]
+                ]
             ]
         );
 
         return $result->getModifiedCount() > 0;
     }
+
 
     public static function getQuestionsForRound($contestId, $roundNumber)
     {
@@ -43,13 +49,37 @@ class ContestQuestions
             throw new Exception('Contest not found');
         }
 
-        $round = array_filter($contest['rounds'], fn($round) => $round['round_number'] == $roundNumber);
+        $round = $db->contest_rounds->findOne([
+            "contest_id" => new MongoDB\BSON\ObjectId($contestId),
+            "round_number" => $roundNumber
+        ]);
 
-        if (empty($round)) {
+        if (!$round) {
             throw new Exception('Round not found');
         }
 
-        return $round[0]['questions'];
+        if (!isset($round['questions'])) {
+            return []; // No questions found
+        }
+
+        $questions = [];
+
+        foreach ($round['questions'] as $questionId) {
+            $question = $db->questions->findOne(["_id" => $questionId], ["projection" => ["created_at" => 0, "updated_at" => 0]]);
+            if ($question) {
+                $questions[] = $question;
+            }
+        }
+
+        foreach ($questions as $key => $question) {
+            $questions[$key] = json_decode(json_encode($question), true);
+            $questions[$key]['_id'] = (string) $question['_id'];
+            $questions[$key]['contest_id'] = (string) $question['contest_id'];
+            $questions[$key]['round_id'] = (string) $question['round_id'];
+        }
+
+
+        return $questions;
     }
 
     public static function getQuestionDetails($questionId)
@@ -169,4 +199,3 @@ class ContestQuestions
 //     "options": ["Paris", "London", "Rome", "Berlin"],
 //     "correct_option_index": 0
 //   }
-  
