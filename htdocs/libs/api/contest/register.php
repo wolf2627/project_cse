@@ -1,9 +1,8 @@
 <?php
 
-
 ${basename(__FILE__, '.php')} = function () {
 
-    $params = ['title', 'description', 'contestType', 'startTime', 'endTime', 'registrationDeadline', 'facultyId'];
+    $params = ['contestId', 'studentId'];
 
     if ($this->paramsExists($params)) {
 
@@ -13,24 +12,19 @@ ${basename(__FILE__, '.php')} = function () {
             return;
         }
 
-        $title = $this->_request['title'];
-        $description = $this->_request['description'];
-        $contestType = $this->_request['contestType'];
-        $startTime = $this->_request['startTime'];
-        $endTime = $this->_request['endTime'];
-        $registrationDeadline = $this->_request['registrationDeadline'];
-        $facultyId = $this->_request['facultyId'];
+        $contestId = $this->_request['contestId'];
+        $studentId = $this->_request['studentId'];
 
         try {
-            $result = Contest::createContest($title, $description, $contestType, $startTime, $endTime, $registrationDeadline, $facultyId);
+            $result = ContestRegistration::registerForContest($contestId, $studentId);
 
             if ($result) {
                 $this->response($this->json([
-                    'message' => 'Contest created successfully!',
-                    'contestId' => (string) $result
+                    'message' => 'Registered successfully!',
+                    "registrationId" => (string) $result
                 ]), 200);
             } else {
-                $this->response($this->json(['message' => 'Contest not created']), 500);
+                $this->response($this->json(['message' => 'Registration failed']), 500);
             }
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();
