@@ -124,7 +124,7 @@ class ContestQuestions
     }
 
 
-    public static function addCodingQuestion($type, $title, $description, $input_format, $output_format, $test_cases, $difficulty, $contestId, $roundId)
+    public static function addCodingQuestion($type, $title, $description, $test_cases, $difficulty, $contestId, $roundId)
     {
         $db = Database::getConnection();
         $collection = $db->questions;
@@ -145,8 +145,8 @@ class ContestQuestions
             "round_id" => new MongoDB\BSON\ObjectId($roundId),
             "title" => $title,
             "description" => $description,
-            "input_format" => $input_format,
-            "output_format" => $output_format,
+            //"input_format" => $input_format,
+            //"output_format" => $output_format,
             "test_cases" => $test_cases,
             "difficulty" => $difficulty,
             "created_at" => new MongoDB\BSON\UTCDateTime(),

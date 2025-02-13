@@ -13,7 +13,10 @@ ${basename(__FILE__, '.php')} = function () {
 
         if ($status == 'upcoming' || $status == 'running' || $status == 'completed') {
             $contests = Contest::showContests($status);
-            $this->response($this->json($contests), 200);
+            $this->response($this->json([
+                'message' => 'success',
+                'contests' => $contests
+            ]), 200);
         } else {
             $this->response($this->json(['message' => 'Invalid status']), 400);
         }
@@ -22,6 +25,9 @@ ${basename(__FILE__, '.php')} = function () {
 
         $contests = Contest::showContests($status);
 
-        $this->response($this->json($contests), 200);
+        $this->response($this->json([
+            'message' => 'success',
+            'contests' => $contests
+        ]), 200);
     }
 };

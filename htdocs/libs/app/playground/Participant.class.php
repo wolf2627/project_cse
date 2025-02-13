@@ -5,6 +5,7 @@ class ContestParticipants
 
     private $db;
     private $participantId;
+    private $contestId;
 
     public function __construct($participantId, $contestId)
     {
@@ -13,7 +14,7 @@ class ContestParticipants
         $collection = $this->db->registrations;
 
         $participant = $collection->findOne([
-            "participant_id" => new MongoDB\BSON\ObjectId($participantId),
+            "student_id" => $participantId,
             "contest_id" => new MongoDB\BSON\ObjectId($contestId)
         ]);
 
@@ -23,58 +24,109 @@ class ContestParticipants
         }
 
         $this->participantId = $participantId;
+        $this->contestId = $contestId;
     }
 
-    public function startContest($contestId, $roundId)
+    public function startContest($roundId)
     {
         $collection = $this->db->participants;
-
-        $pariticipated = $collection->findOne([
+        $roundsCollection = $this->db->contest_rounds;
+    
+        // Ensure the round exists
+        $round = $roundsCollection->findOne(["_id" => new MongoDB\BSON\ObjectId($roundId)]);
+        if (!$round) {
+            throw new Exception("Round not found.");
+        }
+    
+        $currentTime = new MongoDB\BSON\UTCDateTime();
+        $roundEndTime = $round['end_time'];
+    
+        // Check if the round has already ended
+        if ($currentTime > $roundEndTime) {
+            throw new Exception("This round has already ended. You cannot start it now.");
+        }
+    
+        // Check if the participant has already started another contest
+        $ongoingParticipation = $collection->findOne([
             "participant_id" => $this->participantId,
-            "contest_id" => new MongoDB\BSON\ObjectId($contestId),
-            "round_id" => new MongoDB\BSON\ObjectId($roundId)
+            "status" => "started"
         ]);
-
-        if ($pariticipated['status'] == 'started') {
-            throw new Exception('Participant already started the contest');
+    
+        // Handle unfinished attempts if the round has already ended
+        if ($ongoingParticipation) {
+            if ($ongoingParticipation['started_at'] < $roundEndTime) {
+                throw new Exception("You are already participating in another contest.");
+            } else {
+                // Mark previous attempt as expired
+                $collection->updateOne(
+                    ["_id" => $ongoingParticipation["_id"]],
+                    ['$set' => ["status" => "expired", "ended_at" => $roundEndTime]]
+                );
+            }
         }
-
-        if ($pariticipated['status'] == 'ended') {
-            throw new Exception('Participant already ended the contest');
-        }
-
-        $participant = [
+    
+        // Insert participant data
+        $participantData = [
             "participant_id" => $this->participantId,
-            "contest_id" => new MongoDB\BSON\ObjectId($contestId),
+            "contest_id" => new MongoDB\BSON\ObjectId($this->contestId),
             "round_id" => new MongoDB\BSON\ObjectId($roundId),
-            "started_at" => new MongoDB\BSON\UTCDateTime(),
+            "started_at" => $currentTime,
             "ended_at" => null,
             "status" => "started"
         ];
-
-        $contestStarted = $collection->insertOne($participant)->getInsertedId() ? true : false;
-
-        if ($contestStarted) {
-            return ContestQuestions::getQuestionsForRound($contestId, Contest::getRoundNumber($roundId));
-        } else {
-            throw new Exception('Failed to start contest');
+    
+        $insertResult = $collection->insertOne($participantData);
+        if (!$insertResult->getInsertedId()) {
+            throw new Exception("Failed to start contest.");
         }
+    
+        // Return questions for the round
+        return ContestQuestions::getQuestionsForRound($this->contestId, Contest::getRoundNumber($roundId));
     }
+    
 
     public function endContest()
     {
-
         $collection = $this->db->participants;
-
-        $pariticipated = $collection->findOne([
+        $roundsCollection = $this->db->contest_rounds;
+    
+        // Fetch participant data
+        $participation = $collection->findOne([
             "participant_id" => $this->participantId,
             "status" => "started"
         ]);
-
-        if (!$pariticipated) {
-            throw new Exception('Participant not started the contest');
+    
+        if (!$participation) {
+            throw new Exception('Participant has not started the contest.');
         }
-
+    
+        // Get round details
+        $round = $roundsCollection->findOne([
+            "_id" => new MongoDB\BSON\ObjectId($participation["round_id"])
+        ]);
+    
+        if (!$round) {
+            throw new Exception('Contest round not found.');
+        }
+    
+        $currentTime = new MongoDB\BSON\UTCDateTime();
+        $roundEndTime = $round['end_time'];
+    
+        // Check if the round has already ended
+        if ($currentTime > $roundEndTime) {
+            // Mark as expired if participant didn't complete before round ended
+            $status = "expired";
+        } else {
+            // Normal contest completion
+            $status = "ended";
+        }
+    
+        // Ensure we don’t re-end a contest
+        if (!empty($participation['ended_at'])) {
+            throw new Exception("Contest already ended at " . $participation['ended_at']->toDateTime()->format('Y-m-d H:i:s'));
+        }
+    
+        // Update participant status
         $result = $collection->updateOne(
             [
                 "participant_id" => $this->participantId,
@@ -82,14 +134,19 @@ class ContestParticipants
             ],
             [
                 '$set' => [
-                    "status" => "ended",
-                    "ended_at" => new MongoDB\BSON\UTCDateTime()
+                    "status" => $status,
+                    "ended_at" => $currentTime
                 ]
             ]
         );
-
-        return $result->getModifiedCount() > 0;
+    
+        if ($result->getModifiedCount() > 0) {
+            return true;
+        } else {
+            throw new Exception("Failed to update contest status.");
+        }
     }
+    
 
 
     public static function addParticipantToContest($contestId, $participantId)

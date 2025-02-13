@@ -1,6 +1,5 @@
 <?php
 
-// This API returns the list of students assigned to a faculty for a particular subject.
 
 ${basename(__FILE__, '.php')} = function () {
 
@@ -16,24 +15,21 @@ ${basename(__FILE__, '.php')} = function () {
         $type = $this->_request['type'];
 
         if($type == 'coding') {
-            $question = $this->_request['question'];
-            $sampletestcase = $this->_request['sampletestcase'];
+            
+            $title = $this->_request['title'];
+            $description = $this->_request['description'];
+            $test_cases = $this->_request['testcases'];
+            $difficulty = $this->_request['difficulty'];
+            $contestId = $this->_request['contestId'];
+            $roundId = $this->_request['roundId'];
 
             $Question = new ContestQuestions();
-            $Question->addCodingQuestion($type, $Question, $sampletestcase);
+            $Question->addCodingQuestion($type, $title, $description, $test_cases, $difficulty, $contestId, $roundId);
 
             $this->response($this->json(['message' => 'Coding question added successfully!']), 200);
         } else if($type == 'mcq') {
-            $question = $this->_request['question'];
-            $options = $this->_request['options'];
-            $correctOption = $this->_request['correctOption'];
-
-            $Question = new ContestQuestions();
-            $difficulty = $this->_request['difficulty'];
-            $category = $this->_request['category'];
-            $Question->addMCQQuestion($question, $options, $correctOption, $difficulty, $category);
-
-            $this->response($this->json(['message' => 'MCQ question added successfully!']), 200);
+            // TODO: Add MCQ question functionality
+            $this->response($this->json(['message' => 'not implemented']), 200);
         } else {
             $this->response($this->json(['message' => 'Invalid question type']), 400);
         }
