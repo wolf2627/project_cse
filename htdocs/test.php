@@ -39,18 +39,24 @@ try {
 
     // $result = $contest->getJuries();
 
-   // $result = ContestQuestions::addCodingQuestion('coding', 'Test Coding Question', 'This is a test coding question', 'Input Format', 'Output Format', [['input' => '1', 'output' => '2']], 'easy', '67ab889266a1577e120eb4a3', '67ab889266a1577e120eb4a4');
+    // $result = ContestQuestions::addCodingQuestion('coding', 'Test Coding Question', 'This is a test coding question', 'Input Format', 'Output Format', [['input' => '1', 'output' => '2']], 'easy', '67ab889266a1577e120eb4a3', '67ab889266a1577e120eb4a4');
 
-   // $result = ContestQuestions::getQuestionsForRound('67ab889266a1577e120eb4a3', 1);
+    // $result = ContestQuestions::getQuestionsForRound('67ab889266a1577e120eb4a3', 1);
 
     // $result = ContestQuestions::removeQuestionsFromRound("67ab889266a1577e120eb4a3", 1, ["67ab8f334ba64c5dcf0481e5"]);
 
-   // $result = ContestRegistration::showRegistrations('67acb97986833c02da0e1eea');
+    // $result = ContestRegistration::showRegistrations('67acb97986833c02da0e1eea');
 
-   $result = Contest::showContests('upcoming');
+    // $result = Contest::showContests('upcoming');
 
-   echo "<pre>";
-   print_r($result);
+    // print UTCDateTime::now();
+    $currentTime = (new MongoDB\BSON\UTCDateTime())->toDateTime()->format('Y-m-d H:i:s');
+    echo $currentTime . "<br>";
+
+    //$result = ContestSubmissions::showsubmissions('67acb97986833c02da0e1eea', '67acbe85121f2bf47b0068b7');
+    $result = ContestSubmissions::showSubmittedParticipants('67acb97986833c02da0e1eea', '67acbe85121f2bf47b0068b7');
+    echo "<pre>";
+    print_r($result);
     echo "</pre>";
 } catch (Exception $e) {
     echo $e->getMessage();
@@ -61,7 +67,3 @@ try {
 // Session::ensureRole('admin');
 
 // Session::renderPage();
-
-
-
-?>
