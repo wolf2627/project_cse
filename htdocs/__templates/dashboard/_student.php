@@ -126,7 +126,7 @@
                     </div>
                     <div class="card-body">
                         <?php
-                        $contests = Contest::showContests('upcoming');
+                        $contests = Contest::showContests('upcoming', true);
                         ?>
                         <?php if (count($contests) > 0): ?>
                             <ul class="list-group list-group-flush">

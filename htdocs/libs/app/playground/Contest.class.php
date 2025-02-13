@@ -37,13 +37,24 @@ class Contest
     }
 
 
-    public static function showContests($status = 'upcoming')
+    public static function showContests($status = 'upcoming', $registrationopen = null)
     {
         $db = Database::getConnection();
 
+        $query = [];
+
+        if ($status) {
+            $query['status'] = $status;
+        }
+
+        if ($registrationopen) {
+            $query['registration_open'] = $registrationopen;
+        }
+
+
         // Find contests with sorting and exclude 'rounds' field
         $cursor = $db->contests->find(
-            ['status' => $status],
+            $query,
             [
                 'sort' => ['start_time' => 1],
                 //'projection' => ['rounds' => 0] // Exclude 'rounds'
@@ -62,6 +73,8 @@ class Contest
             $contest['end_time'] = $convertDate($contest['end_time']);
             $contest['registration_deadline'] = $convertDate($contest['registration_deadline']);
             $contest['created_at'] = $convertDate($contest['created_at']);
+            $contest['registration_open'] = $contest['registration_open'] ? 'true' : 'false';
+
 
             // Convert BSON arrays to PHP arrays
             foreach (['registered_users', 'participants', 'jury', 'coordinators', 'winners'] as $field) {
