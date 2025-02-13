@@ -1,4 +1,4 @@
-/* Processed on 11/2/2025 @ 3:29:56 */
+/* Processed on 13/2/2025 @ 16:0:1 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -387,6 +387,34 @@ $('#class-wise-year-report-btn').click(function () {
 });
 
 
+
+$(document).ready(function () {
+    console.log("Register script loaded successfully");
+    $(".register-btn").click(function () {
+        var contestId = $(this).data("contest-id");
+        var button = $(this);
+        button.prop("disabled", true);
+        button.html("Registering...");
+
+        $.ajax({
+            url: "/api/contest/register",
+            type: "POST",
+            data: { contestId: contestId },
+            success: function (response) {
+                var toast = new Toast("now", "success", "Registration successful");
+                toast.show();
+                button.html("Registered");
+            },
+            error: function (xhr, status, error) {
+                var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "Registration failed";
+                var toast = new Toast("now", "error", errorMessage + " Please try again later.");
+                toast.show();
+                button.html("Failed");
+                button.prop("disabled", false);
+            }
+        });
+    });
+});
 
 $(document).ready(function () {
 

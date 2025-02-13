@@ -2,7 +2,7 @@
 
 ${basename(__FILE__, '.php')} = function () {
 
-    $params = ['contestId', 'studentId'];
+    $params = ['contestId'];
 
     if ($this->paramsExists($params)) {
 
@@ -13,9 +13,18 @@ ${basename(__FILE__, '.php')} = function () {
         }
 
         $contestId = $this->_request['contestId'];
-        $studentId = $this->_request['studentId'];
+
+        // TODO: Check if the user is a student or teacher. implement the check here
+        if(Session::getUser()->getRole() !== 'student' && Session::getUser()->getRole() !== 'admin') {
+            $this->response($this->json(['message' => 'Unauthorized']), 403);
+            return;
+        }
+
+        $studentId = $this->_request['studentId'] ?? Session::getUser()->getRegNo();
 
         try {
+
+            //throw new Exception('Not implemented');
             $result = ContestRegistration::registerForContest($contestId, $studentId);
 
             if ($result) {

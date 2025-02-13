@@ -53,8 +53,14 @@ try {
     $currentTime = (new MongoDB\BSON\UTCDateTime())->toDateTime()->format('Y-m-d H:i:s');
     echo $currentTime . "<br>";
 
-    //$result = ContestSubmissions::showsubmissions('67acb97986833c02da0e1eea', '67acbe85121f2bf47b0068b7');
-    $result = ContestSubmissions::showSubmittedParticipants('67acb97986833c02da0e1eea', '67acbe85121f2bf47b0068b7');
+    // $result = ContestSubmissions::showsubmissions('67acb97986833c02da0e1eea', '67acbe85121f2bf47b0068b7');
+    // $result = ContestSubmissions::showSubmittedParticipants('67acb97986833c02da0e1eea', '67acbe85121f2bf47b0068b7');
+
+    echo Session::getUser()->getRole();
+    echo Session::getUser()->getRegNo();
+
+    $result = ContestRegistration::isRegistered("67acb97986833c02da0e1eea", "92132213026");
+
     echo "<pre>";
     print_r($result);
     echo "</pre>";

@@ -72,4 +72,17 @@ class ContestRegistration
 
         return $registrations ? $registrations : [];
     }
+
+    public static function isRegistered($contestId, $studentId)
+    {
+        $db = Database::getConnection();
+
+        $registrations = $db->registrations;
+
+        $registered = $registrations->findOne(["contest_id" => new MongoDB\BSON\ObjectId($contestId), "student_id" => $studentId]);
+
+        $registered = $registered ? $registered->getArrayCopy() : false;
+
+        return $registered ? $registered['status'] : false;
+    }
 }
