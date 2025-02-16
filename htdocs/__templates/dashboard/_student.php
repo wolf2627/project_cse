@@ -160,7 +160,9 @@
 
                                         ?>
                                             <span class="badge bg-success rounded-pill" id="registration-status"><?= $status ?></span>
-
+                                            <a href="/contest?contestid=<?= base64_encode(htmlspecialchars($contest['_id'])) ?>" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
                                         <?
 
                                         } else {

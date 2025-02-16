@@ -221,7 +221,9 @@ class Essentials
                 // Convert MongoDB DateTime to a formatted PHP DateTime string
                 elseif (isset($value['$date']['$numberLong'])) {
                     $timestamp = (int) ($value['$date']['$numberLong'] / 1000); // Convert ms to seconds
-                    $data[$key] = date('Y-m-d H:i:s', $timestamp); // Format as readable time
+                    $dateTime = new DateTime("@$timestamp"); // Create DateTime object
+                    $dateTime->setTimezone(new DateTimeZone('Asia/Kolkata')); // Set timezone to IST
+                    $data[$key] = $dateTime->format('Y-m-d H:i:s'); // Format as readable time
                 }
                 // Recursive call for nested structures
                 else {

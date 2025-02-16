@@ -134,7 +134,7 @@ class Contest
 
     public function isCoordinator($userId)
     {
-        //print_r($this->contest['coordinators']);
+        // print_r($this->contest['coordinators']);
         return in_array($userId, $this->contest['coordinators']);
     }
 
@@ -151,6 +151,16 @@ class Contest
         $result = $collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($contestId)], ['$set' => ['status' => $status]]);
 
         return $result->getModifiedCount();
+    }
+
+    public function getRounds(){
+        $rounds = $this->db->contest_rounds->find(['contest_id' => new MongoDB\BSON\ObjectId($this->contestId)]);
+        
+        $rounds = iterator_to_array($rounds);
+
+        $rounds = Essentials::bsonToArray($rounds);
+
+        return $rounds;
     }
 
     public static function verfiyContestforRegistration($contestId)
