@@ -9,18 +9,148 @@ class Contest
 
     public function __construct($contestId)
     {
-
         $this->db = Database::getConnection();
         $this->collection = $this->db->contests;
 
-        $contest = $this->db->contests->findOne(['_id' => new MongoDB\BSON\ObjectId($contestId)]);
+        $contest = $this->collection->findOne(['_id' => new MongoDB\BSON\ObjectId($contestId)]);
 
         if (!$contest) {
             throw new Exception('Contest not found');
         }
 
+        // Convert BSONDocument to PHP Array
+        $contestArray = Essentials::bsonToArray($contest);
+
+        // echo "<pre>";
+        // print_r($contestArray); // Debugging
+        // echo "</pre>";
         $this->contestId = $contestId;
-        $this->contest = $contest;
+        $this->contest = $contestArray;
+    }
+
+    public function getTitle()
+    {
+        return $this->contest['title'];
+    }
+
+    public function getDescription()
+    {
+        return $this->contest['description'];
+    }
+
+    public function getStartTime($timezone = 'Asia/Kolkata')
+    {
+        $startTime = new DateTime(
+            $this->contest['start_time'],
+            new DateTimeZone('UTC')
+        );
+        $startTime->setTimezone(new DateTimeZone($timezone)); // Convert to IST
+        return $startTime->format('d-m-Y H:i:s'); // Output: 16-06-2021 05:30:00
+    }
+   
+
+    public function getEndTime($timezone = 'Asia/Kolkata')
+    {
+        $endTime = new DateTime(
+            $this->contest['end_time'],
+            new DateTimeZone('UTC')
+        );
+        $endTime->setTimezone(new DateTimeZone($timezone)); // Convert to IST
+        return $endTime->format('d-m-Y H:i:s'); // Output: 16-06-2021 05:30:00
+    }
+
+    public function getRegistrationDeadline($timezone = 'Asia/Kolkata')
+    {
+        $registrationDeadline = new DateTime(
+            $this->contest['registration_deadline'],
+            new DateTimeZone('UTC')
+        );
+        $registrationDeadline->setTimezone(new DateTimeZone($timezone)); // Convert to IST
+        return $registrationDeadline->format('d-m-Y H:i:s'); // Output: 16-06-2021 05:30:00
+    }
+
+
+    public function getStatus(){
+        return $this->contest['status'];
+    }
+
+    public function getParticipants()
+    {
+        return $this->contest['participants'];
+    }
+
+    public function setJuries($juries)
+    {
+        // set juries for contest
+
+        $result = $this->collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($this->contestId)], ['$set' => ['jury' => $juries]]);
+
+        return $result->getModifiedCount();
+    }
+
+    public function getJuries()
+    {
+        // get juries for contest
+        return $this->contest['jury'];
+    }
+
+    public function setWinners() {}
+
+    public function getWinners()
+    {
+        return $this->contest['winners'];
+    }
+
+    public function setCoordinators($coordinators)
+    {
+        // Ensure coordinators is an array
+        if (!is_array($coordinators)) {
+            throw new InvalidArgumentException('Coordinators must be an array');
+        }
+
+        // set coordinators for contest
+        $result = $this->collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($this->contestId)], ['$set' => ['coordinators' => $coordinators]]);
+        return $result->getModifiedCount();
+    }
+
+    public function adddCoordinator($coordinator)
+    {
+        // append a coordinator for contest
+        $result = $this->collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($this->contestId)], ['$addToSet' => ['coordinators' => $coordinator]]);
+        return $result->getModifiedCount();
+    }
+
+    public function removeCoordinator($coordinator)
+    {
+        // remove a coordinator for contest
+        $result = $this->collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($this->contestId)], ['$pull' => ['coordinators' => $coordinator]]);
+        return $result->getModifiedCount();
+    }
+
+    public function getCoordinators()
+    {
+        return $this->contest['coordinators'];
+    }
+
+    public function isCoordinator($userId)
+    {
+        //print_r($this->contest['coordinators']);
+        return in_array($userId, $this->contest['coordinators']);
+    }
+
+    public function changeStatus($contestId, $status)
+    {
+        $collection = Database::getConnection()->contests;
+
+        $contest = $collection->findOne(['_id' => new MongoDB\BSON\ObjectId($contestId)]);
+
+        if (!$contest) {
+            throw new Exception('Contest not found');
+        }
+
+        $result = $collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($contestId)], ['$set' => ['status' => $status]]);
+
+        return $result->getModifiedCount();
     }
 
     public static function verfiyContestforRegistration($contestId)
@@ -88,7 +218,6 @@ class Contest
             if (isset($contest['rounds']) && $contest['rounds'] instanceof MongoDB\Model\BSONArray) {
                 $contest['rounds'] = array_map(fn($round) => (string) $round, $contest['rounds']->getArrayCopy());
             }
-            
         }
 
         return $contests;
@@ -177,48 +306,5 @@ class Contest
         }
 
         return $round['round_number'];
-    }
-
-    public function changeStatus($contestId, $status)
-    {
-        $collection = Database::getConnection()->contests;
-
-        $contest = $collection->findOne(['_id' => new MongoDB\BSON\ObjectId($contestId)]);
-
-        if (!$contest) {
-            throw new Exception('Contest not found');
-        }
-
-        $result = $collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($contestId)], ['$set' => ['status' => $status]]);
-
-        return $result->getModifiedCount();
-    }
-
-
-    public function getParticipants()
-    {
-        return $this->contest['participants'];
-    }
-
-    public function setJuries($juries)
-    {
-        // set juries for contest
-
-        $result = $this->collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($this->contestId)], ['$set' => ['jury' => $juries]]);
-
-        return $result->getModifiedCount();
-    }
-
-    public function getJuries()
-    {
-        // get juries for contest
-        return $this->contest['jury'];
-    }
-
-    public function setWinners() {}
-
-    public function getWinners()
-    {
-        return $this->contest['winners'];
     }
 }

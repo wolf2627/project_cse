@@ -56,10 +56,30 @@ try {
     // $result = ContestSubmissions::showsubmissions('67acb97986833c02da0e1eea', '67acbe85121f2bf47b0068b7');
     // $result = ContestSubmissions::showSubmittedParticipants('67acb97986833c02da0e1eea', '67acbe85121f2bf47b0068b7');
 
-    echo Session::getUser()->getRole();
-    echo Session::getUser()->getRegNo();
+    echo Session::getUser()->getRole() . "<br>";
+    echo Session::getUser()->getRegNo() . "<br>";
 
-    $result = ContestRegistration::isRegistered("67acb97986833c02da0e1eea", "92132213026");
+    // $result = ContestRegistration::isRegistered("67acb97986833c02da0e1eea", "92132213026");
+    // $result = ContestRegistration::showRegistrations('67acb97986833c02da0e1eea', 'pending');
+
+    $contest = new Contest("67acb97986833c02da0e1eea");
+    $result = $contest->setCoordinators(["92132213026", "1013", "1012"]);
+    if ($contest->isCoordinator("1013")) {
+        echo "Yes";
+    } else {
+        echo "No";
+    }
+    // $result = $contest->getCoordinators();
+
+    //$result = $contest->getStartTime();
+
+    $startTime = new DateTime(
+        $contest->getStartTime(),
+        new DateTimeZone('UTC')
+    );
+    $startTime->setTimezone(new DateTimeZone('Asia/Kolkata')); // Convert to IST
+    echo $startTime->format('d-m-Y H:i:s'); // Output: 16-06-2021 05:30:00
+
 
     echo "<pre>";
     print_r($result);

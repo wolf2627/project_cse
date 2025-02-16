@@ -21,13 +21,13 @@ class Essentials
         $convertedArray = [];
         foreach ($paramArray as $key => $value) {
             if ($value instanceof MongoDB\BSON\ObjectId) {
-            $convertedArray[$key] = (string)$value;
+                $convertedArray[$key] = (string)$value;
             } elseif ($value instanceof MongoDB\Model\BSONArray) {
-            $convertedArray[$key] = $value->getArrayCopy();
+                $convertedArray[$key] = $value->getArrayCopy();
             } elseif ($value instanceof MongoDB\BSON\UTCDateTime) {
-            $convertedArray[$key] = $value->toDateTime()->format('Y-m-d H:i:s');
+                $convertedArray[$key] = $value->toDateTime()->format('Y-m-d H:i:s');
             } else {
-            $convertedArray[$key] = $value;
+                $convertedArray[$key] = $value;
             }
         }
         return $convertedArray;
@@ -201,5 +201,35 @@ class Essentials
             }, range(301, 316)),
             ['GF Lab', 'FF Lab', 'SF Lab', 'Software Lab', 'IOT Lab']
         );
+    }
+
+    /**
+     * Convert MongoDB BSONDocument & BSONArray to PHP Array recursively
+     */
+    public static function bsonToArray($data)
+    {
+        if ($data instanceof MongoDB\Model\BSONDocument || $data instanceof MongoDB\Model\BSONArray) {
+            $data = json_decode(json_encode($data), true);
+        }
+
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                // Convert MongoDB ObjectId to string
+                if (isset($value['$oid'])) {
+                    $data[$key] = $value['$oid'];
+                }
+                // Convert MongoDB DateTime to a formatted PHP DateTime string
+                elseif (isset($value['$date']['$numberLong'])) {
+                    $timestamp = (int) ($value['$date']['$numberLong'] / 1000); // Convert ms to seconds
+                    $data[$key] = date('Y-m-d H:i:s', $timestamp); // Format as readable time
+                }
+                // Recursive call for nested structures
+                else {
+                    $data[$key] = self::bsonToArray($value);
+                }
+            }
+        }
+
+        return $data;
     }
 }

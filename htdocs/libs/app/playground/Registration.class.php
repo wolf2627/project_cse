@@ -42,10 +42,14 @@ class ContestRegistration
             ['$set' => ["status" => "approved", "confirmed_by" => $facultyId]]
         );
 
-        $contests->updateOne(
+        $contest = $contests->findOne(["_id" => new MongoDB\BSON\ObjectId($contestId), "participants" => $studentId]);
+
+        if (!$contest) {
+            $contests->updateOne(
             ["_id" => new MongoDB\BSON\ObjectId($contestId)],
             ['$push' => ["participants" => $studentId]]
-        );
+            );
+        }
 
         return true;
     }

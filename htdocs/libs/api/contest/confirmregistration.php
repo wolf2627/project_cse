@@ -1,9 +1,8 @@
 <?php
 
-
 ${basename(__FILE__, '.php')} = function () {
 
-    $params = ['contestId', 'studentId', 'facultyId'];
+    $params = ['contestId', 'studentId'];
 
     if ($this->paramsExists($params)) {
 
@@ -14,15 +13,22 @@ ${basename(__FILE__, '.php')} = function () {
 
         $contestId = $this->_request['contestId'];
         $studentId = $this->_request['studentId'];
-        $facultyId = $this->_request['facultyId'];
+
+        if (Session::getUser()->getRole() === 'faculty') {
+            $approverId = Session::getUser()->getFacultyId();
+        } else if (Session::getUser()->getRole() === 'admin') {
+            $approverId = Session::getUser()->getAdminId();
+        } else if (Session::getUser()->getRole() === 'student') {
+            $approverId = Session::getUser()->getRegNo();
+        }
 
 
         try {
 
-            $result = ContestRegistration::confirmRegistration($contestId, $studentId, $facultyId);
+            $result = ContestRegistration::confirmRegistration($contestId, $studentId, $approverId);
 
             if ($result) {
-                $this->response($this->json(['message' => 'Registration confirmed successfully!']), 200);
+                $this->response($this->json(['message' => 'success']), 200);
             } else {
                 $this->response($this->json(['message' => 'Registration not confirmed']), 500);
             }

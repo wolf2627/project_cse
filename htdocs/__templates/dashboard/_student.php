@@ -124,7 +124,7 @@
                     <div class="card-header text-white bg-primary">
                         <strong>Upcoming Contests</strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
                         <?php
                         $contests = Contest::showContests('upcoming', true);
                         ?>
