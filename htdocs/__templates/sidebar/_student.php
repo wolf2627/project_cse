@@ -7,24 +7,35 @@ $listOfLinks = [
     //     'icon' => 'journal-plus',
     //     'subLinks' => []
     // ],
+    // [
+    //     'name' => 'Time Table',
+    //     'icon' => 'calendar3',
+    //     'href' => '/timetable'
+    // ],
+    // [
+    //     'name' => 'Attendance',
+    //     'icon' => 'calendar2-check',
+    //     'subLinks' => [
+    //         [
+    //             'name' => 'Summary',
+    //             'icon' => 'person-lines-fill',
+    //             'href' => '/attendance?atye=' . base64_encode('sw')
+    //         ],
+    //         [
+    //             'name' => 'Date Wise',
+    //             'icon' => 'person-check-fill',
+    //             'href' => '/attendance?atye=' . base64_encode('at')
+    //         ]
+    //     ]
+    // ],
     [
-        'name' => 'Time Table',
-        'icon' => 'calendar3',
-        'href' => '/timetable'
-    ],
-    [
-        'name' => 'Attendance',
-        'icon' => 'calendar2-check',
+        'name' => 'Department',
+        'icon' => 'new-folder',
         'subLinks' => [
             [
-                'name' => 'Summary',
-                'icon' => 'person-lines-fill',
-                'href' => '/attendance?atye=' . base64_encode('sw')
-            ],
-            [
-                'name' => 'Date Wise',
-                'icon' => 'person-check-fill',
-                'href' => '/attendance?atye=' . base64_encode('at')
+                'name' => 'project based Learning',
+                'icon' => 'journal-plus',
+                'href' => '/projectbasedlearning'
             ]
         ]
     ]
