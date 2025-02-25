@@ -4,4 +4,4 @@ include 'libs/load.php';
 
 
 Session::$isError = True;
-Session::renderPage();
+Session::renderPage(['title' => 'Error']);

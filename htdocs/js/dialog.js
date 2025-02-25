@@ -49,9 +49,14 @@ class Dialog {
 			this.options.size = "medium";
 		}
 
-		if(typeof options === "object"){
-			this.options = {...this.options, options};
+		// if(typeof options === "object"){
+		// 	this.options = {...this.options, options};
+		// }
+
+		if (typeof options === "object") {
+			Object.assign(this.options, options); // ✅ Correctly merges options
 		}
+		
 
 		if(typeof options === "string"){
 			this.options.size = options;

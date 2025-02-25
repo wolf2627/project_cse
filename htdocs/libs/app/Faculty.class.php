@@ -8,10 +8,61 @@ class Faculty
     private $faculty_id;
     private $conn;
 
-    public function __construct()
+    public function __construct($facultyId = null)
     {
-        $this->faculty_id = Session::getUser()->getFacultyId();
+
         $this->conn = Database::getConnection();
+        if ($facultyId !== null) {
+
+            // check for faculty id in the database
+            $faculty = $this->conn->faculties->findOne(['faculty_id' => $facultyId]);
+
+            if (!$faculty) {
+                throw new Exception('Faculty not found.');
+            }
+
+            $this->faculty_id = $facultyId;
+        } else {
+            $this->faculty_id = Session::getUser()->getFacultyId();
+        }
+        $this->conn = Database::getConnection();
+    }
+
+
+    public static function getAllFaculties($key=null, $value=null)
+    {
+        $facultyCollection = Database::getConnection()->faculties;
+        $faculties = $facultyCollection->find(
+            $key && $value ? [$key => $value] : [],
+            ['projection' => ['created_at' => 0]]
+        );
+        $result = [];
+
+        foreach ($faculties as $faculty) {
+            $result[] = [
+                'faculty_id' => $faculty['faculty_id'],
+                'name' => $faculty['name'],
+                'email' => $faculty['email'],
+                'department' => $faculty['department'],
+                'designation' => $faculty['designation'],
+                'role' => $faculty['role']
+            ];
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * Verify if a faculty exists.
+     * @param string $facultyId
+     */
+    public static function verify($facultyId)
+    {
+        $facultyCollection = Database::getConnection()->faculties;
+        $faculty = $facultyCollection->findOne(['faculty_id' => $facultyId]);
+
+        return $faculty ? true : false;
     }
 
     public function getFacultyId()
@@ -19,13 +70,34 @@ class Faculty
         return $this->faculty_id;
     }
 
-    public static function getFacultyName($faculty_id){
+    public static function getFacultyName($faculty_id)
+    {
         $facultyCollection = Database::getConnection()->faculties;
         $faculty = $facultyCollection->findOne(['faculty_id' => $faculty_id]);
         return $faculty ? $faculty['name'] : 'Unknown Faculty';
     }
 
 
+    public function getFacultyDetails($facultyId)
+    {
+        $facultyCollection = $this->conn->faculties;
+        $faculty = $facultyCollection->findOne(
+            ['faculty_id' => $facultyId],
+            ['projection' => ['created_at' => 0]]
+        );
+
+        if (!$faculty) {
+            throw new Exception('Faculty not found.');
+        }
+
+        $result = iterator_to_array($faculty);
+
+        return $result;
+    }
+
+    /**
+     * Fetch batches assigned to the faculty.
+     */
     public function getBatches()
     {
         $collection = $this->conn->classes;
@@ -128,18 +200,18 @@ class Faculty
     }
 
 
-    
+
     /**
      * Fetch students assigned to a faculty and subject.
      */
-    public function getAssignedStudents($subjectCode, $batch, $semester, $facultyId = null)
+    public function getAssignedStudents($subjectCode, $batch, $semester, $section, $department, $facultyId = null)
     {
         $classCollection = $this->conn->classes;
         $enrollmentCollection = $this->conn->enrollments;
         $studentCollection = $this->conn->students;
 
-        
-        if(!$facultyId) {
+
+        if (!$facultyId) {
             $facultyId = $this->faculty_id;
         }
 
@@ -148,7 +220,9 @@ class Faculty
                 'faculty_id' => $facultyId,
                 'subject_code' => $subjectCode,
                 'batch' => $batch,
-                'semester' => $semester
+                'semester' => $semester,
+                'section' => $section,
+                'department' => $department
             ]);
 
             if (!$class) {
@@ -182,6 +256,36 @@ class Faculty
             return $students ?: throw new Exception('No students found.');
         } catch (Exception $e) {
             error_log('Error fetching students: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+
+
+    public function getSections($subjectCode, $batch, $semester, $faculty_id = false)
+    {
+        $classCollection = $this->conn->classes;
+
+        if (!$faculty_id) {
+            $faculty_id = $this->faculty_id;
+        }
+
+        try {
+            $cursor = $classCollection->distinct('section', [
+                'faculty_id' => $faculty_id,
+                'subject_code' => $subjectCode,
+                'batch' => $batch,
+                'semester' => $semester
+            ]);
+
+            $sections = array_map(fn($section) => ['section' => $section], $cursor);
+
+            //convert to single array
+            $sections = array_column($sections, 'section');
+
+            return $sections ?: false;
+        } catch (Exception $e) {
+            error_log('Error fetching sections: ' . $e->getMessage());
             return false;
         }
     }

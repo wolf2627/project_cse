@@ -14,10 +14,19 @@ ${basename(__FILE__, '.php')} = function () {
                 <input type="text" id="roleName" class="form-control" placeholder="Enter role name" required>
             </div>
             <div class="mb-3">
+                <label for="roleCategory" class="form-label">Role Category:</label>
+                <select id="roleCategory" class="form-control" required>
+                    <option value="">Select Role Category</option>
+                    <option value="admin">Admin</option>
+                    <option value="faculty">Faculty</option>
+                    <option value="student">Student</option>
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="description" class="form-label">Description:</label>
                 <textarea id="description" class="form-control" placeholder="Enter description" required></textarea>
             </div>
-            <button type="button" class="btn btn-primary" onclick="submitForm('create')">Submit</button>
+            <button type="button" class="btn btn-primary" onclick="manageRoleSubmitForm('create')">Submit</button>
         </form>
 <? } else {
         $this->response($this->json(['message' => 'bad request']), 400);

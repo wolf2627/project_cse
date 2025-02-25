@@ -11,120 +11,125 @@ class ClassReport
 
     public function getSectionWiseReport($test_id)
     {
-        $testDetails = Test::getTestDetails($test_id);
+        try {
+            $testDetails = Test::getTestDetails($test_id);
 
-        if (!$testDetails) {
-            return "Test not found!";
-        }
+            if (!$testDetails) {
+                throw new Exception("Test details not found");
+            }
 
-        $subjectCollection = $this->conn->subjects;
-        $classesCollection = $this->conn->classes;
-        $marksCollection = $this->conn->marks; // Marks collection
-        $facultiesCollection = $this->conn->faculties;
+            $subjectCollection = $this->conn->subjects;
+            $classesCollection = $this->conn->classes;
+            $marksCollection = $this->conn->marks; // Marks collection
+            $facultiesCollection = $this->conn->faculties;
 
-        $passmarks = (int)$testDetails->passmarks; // Convert passmarks to integer
+            $passmarks = (int)$testDetails->passmarks; // Convert passmarks to integer
 
-        $sectionWiseReport = [];
+            $sectionWiseReport = [];
 
-        // Loop through subjects in the test
-        foreach ($testDetails->subjects as $subject) {
-            $subject_code = $subject->subject_code;
-            $batch = $testDetails->batch;
-            $semester = $testDetails->semester;
+            // Loop through subjects in the test
+            foreach ($testDetails->subjects as $subject) {
+                $subject_code = $subject->subject_code;
+                $batch = $testDetails->batch;
+                $semester = $testDetails->semester;
 
-            // Get subject name from the subjects collection
-            $subjectDetails = $subjectCollection->findOne(array('subject_code' => $subject_code));
-            $subject_name = $subjectDetails ? $subjectDetails->subject_name : 'Unknown Subject';
+                // Get subject name from the subjects collection
+                $subjectDetails = $subjectCollection->findOne(array('subject_code' => $subject_code));
+                $subject_name = $subjectDetails ? $subjectDetails->subject_name : 'Unknown Subject';
 
-            // Fetch all classes for the subject, batch, and semester
-            $classes = $classesCollection->find(array(
-                'subject_code' => $subject_code,
-                'batch' => $batch,
-                'semester' => $semester
-            ));
+                // Fetch all classes for the subject, batch, and semester
+                $classes = $classesCollection->find(array(
+                    'subject_code' => $subject_code,
+                    'batch' => $batch,
+                    'semester' => $semester
+                ));
 
-            // Loop through each class for the subject
-            foreach ($classes as $class) {
-                $class_id = (string) $class['_id']; // Convert class_id to string
-                $section = $class['section'];
-                $faculty_id = (string) $class['faculty_id'];
-                $faculty_name = Faculty::getFacultyName($faculty_id);
+                // Loop through each class for the subject
+                foreach ($classes as $class) {
+                    $class_id = (string) $class['_id']; // Convert class_id to string
+                    $section = $class['section'];
+                    $faculty_id = (string) $class['faculty_id'];
+                    $faculty_name = Faculty::getFacultyName($faculty_id);
 
-                // Initialize counters for each section
-                $appearedCount = 0;
-                $passCount = 0;
-                $failCount = 0;
+                    // Initialize counters for each section
+                    $appearedCount = 0;
+                    $passCount = 0;
+                    $failCount = 0;
 
-                // Initialize an array to store the student marks for this section
-                $studentMarks = [];
+                    // Initialize an array to store the student marks for this section
+                    $studentMarks = [];
 
-                $failedStudents = [];
+                    $failedStudents = [];
 
-                // Fetch marks for the current class_id and test_id
-                $marksData = $marksCollection->find(array(
-                    'class_id' => new MongoDB\BSON\ObjectId($class_id),
-                    'test_id' => new MongoDB\BSON\ObjectId($test_id)
-                ))->toArray();
+                    // Fetch marks for the current class_id and test_id
+                    $marksData = $marksCollection->find(array(
+                        'class_id' => new MongoDB\BSON\ObjectId($class_id),
+                        'test_id' => new MongoDB\BSON\ObjectId($test_id)
+                    ))->toArray();
 
-                if (count($marksData) > 0) {
-                    // Process marks data
-                    foreach ($marksData as $marksEntry) {
-                        foreach ($marksEntry['marks'] as $studentMark) {
-                            if ($studentMark['reg_no']) {
-                                // Count as appeared
-                                $appearedCount++;
+                    if (count($marksData) > 0) {
+                        // Process marks data
+                        foreach ($marksData as $marksEntry) {
+                            foreach ($marksEntry['marks'] as $studentMark) {
+                                if ($studentMark['reg_no']) {
+                                    // Count as appeared
+                                    $appearedCount++;
 
-                                // Check if student passed or failed
-                                if ($studentMark['marks'] >= $passmarks) {
-                                    $passCount++;
-                                } else {
-                                    $failCount++;
-                                    $failedStudents[] = [
+                                    // Check if student passed or failed
+                                    if ($studentMark['marks'] >= $passmarks) {
+                                        $passCount++;
+                                    } else {
+                                        $failCount++;
+                                        $failedStudents[] = [
+                                            'Reg No' => $studentMark['reg_no'],
+                                            'Student Name' => $studentMark['studentname'],
+                                            'Marks' => $studentMark['marks']
+                                        ];
+                                    }
+
+                                    // Add student marks to the array
+                                    $studentMarks[] = [
                                         'Reg No' => $studentMark['reg_no'],
                                         'Student Name' => $studentMark['studentname'],
                                         'Marks' => $studentMark['marks']
                                     ];
                                 }
-
-                                // Add student marks to the array
-                                $studentMarks[] = [
-                                    'Reg No' => $studentMark['reg_no'],
-                                    'Student Name' => $studentMark['studentname'],
-                                    'Marks' => $studentMark['marks']
-                                ];
                             }
                         }
+                    } else {
+                        // No marks available, set as 'nil'
+                        $studentMarks = 'nil';
                     }
-                } else {
-                    // No marks available, set as 'nil'
-                    $studentMarks = 'nil';
-                }
 
-                // Store results by section (A, B, C, D) for each subject
-                if (!isset($sectionWiseReport[$section])) {
-                    $sectionWiseReport[$section] = [
-                        'Section' => $section,
-                        'Subjects' => []
+                    // Store results by section (A, B, C, D) for each subject
+                    if (!isset($sectionWiseReport[$section])) {
+                        $sectionWiseReport[$section] = [
+                            'Section' => $section,
+                            'Subjects' => []
+                        ];
+                    }
+
+                    $sectionWiseReport[$section]['Subjects'][$subject_code] = [
+                        'Subject Name' => $subject_name,
+                        'Subject Code' => $subject_code,
+                        'Faculty Name' => $faculty_name,
+                        'Class ID' => $class_id,
+                        'Appeared Students' => ($studentMarks === 'nil') ? 0 : $appearedCount,
+                        'Pass Count' => ($studentMarks === 'nil') ? 0 : $passCount,
+                        'Pass Percentage' => ($studentMarks === 'nil' || $appearedCount === 0) ? 0 : round(($passCount / $appearedCount) * 100, 2),
+                        'Fail Count' => ($studentMarks === 'nil') ? 0 : $failCount,
+                        'Student Marks' => $studentMarks, // Student marks or 'nil'
+                        'Failed Students' => $failedStudents // Failed students
                     ];
                 }
-
-                $sectionWiseReport[$section]['Subjects'][$subject_code] = [
-                    'Subject Name' => $subject_name,
-                    'Subject Code' => $subject_code,
-                    'Faculty Name' => $faculty_name,
-                    'Class ID' => $class_id,
-                    'Appeared Students' => ($studentMarks === 'nil') ? 0 : $appearedCount,
-                    'Pass Count' => ($studentMarks === 'nil') ? 0 : $passCount,
-                    'Pass Percentage' => ($studentMarks === 'nil' || $appearedCount === 0) ? 0 : round(($passCount / $appearedCount) * 100, 2),
-                    'Fail Count' => ($studentMarks === 'nil') ? 0 : $failCount,
-                    'Student Marks' => $studentMarks, // Student marks or 'nil'
-                    'Failed Students' => $failedStudents // Failed students
-                ];
             }
-        }
 
-        // Return the structured array section-wise
-        return $sectionWiseReport;
+            // Return the structured array section-wise
+            return $sectionWiseReport;
+        } catch (Exception $e) {
+            error_log('ClassReport::',  $e->getMessage());
+            return false;
+        }
     }
 
 
@@ -227,8 +232,64 @@ class ClassReport
             $failure_categories[$failed_subjects_count]['count']++;
         }
 
-        ksort($failure_categories);
+        ksort($failure_categories); // Sort the categories by the number of failed subjects
 
         return $failure_categories;
+    }
+
+
+    // Function to calculate overall report for all sections combined
+
+    public function calculateOverallReport($sectionWiseReport)
+    {
+        $overallReport = [];
+
+        // Loop through each section
+        foreach ($sectionWiseReport as $section => $data) {
+            // Loop through each subject in the current section
+            foreach ($data['Subjects'] as $subject_code => $subjectData) {
+                // Initialize overall subject data if not already initialized
+                if (!isset($overallReport[$subject_code])) {
+                    $overallReport[$subject_code] = [
+                        'Subject Name' => $subjectData['Subject Name'],
+                        'Subject Code' => $subjectData['Subject Code'],
+                        'Total Appeared Students' => 0,
+                        'Total Pass Count' => 0,
+                        'Total Fail Count' => 0,
+                        'Total Marks' => [],
+                    ];
+                }
+
+                // Aggregate the data for appeared students, pass count, and fail count
+                $overallReport[$subject_code]['Total Appeared Students'] += $subjectData['Appeared Students'];
+                $overallReport[$subject_code]['Total Pass Count'] += $subjectData['Pass Count'];
+                $overallReport[$subject_code]['Total Fail Count'] += $subjectData['Fail Count'];
+
+                // Merge student marks from the current subject
+                if ($subjectData['Student Marks'] !== 'nil') {
+                    $overallReport[$subject_code]['Total Marks'] = array_merge(
+                        $overallReport[$subject_code]['Total Marks'],
+                        $subjectData['Student Marks']
+                    );
+                }
+            }
+        }
+
+        // Calculate pass percentages for each subject
+        foreach ($overallReport as $subject_code => &$subjectData) {
+            $appearedCount = $subjectData['Total Appeared Students'];
+            $passCount = $subjectData['Total Pass Count'];
+            $failCount = $subjectData['Total Fail Count'];
+
+            // Calculate pass percentage
+            if ($appearedCount > 0) {
+                $subjectData['Pass Percentage'] = round(($passCount / $appearedCount) * 100, 2);
+            } else {
+                $subjectData['Pass Percentage'] = 0;
+            }
+        }
+
+        // Return the aggregated report
+        return $overallReport;
     }
 }

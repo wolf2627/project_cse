@@ -2,7 +2,7 @@
 
 ${basename(__FILE__, '.php')} = function () {
 
-    if ($this->paramsExists(['roleName', 'description'])) {
+    if ($this->paramsExists(['roleName', 'description', 'roleCategory'])) {
 
         if (!Session::isAuthenticated()) {
             $this->response($this->json(['message' => 'Unauthorized']), 401);
@@ -12,10 +12,11 @@ ${basename(__FILE__, '.php')} = function () {
 
         try {
             $roleName = $this->_request['roleName'];
+            $roleCategory = $this->_request['roleCategory'];
             $description = $this->_request['description'];
 
             // Create the role and get the roleId
-            $roleId = $role->createRole($roleName, $description);
+            $roleId = $role->createRole($roleName,$roleCategory ,$description);
 
             // Convert MongoDB ObjectId to string if necessary
             if ($roleId instanceof MongoDB\BSON\ObjectId) {

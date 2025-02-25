@@ -1,56 +1,48 @@
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
 
-<? Session::loadTemplate('_head'); // load head 
+<?
+Session::loadTemplate('_head', ['title' => $data['title']]); // load head 
 ?>
 
 <body>
 
-    <? Session::loadTemplate('_modetoggle'); // load mode toggle
-    ?>
-
-    <?
-    //load svg for using icons 
-    Session::loadTemplate('svg'); // load svg
+    <? Session::loadTemplate('svg'); // load svg 
     ?>
 
     <?
     if (Session::currentScript() == 'login' || Session::currentScript() == 'index' || Session::$isError) {
-        Session::loadTemplate('_otherheader'); // load signin header
-    } else {
-        Session::loadTemplate('_mainheader'); // load header
-    }
-    ?>
 
-    <div class="container-fluid">
-        <div class="row">
-            <?
-            // load script dynamically based on the current script
-            if (Session::$isError) {
-                Session::loadTemplate('_error');
-            } else {
-                if (Session::currentScript() != 'login' && Session::currentScript() != 'index') {
-                    Session::loadTemplate('_sidebar'); // load sidebar 
-                }
-
-                if (Session::currentScript() == 'login' || Session::currentScript() == 'index') {
-                    Session::loadTemplate(Session::currentScript());
-                } else {
-            ?>
-                    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                        <?
-                        Session::loadTemplate(Session::currentScript());
-                        ?>
-                    </main>
-            <? }
+    ?> <style>
+            body {
+                background: url('<?= get_config('base_path') ?>required/2022-09-22.jpg') no-repeat center center fixed;
+                background-size: cover;
+                backdrop-filter: blur(10px);
             }
-            // Session::loadTemplate('_footer'); // load footer
+        </style>
+    <?
+        //Session::loadTemplate('_otherheader'); // load signin header
+        Session::loadTemplate(Session::currentScript());
+    } else { ?>
+        <div class="sidebar-overlay"></div>
+
+        <? Session::loadTemplate('_sidebar'); ?>
+
+        <div class="main-content d-flex flex-column">
+
+            <? Session::loadTemplate('_header') ?>
+
+            <main class="flex-grow-1 px-4" style="padding-bottom: 60px;">
+                <? Session::loadTemplate(Session::currentScript()); ?>
+            </main>
+
+            <? Session::loadTemplate('_footer'); // load footer
             ?>
         </div>
-    </div>
 
-    <? //Session::loadTemplate('_footer'); // load footer
-    ?>
+    <? } ?>
+
+
 
     <? Session::loadTemplate('_modal'); //load modal template 
     ?>
@@ -72,6 +64,8 @@
 
     <!-- Include Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 
     <script src="<?= get_config("base_path") ?>js/app.min.js"></script>

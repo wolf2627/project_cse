@@ -1,0 +1,61 @@
+.popover {
+    font-size: 14px;
+    font-weight: 400;
+    font-family: 'Raleway', sans-serif, 'Noto Sans Tamil', serif;
+    line-height: 22px;
+    position: absolute;
+    z-index: 1050;
+    /* Ensures popover appears above other elements */
+    max-width: 500px;
+    padding: 1px;
+    text-align: left;
+    white-space: normal;
+    /* background-color: #fff; */
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    background-clip: padding-box;
+    padding: 10px;
+}
+
+/* Theme of popover in dark mode
+.popover-dark {
+    background-color: #343a40;
+    color: #fff;
+} */
+
+
+.popover.show {
+    opacity: 1;
+}
+
+.line {
+    font-family: 'Noto Sans Tamil', serif;
+    font-size: 0.7em;
+    margin-bottom: 0.1em;
+    position: relative;
+}
+
+.thil-explanation {
+    font-family: 'Noto Sans Tamil', serif;
+}
+
+/* Fix for content hiding issue */
+.kural-container {
+    position: relative;
+    overflow: visible;
+    /* Ensure popovers are fully visible */
+}
+
+.translation,
+.explanation {
+    display: none;
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 768px) {
+    .line {
+        font-size: 0.3em;
+        /* display: none; */
+    }
+}

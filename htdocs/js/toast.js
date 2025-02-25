@@ -15,16 +15,17 @@ C,15,a[50]),d=n(d,e,f,c,s,21,a[51]),c=n(c,d,e,f,A,6,a[52]),f=n(f,c,d,e,q,10,a[53
 
 
 class Toast {
-    constructor(title, subtitle, message, options=undefined) {
+    constructor(title, subtitle, message, options = {}) {
         this.title = title;
         this.subtitle = subtitle;
         this.message = message;
-        this.id = "toast_" + CryptoJS.MD5(Math.random()+"").toString();
+        this.id = "toast_" + CryptoJS.MD5(Math.random() + "").toString();
         this.options = {
-            "placement": "top-right"
-        }
-
-        this.options = {...this.options, ...options};
+            placement: "top-right", // Default placement
+            autohide: true,        // Default autohide behavior
+            delay: 5000,           // Default delay
+            ...options             // Merge with provided options
+        };
 
         this.placement_vals = {
             "top-left": "top-0 start-0",
@@ -36,26 +37,37 @@ class Toast {
             "bottom-left": "bottom-0 start-0",
             "bottom-center": "bottom-0 start-50 translate-middle-x",
             "bottom-right": "bottom-0 end-0"
-        }
+        };
 
         this.domInit();
     }
 
     domInit() {
-        this.placement_class = this.placement_vals[this.options.placement];
-        if ($(`#toast-${this.options.placement}`).length == 0) {
+        const placementClass = this.placement_vals[this.options.placement];
+        if (!placementClass) {
+            console.error(`Invalid placement option: ${this.options.placement}`);
+            return;
+        }
+
+        // Create the container if it doesn't exist
+        if ($(`#toast-${this.options.placement}`).length === 0) {
             $('body').append(`
-                <div id = toast-${this.options.placement} class= "toast-container position-fixed  ${this.placement_class}">
+                <div id="toast-${this.options.placement}" 
+                     class="toast-container position-fixed ${placementClass}">
                 </div>`
             );
-        } else {
-            //do nothing
         }
     }
 
     show() {
-        var toast_template = `
-        <div class="toast" id="${this.id}" role="alert" aria-live="assertive" aria-atomic="true">
+        if (!this.placement_vals[this.options.placement]) {
+            console.error(`Invalid placement: ${this.options.placement}`);
+            return;
+        }
+
+        // Toast template
+        const toastTemplate = `
+        <div class="toast primary" id="${this.id}" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <strong class="me-auto">${this.title}</strong>
                 <small class="text-body-secondary">${this.subtitle}</small>
@@ -65,16 +77,20 @@ class Toast {
                 ${this.message}
             </div>
         </div>`;
-        
-        $(`#toast-${this.options.placement}`).append(toast_template);
-        
-        var t = new bootstrap.Toast(document.getElementById(`${this.id}`), this.options);
-        
-        $(document.getElementById(`${this.id}`)).on('hidden.bs.toast', function () {
+
+        // Append the toast to the correct container
+        $(`#toast-${this.options.placement}`).append(toastTemplate);
+
+        // Initialize the Bootstrap Toast
+        const toastElement = document.getElementById(this.id);
+        const bootstrapToast = new bootstrap.Toast(toastElement, this.options);
+
+        // Automatically remove toast from DOM after it's hidden
+        $(toastElement).on('hidden.bs.toast', () => {
             $(`#${this.id}`).remove();
         });
-        //console.log(t) ;
-        
-        t.show();
+
+        // Show the toast
+        bootstrapToast.show();
     }
 }
