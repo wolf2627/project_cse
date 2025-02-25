@@ -35,7 +35,7 @@
                     </div>
                     <div class="card-body" style="max-height: 400px; overflow-y: auto;">
                         <?php
-                        $contests = Contest::showContests('upcoming', true);
+                        $contests = Contest::showContests('upcoming');
                         ?>
                         <?php if (count($contests) > 0): ?>
                             <ul class="list-group list-group-flush">

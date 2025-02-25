@@ -10,6 +10,12 @@ class ContestRegistration
 
         $registered = $collection->findOne(["contest_id" => new MongoDB\BSON\ObjectId($contestId), "student_id" => $studentId]);
 
+        $contest = new Contest($contestId);
+
+        if(!$contest->isRegistrationOpen()) {
+            throw new Exception('Registration is closed');
+        }
+
         if ($registered) {
             throw new Exception('Already registered for contest');
         }
@@ -57,7 +63,7 @@ class ContestRegistration
     public static function showRegistrations($contestId, $status = "pending")
     {
 
-        Contest::verfiyContestforRegistration($contestId);
+        // Contest::verfiyContestforRegistration($contestId);
 
         $db = Database::getConnection();
 

@@ -47,7 +47,7 @@ try {
 
     // $result = ContestRegistration::showRegistrations('67acb97986833c02da0e1eea');
 
-    // $result = Contest::showContests('upcoming');
+    $result = Contest::showContests('upcoming');
 
     // print UTCDateTime::now();
     $currentTime = (new MongoDB\BSON\UTCDateTime())->toDateTime()->format('Y-m-d H:i:s');
@@ -63,24 +63,26 @@ try {
     // $result = ContestRegistration::showRegistrations('67acb97986833c02da0e1eea', 'pending');
 
     $contest = new Contest("67acb97986833c02da0e1eea");
-    $result = $contest->setCoordinators(["92132213026", "1013", "1012"]);
-    if ($contest->isCoordinator("1013")) {
-        echo "Yes";
-    } else {
-        echo "No";
-    }
+    // $result = $contest->setCoordinators(["92132213026", "1013", "1012"]);
+    // if ($contest->isCoordinator("1013")) {
+    //     echo "Yes";
+    // } else {
+    //     echo "No";
+    // }
     // $result = $contest->getCoordinators();
 
     //$result = $contest->getStartTime();
 
-    $startTime = new DateTime(
-        $contest->getStartTime(),
-        new DateTimeZone('UTC')
-    );
-    $startTime->setTimezone(new DateTimeZone('Asia/Kolkata')); // Convert to IST
-    echo $startTime->format('d-m-Y H:i:s'); // Output: 16-06-2021 05:30:00
+    // $startTime = new DateTime(
+    //     $contest->getStartTime(),
+    //     new DateTimeZone('UTC')
+    // );
+    // $startTime->setTimezone(new DateTimeZone('Asia/Kolkata')); // Convert to IST
+    // echo $startTime->format('d-m-Y H:i:s'); // Output: 16-06-2021 05:30:00
 
+    $contest->startnow();
 
+   // $contest->endnow();
     echo "<pre>";
     print_r($result);
     echo "</pre>";

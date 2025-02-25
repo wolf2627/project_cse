@@ -7,6 +7,11 @@ $studentId = Session::getUser()->getRegNo();
 $contest = new Contest($contestId);
 $rounds = $contest->getRounds();
 
+if(!$rounds) {
+    echo '<div class="alert alert-info">No rounds available</div>';
+    return;
+}
+
 $currentTime = date("Y-m-d H:i:s");
 
 ?>

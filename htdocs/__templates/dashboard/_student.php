@@ -122,84 +122,113 @@
             <div class="col-md-4 mb-3">
                 <div class="card border-primary">
                     <div class="card-header text-white bg-primary">
-                        <strong>Upcoming Contests</strong>
+                        <strong>Contests</strong>
                     </div>
                     <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+
                         <?php
-                        $contests = Contest::showContests('upcoming', true);
+                        // Fetch ongoing and upcoming contests
+                        $ongoingContests = Contest::showContests('ongoing');
+                        $upcomingContests = Contest::showContests('upcoming', true);
+
+                        if (count($ongoingContests) > 0 || count($upcomingContests) > 0) {
+                            echo '<ul class="list-group list-group-flush">';
+
+                            // Display ongoing contests first
+                            foreach ($ongoingContests as $contest) {
+                                echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                                echo '<div>';
+                                echo '<strong>' . htmlspecialchars($contest['title']) . '</strong>';
+                                echo '<p class="text-muted small mb-1">' . htmlspecialchars($contest['description']) . '</p>';
+                                echo '<p class="text-muted small">';
+                                $date = new DateTime($contest['start_time'], new DateTimeZone('UTC'));
+                                $date->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                echo '<i class="far fa-calendar-alt"></i> ' . $date->format('d-m-Y H:i:s');
+                                echo '</p>';
+                                echo '</div>';
+
+                                // Check if the user is already registered for the contest
+                                $registered = ContestRegistration::isRegistered($contest['_id'], Session::getUser()->getRegNo());
+
+                                echo '<span class="badge bg-info rounded-pill">' . htmlspecialchars($contest['status']) . '</span>';
+
+                                if ($registered) {
+                                    $status = ($registered === 'approved') ? 'Registered and Approved' : 'Waiting for Approval';
+                                    echo '<span class="badge bg-success rounded-pill" id="registration-status">' . $status . '</span>';
+                                    echo '<a href="/contest?contestid=' . base64_encode(htmlspecialchars($contest['_id'])) . '" class="btn btn-sm btn-info">';
+                                    echo '<i class="fas fa-eye"></i> View';
+                                    echo '</a>';
+                                } else {
+
+                                    if ($contest['status'] === 'Registration Open') {
+                                        echo '<button class="btn btn-sm btn-primary register-btn" data-contest-id="' . htmlspecialchars($contest['_id']) . '">';
+                                        echo '<i class="fas fa-edit"></i> Register';
+                                        echo '</button>';
+                                    } else {
+                                        echo '<button class="btn btn-sm btn-secondary" disabled>';
+                                        echo '<i class="fas fa-edit"></i> Registration Closed';
+                                        echo '</button>';
+                                    }
+                                }
+
+                                echo '</li>';
+                            }
+
+                            // Display upcoming contests next
+                            foreach ($upcomingContests as $contest) {
+                                echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                                echo '<div>';
+                                echo '<strong>' . htmlspecialchars($contest['title']) . '</strong>';
+                                echo '<p class="text-muted small mb-1">' . htmlspecialchars($contest['description']) . '</p>';
+                                echo '<p class="text-muted small">';
+                                $date = new DateTime($contest['start_time'], new DateTimeZone('UTC'));
+                                $date->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                echo '<i class="far fa-calendar-alt"></i> ' . $date->format('d-m-Y H:i:s');
+                                echo '</p>';
+                                echo '</div>';
+
+                                // Check if the user is already registered for the contest
+                                $registered = ContestRegistration::isRegistered($contest['_id'], Session::getUser()->getRegNo());
+
+                                if ($registered) {
+                                    $status = ($registered === 'approved') ? 'Registered and Approved' : 'Waiting for Approval';
+                                    echo '<span class="badge bg-success rounded-pill" id="registration-status">' . $status . '</span>';
+                                    echo '<a href="/contest?contestid=' . base64_encode(htmlspecialchars($contest['_id'])) . '" class="btn btn-sm btn-info">';
+                                    echo '<i class="fas fa-eye"></i> View';
+                                    echo '</a>';
+                                } else {
+                                    echo '<button class="btn btn-sm btn-primary register-btn" data-contest-id="' . htmlspecialchars($contest['_id']) . '">';
+                                    echo '<i class="fas fa-edit"></i> Register';
+                                    echo '</button>';
+                                }
+
+                                echo '</li>';
+                            }
+
+                            echo '</ul>';
+                        } else {
+                            echo '<p class="card-text">No ongoing or upcoming contests.</p>';
+                        }
                         ?>
-                        <?php if (count($contests) > 0): ?>
-                            <ul class="list-group list-group-flush">
-                                <?php foreach ($contests as $contest): ?>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong><?= htmlspecialchars($contest['title']) ?></strong>
-                                            <p class="text-muted small mb-1">
-                                                <?= htmlspecialchars($contest['description']) ?>
-                                            </p>
-                                            <p class="text-muted small">
-                                                <?php
-                                                $date = new DateTime($contest['start_time'], new DateTimeZone('UTC'));
-                                                $date->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                                                ?>
-                                                <i class="far fa-calendar-alt"></i> <?= $date->format('d-m-Y H:i:s') ?>
-                                            </p>
-                                        </div>
-                                        <?
-                                        // Check if the user is already registered for the contest
-                                        $registered = ContestRegistration::isRegistered($contest['_id'], Session::getUser()->getRegNo());
-
-                                        if ($registered) {
-                                            $status = $registered;
-                                            error_log("Status : " . $status);
-                                            if ($status === 'approved') {
-                                                $status = 'Registered and approved';
-                                            } else {
-                                                $status = 'Waiting for approval';
-                                            }
-
-                                        ?>
-                                            <span class="badge bg-success rounded-pill" id="registration-status"><?= $status ?></span>
-                                            <a href="/contest?contestid=<?= base64_encode(htmlspecialchars($contest['_id'])) ?>" class="btn btn-sm btn-info">
-                                                <i class="fas fa-eye"></i> View
-                                            </a>
-                                        <?
-
-                                        } else {
-                                            $status = 'Not Registered';
-                                        ?>
-                                            <button class="btn btn-sm btn-primary register-btn"
-                                                data-contest-id="<?= htmlspecialchars($contest['_id']) ?>">
-                                                <i class="fas fa-edit"></i> Register
-                                            </button>
-                                        <?
-                                        }
-                                        ?>
-
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php else: ?>
-                            <p class="card-text">No upcoming contests.</p>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
 
 
-
-
-            <script>
-                // Initialize Masonry after the page loads
-                document.addEventListener("DOMContentLoaded", function() {
-                    var grid = document.querySelector('.row[data-masonry]');
-                    new Masonry(grid, {
-                        itemSelector: '.col-md-4',
-                        percentPosition: true
-                    });
-                });
-            </script>
-
-
-
         </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    // Initialize Masonry after the page loads
+    document.addEventListener("DOMContentLoaded", function() {
+        var grid = document.querySelector('.row[data-masonry]');
+        new Masonry(grid, {
+            itemSelector: '.col-md-4',
+            percentPosition: true
+        });
+    });
+</script>

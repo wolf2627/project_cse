@@ -28,6 +28,11 @@ class Contest
         $this->contest = $contestArray;
     }
 
+    public function isRegistrationOpen()
+    {
+        return $this->contest['registration_open'];
+    }
+
     public function getTitle()
     {
         return $this->contest['title'];
@@ -163,6 +168,16 @@ class Contest
         return $rounds;
     }
 
+    public function startnow(){
+        $result = $this->collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($this->contestId)], ['$set' => ['status' => 'ongoing', 'registration_open' => false, 'start_time' => new MongoDB\BSON\UTCDateTime(), 'end_time' => 'hidden']]);
+        return $result->getModifiedCount() > 0;
+    }
+
+    public function endnow(){
+        $result = $this->collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($this->contestId)], ['$set' => ['status' => 'ended', 'end_time' => new MongoDB\BSON\UTCDateTime()]]);
+        return $result->getModifiedCount() > 0;
+    }
+
     public static function verfiyContestforRegistration($contestId)
     {
         $db = Database::getConnection();
@@ -170,7 +185,7 @@ class Contest
         $contest = $db->contests->findOne(['_id' => new MongoDB\BSON\ObjectId($contestId), 'registration_open' => true]);
 
         if (!$contest) {
-            throw new Exception('Contest not found');
+            throw new Exception('Registration closed');
         }
 
         return $contest;
@@ -187,7 +202,7 @@ class Contest
             $query['status'] = $status;
         }
 
-        if ($registrationopen) {
+        if ($registrationopen != null) {
             $query['registration_open'] = $registrationopen;
         }
 

@@ -9,7 +9,7 @@ if (Session::getUser()->getRole() == 'student') {
     $userId = Session::getUser()->getRegNo();
 } else if (Session::getUser()->getRole() == 'admin') {
     $userId = Session::getUser()->getAdminId();
-} else {
+} else if(Session::getUser()->getRole() == 'faculty') {
     $userId = Session::getUser()->getFacultyId();
 }
 
