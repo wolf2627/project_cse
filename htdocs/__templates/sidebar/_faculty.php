@@ -30,17 +30,6 @@ $listOfLinks = [
         'icon' => 'people-fill',
         'href' => '/wardstudents'
     ],
-    [
-        'name' => 'Department',
-        'icon' => 'new-folder',
-        'subLinks' => [
-            [
-                'name' => 'project based Learning',
-                'icon' => 'journal-plus',
-                'href' => '/projectbasedlearning'
-            ]
-        ]
-    ]
 ];
 
 

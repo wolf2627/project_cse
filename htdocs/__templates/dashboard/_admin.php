@@ -3,9 +3,9 @@
     <div class="row">
         <div class="col-md-12">
             <!-- Marquee -->
-            <marquee behavior="scroll" direction="left" class="text-warning small p-2 border rounded">
+            <!-- <marquee behavior="scroll" direction="left" class="text-warning small p-2 border rounded">
                 <strong>Welcome to the site. This Site Is Under Development.</strong>
-            </marquee>
+            </marquee> -->
         </div>
     </div>
 
