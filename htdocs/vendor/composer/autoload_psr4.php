@@ -24,6 +24,7 @@ return array(
     'PhpOffice\\Math\\' => array($vendorDir . '/phpoffice/math/src/Math'),
     'MongoDB\\' => array($vendorDir . '/mongodb/mongodb/src'),
     'Matrix\\' => array($vendorDir . '/markbaker/matrix/classes/src'),
+    'Composer\\Pcre\\' => array($vendorDir . '/composer/pcre/src'),
     'Complex\\' => array($vendorDir . '/markbaker/complex/classes/src'),
     'Carbon\\Doctrine\\' => array($vendorDir . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine'),
     'Carbon\\' => array($vendorDir . '/nesbot/carbon/src/Carbon'),
