@@ -4,4 +4,4 @@ include 'libs/load.php';
 
 // Session::ensureLogin();
 
-Session::renderPage(['title' => 'project based learning']);
+Session::renderPage(['title' => 'Project Based Learning']);

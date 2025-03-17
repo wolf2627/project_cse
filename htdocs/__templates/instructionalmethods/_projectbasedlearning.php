@@ -1,59 +1,109 @@
-<h3 class="text-center">Project Based Learning</h3>
+<style>
+    .report-item {
+        background-color: #17a2b8; /* bg-info equivalent */
+        padding: 10px;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-<div class="row mt-4 mb-4">
-        <!-- YouTube Video Cards -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="ratio ratio-16x9">
-                    <!-- <iframe src="https://youtu.be/tKPs7lnZ22U?si=XKmMSuOfndNK6wYq" allowfullscreen></iframe> -->
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/Ce7GAuJBRUs?si=E8BW-0tRqEuyCtdq" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">YouTube Video 1</h5>
-                    <p class="card-text">Some details about this video.</p>
+    .report-item:hover {
+        transform: scale(1.03);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .serial-number {
+        width: 40px;
+        text-align: center;
+        font-weight: bold;
+        /* background-color: #007bff; More distinct color for serial number */
+        padding: 10px;
+        color: white;
+    }
+
+    .report-content {
+        flex-grow: 1;
+        padding-left: 10px;
+    }
+
+    a {
+        text-decoration: none;
+        color: white; /* Adjusted to white for better contrast on bg-info */
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="container">
+    <h4 class="text-center mb-4 h4">Project Based Learning</h4>
+
+    <?php
+    $links = [
+        [
+            'link' => 'https://www.youtube.com/embed/Ce7GAuJBRUs?si=E8BW-0tRqEuyCtdq',
+            'title' => 'Sample 1',
+            'description' => 'By'
+        ],
+        [
+            'link' => 'https://www.youtube.com/embed/pZ9GtZIjyY0?si=aQggiVWv62GO44Aw',
+            'title' => 'Sample 2',
+            'description' => 'By'
+        ],
+        [
+            'link' => 'https://www.youtube.com/embed/TUgZD6RSnb4?si=DxcYb_QqB2XSJpoG',
+            'title' => 'Sample 3',
+            'description' => 'By'
+        ],
+    ];
+    ?>
+
+    <div class="row mt-4">
+        <?php foreach ($links as $link): ?>
+            <div class="col-md-4 mb-4">
+                <div class="card d-flex flex-column h-100">
+                    <div class="ratio ratio-16x9 flex-grow-1">
+                        <iframe src="<?php echo $link['link']; ?>"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                    </div>
                 </div>
             </div>
-        </div>
+        <?php endforeach; ?>
+    </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="ratio ratio-16x9">
-                    <!-- <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_2" allowfullscreen></iframe> -->
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/tKPs7lnZ22U?si=9F6dSX1xd3-zBXU0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">YouTube Video 2</h5>
-                    <p class="card-text">Some details about this video.</p>
-                </div>
-            </div>
-        </div>
+    <hr>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="ratio ratio-16x9">
-                    <!-- <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_3" allowfullscreen></iframe> -->
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/L7GhDHpve3U?si=zkxsyiVq7c3uH5cE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">YouTube Video 3</h5>
-                    <p class="card-text">Some details about this video.</p>
-                </div>
+    <div class="mt-4 d-flex">
+        <div class="w-50">
+            <div class="row">
+                <?php
+                $reports = [
+                    ['year' => '2024-25', 'file' => 'pbl-2024-25.pdf'],
+                    ['year' => '2023-24', 'file' => '2022.pdf'],
+                    ['year' => '2022-23', 'file' => '2020.pdf'],
+                    ['year' => '2020-21', 'file' => '2021.pdf'],
+                ];
+                foreach ($reports as $index => $report): ?>
+                    <div class="col-12 report-item" onclick="window.open('/required/files/<?php echo $report['file']; ?>', '_blank')">
+                        <div class="serial-number"><?php echo $index + 1; ?>.</div>
+                        <div class="report-content">
+                            <a href="/required/files/<?php echo $report['file']; ?>" target="_blank"><?php echo $report['year']; ?> Report</a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
-
-
-<?php
-
-$pdfpath = "/required/files/projectbasedlearning.pdf";
-$pdffile = $_SERVER['DOCUMENT_ROOT'] . $pdfpath;
-
-if (file_exists($pdffile)) {
-    // use iframes to display PDF
-    echo "<iframe src='$pdfpath' width='100%' height='1000px'></iframe>";
-} else {
-    http_response_code(404);
-    echo "File not found.";
-}
-?>
-
+</div>

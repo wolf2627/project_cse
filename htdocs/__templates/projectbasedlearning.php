@@ -1,3 +1,3 @@
 <?php
 
-Session::loadTemplate('instructionalmethods/_yeartest');
+Session::loadTemplate('instructionalmethods/_projectbasedlearning');

@@ -1,11 +1,13 @@
-<header class="d-flex py-2">
-    <ul class="nav nav-pills">
-    <li class="nav-item"><a href="#" class="nav-link active">Experimental Learning</a></li>
+<nav class="navbar" style="background-color: #e3f2fd;">
+  <!-- Navbar content -->
+  <ul class="nav nav-pills">
         <li class="nav-item"><a href="/projectbasedlearning" class="nav-link">Project Based Learning</a></li>
         <li class="nav-item"><a href="internships" class="nav-link">Internships</a></li>
         <li class="nav-item"><a href="industrialvisit" class="nav-link">Industrial Visit</a></li>
     </ul>
-</header>
+</nav>
+
+<hr>
 
 
 <?php
