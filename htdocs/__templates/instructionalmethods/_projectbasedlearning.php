@@ -90,10 +90,10 @@
             <div class="row">
                 <?php
                 $reports = [
-                    ['year' => '2024-25', 'file' => 'pbl-2024-25.pdf'],
-                    ['year' => '2023-24', 'file' => '2022.pdf'],
-                    ['year' => '2022-23', 'file' => '2020.pdf'],
-                    ['year' => '2020-21', 'file' => '2021.pdf'],
+                    ['year' => '2024-25', 'file' => '2024-25 PBL report.pdf'],
+                    ['year' => '2023-24', 'file' => '2023-2024 PBL report.pdf'],
+                    ['year' => '2022-23', 'file' => '2022-23 PBL report.pdf'],
+
                 ];
                 foreach ($reports as $index => $report): ?>
                     <div class="col-12 report-item" onclick="window.open('/required/files/<?php echo $report['file']; ?>', '_blank')">

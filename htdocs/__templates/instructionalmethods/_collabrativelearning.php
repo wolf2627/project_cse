@@ -1,6 +1,6 @@
 <?php
 
-$pdfpath = "/required/files/collabrativelearning.pdf";
+$pdfpath = "/required/files/Collaborative learning.pdf";
 $pdffile = $_SERVER['DOCUMENT_ROOT'] . $pdfpath;
 
 if (file_exists($pdffile)) {

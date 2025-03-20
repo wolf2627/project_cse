@@ -106,7 +106,7 @@
 
 <div class="container">
     <!-- Internships Title at the Top -->
-    <h4 class="text-center mb-4 h4">Internships</h4>
+    <h4 class="text-center mb-4 h4">Train the Trainer</h4>
 
     <div class="d-flex justify-content-center">
         <!-- Students Section -->
@@ -116,10 +116,10 @@
                 <?php
                 // Define report data for both students and teachers
                 $reports = [
-                    'student' => [
-                        ['year' => '2023-24', 'file' => 'intern_student_2024.pdf'],
-                        ['year' => '2022-23', 'file' => 'intern_student_2023.pdf'],
-                        ['year' => '2021-22', 'file' => 'intern_student_2022.pdf'],
+                    'faculty' => [
+                        ['year' => '2023-24', 'file' => 'Industry Trained faculty 23-24.pdf'],
+                        ['year' => '2022-23', 'file' => 'Industry Trained faculty 22-23.pdf'],
+                        ['year' => '2021-22', 'file' => 'Industry Trained faculty 21-22.pdf'],
                     ],
                 ];
 
@@ -136,20 +136,20 @@
                 }
 
                 // Generate student reports
-                generateReportItems($reports['student']);
+                // generateReportItems($reports['faculty']);
                 ?>
             </div>
         </div>
 
         <!-- Teachers Section -->
-        <!-- <div class="column">
-            <h5 class="section-title">Faculty</h5>
+        <div class="column">
+            <!-- <h5 class="section-title">Faculty</h5> -->
             <div class="row text-right">
                 <?php
                 // Generate faculty reports
-                // generateReportItems($reports['faculty']);
+                generateReportItems($reports['faculty']);
                 ?>
             </div>
-        </div> -->
+        </div>
     </div>
 </div>
