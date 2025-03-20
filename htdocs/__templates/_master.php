@@ -2,6 +2,7 @@
 <html lang="en" data-bs-theme="auto">
 
 <?
+
 Session::loadTemplate('_head', ['title' => $data['title']]); // load head 
 ?>
 
@@ -11,7 +12,7 @@ Session::loadTemplate('_head', ['title' => $data['title']]); // load head
     ?>
 
     <?
-    if (Session::currentScript() == 'login' || Session::currentScript() == 'index' || Session::$isError) {
+    if (Session::currentScript() == 'login' || Session::currentScript() == 'index') {
 
     ?> <style>
             body {
@@ -23,6 +24,8 @@ Session::loadTemplate('_head', ['title' => $data['title']]); // load head
     <?
         //Session::loadTemplate('_otherheader'); // load signin header
         Session::loadTemplate(Session::currentScript());
+    } elseif (Session::$isError) {
+        Session::loadTemplate('_error');
     } else { ?>
         <div class="sidebar-overlay"></div>
 

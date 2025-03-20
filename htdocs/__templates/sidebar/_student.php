@@ -1,4 +1,6 @@
-
+<h6 class="sidebar-heading justify-content-between align-items-center px-3 text-muted">
+    <span>Student</span>
+</h6>
 <?php
 
 $listOfLinks = [
@@ -7,38 +9,27 @@ $listOfLinks = [
     //     'icon' => 'journal-plus',
     //     'subLinks' => []
     // ],
-    // [
-    //     'name' => 'Time Table',
-    //     'icon' => 'calendar3',
-    //     'href' => '/timetable'
-    // ],
-    // [
-    //     'name' => 'Attendance',
-    //     'icon' => 'calendar2-check',
-    //     'subLinks' => [
-    //         [
-    //             'name' => 'Summary',
-    //             'icon' => 'person-lines-fill',
-    //             'href' => '/attendance?atye=' . base64_encode('sw')
-    //         ],
-    //         [
-    //             'name' => 'Date Wise',
-    //             'icon' => 'person-check-fill',
-    //             'href' => '/attendance?atye=' . base64_encode('at')
-    //         ]
-    //     ]
-    // ],
     [
-        'name' => 'Department',
-        'icon' => 'new-folder',
+        'name' => 'Time Table',
+        'icon' => 'calendar3',
+        'href' => '/timetable'
+    ],
+    [
+        'name' => 'Attendance',
+        'icon' => 'calendar2-check',
         'subLinks' => [
             [
-                'name' => 'project based Learning',
-                'icon' => 'journal-plus',
-                'href' => '/projectbasedlearning'
+                'name' => 'Summary',
+                'icon' => 'person-lines-fill',
+                'href' => '/attendance?atye=' . base64_encode('sw')
+            ],
+            [
+                'name' => 'Date Wise',
+                'icon' => 'person-check-fill',
+                'href' => '/attendance?atye=' . base64_encode('at')
             ]
         ]
-    ]
+    ],
 ];
 
 

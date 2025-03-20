@@ -16,6 +16,8 @@ $role = Session::get('role');
             </a>
         </li>
 
+        <?php Session::loadTemplate("sidebar/_common");?>
+
         <?php if ($role == "admin"): ?>
             <? Session::loadTemplate('sidebar/_admin') ?>
         <?php endif; ?>

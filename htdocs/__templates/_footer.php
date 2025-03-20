@@ -2,7 +2,7 @@
 
     <div class="col-md-0 align-items-center px-4 footer-text">
         <span class="mb-3 mb-md-0 text-body-secondary" id="footer-text-1">Developed By Yuheswari and Aswin © 2025</span>
-        <span class="mb-3 mb-md-0 text-body-secondary" id="footer-text-2" style="display:none;">Thanks to Dr. M. Buvana for initiating this!</span>
+        <span class="mb-3 mb-md-0 text-body-secondary" id="footer-text-2" style="display:none;">Thanks to HOD, CSE.</span>
     </div>
 
     <ul class="nav col-md-4 justify-content-end list-unstyled d-flex px-5 d-none d-md-flex">
