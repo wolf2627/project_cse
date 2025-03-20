@@ -1,6 +1,6 @@
 <?php
 
-$pdfpath = "/required/files/activitybasedlearning.pdf";
+$pdfpath = "/required/files/Activity based Learning.pdf";
 $pdffile = $_SERVER['DOCUMENT_ROOT'] . $pdfpath;
 
 if (file_exists($pdffile)) {

@@ -57,7 +57,18 @@
             <li>
                 <hr class="dropdown-divider">
             </li>
-            <li><a class="dropdown-item" href="?logout" id="signOutBtn">Sign out</a></li>
+            <?php 
+            if(Session::isAuthenticated()){
+                ?>
+                    <li><a class="dropdown-item" href="/" id="signOutBtn">Sign in</a></li>
+                <?
+            } else {
+                ?>
+                    <li><a class="dropdown-item" href="?logout" id="signOutBtn">Sign out</a></li>
+                <?
+            }
+            ?>
+    
         </ul>
     </div>
 
