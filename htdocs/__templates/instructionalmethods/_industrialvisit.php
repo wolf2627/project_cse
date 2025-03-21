@@ -69,7 +69,6 @@
                     ['year' => '2024-25', 'file' => '2023.pdf'],
                     ['year' => '2023-24', 'file' => '2022.pdf'],
                     ['year' => '2022-23', 'file' => '2020.pdf'],
-                    ['year' => '2020-21', 'file' => '2021.pdf'],
                 ];
                 foreach ($reports as $index => $report): ?>
                     <div class="col-12 report-item" onclick="window.open('/required/files/<?php echo $report['file']; ?>', '_blank')">
