@@ -12,7 +12,7 @@
 
 <?php
 
-$pdfpath = "/required/files/Experimental learning.pdf";
+$pdfpath = "/required/uploads/catergorypdf/Experimental learning.pdf";
 $pdffile = $_SERVER['DOCUMENT_ROOT'] . $pdfpath;
 
 if (file_exists($pdffile)) {

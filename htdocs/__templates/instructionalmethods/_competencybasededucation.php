@@ -1,6 +1,6 @@
 <?php
 
-$pdfpath = "/required/files/Competency learning.pdf";
+$pdfpath = "/required/uploads/catergorypdf/Competency learning.pdf";
 $pdffile = $_SERVER['DOCUMENT_ROOT'] . $pdfpath;
 
 if (file_exists($pdffile)) {
