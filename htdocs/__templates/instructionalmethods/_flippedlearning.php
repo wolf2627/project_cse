@@ -1,6 +1,6 @@
 <?php
 
-$pdfpath = "/required/files/Flipped Learning.pdf";
+$pdfpath = "/required/uploads/catergorypdf/Flipped Learning.pdf";
 $pdffile = $_SERVER['DOCUMENT_ROOT'] . $pdfpath;
 
 if (file_exists($pdffile)) {

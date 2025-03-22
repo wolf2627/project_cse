@@ -1,6 +1,6 @@
 <!-- <?php
 
-// $pdfpath = "/required/files/industrialvisit.pdf";
+// $pdfpath = "/required/uploads/catergorypdf/industrialvisit.pdf";
 // $pdffile = $_SERVER['DOCUMENT_ROOT'] . $pdfpath;
 
 // if (file_exists($pdffile)) {
@@ -66,16 +66,15 @@
             <div class="row">
                 <?php
                 $reports = [
-                    ['year' => '2024-25', 'file' => '2023.pdf'],
-                    ['year' => '2023-24', 'file' => '2022.pdf'],
-                    ['year' => '2022-23', 'file' => '2020.pdf'],
-                    ['year' => '2020-21', 'file' => '2021.pdf'],
+                    ['year' => '2024-25', 'file' => '2024-2025 IV.pdf'],
+                    ['year' => '2023-24', 'file' => '2023-2024 IV.pdf'],
+                    ['year' => '2022-23', 'file' => '2022-2023 IV.pdf']
                 ];
                 foreach ($reports as $index => $report): ?>
-                    <div class="col-12 report-item" onclick="window.open('/required/files/<?php echo $report['file']; ?>', '_blank')">
+                    <div class="col-12 report-item" onclick="window.open('/required/uploads/catergorypdf/<?php echo $report['file']; ?>', '_blank')">
                         <div class="serial-number"><?php echo $index + 1; ?>.</div>
                         <div class="report-content">
-                            <a href="/required/files/<?php echo $report['file']; ?>" target="_blank"><?php echo $report['year']; ?> Report</a>
+                            <a href="/required/uploads/catergorypdf/<?php echo $report['file']; ?>" target="_blank"><?php echo $report['year']; ?> Report</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

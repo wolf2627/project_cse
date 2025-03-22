@@ -6,7 +6,7 @@
             </svg>
         </button>
     </div>
-    <!-- <?php //$randomKural = Addons::getThirukkural(); 
+    <!-- <?php $randomKural = Addons::getThirukkural(); 
             ?>
 
     <div class="kural-container" id="kural-container"

@@ -99,7 +99,7 @@
                     <div class="col-12 report-item" onclick="window.open('/required/files/<?php echo $report['file']; ?>', '_blank')">
                         <div class="serial-number"><?php echo $index + 1; ?>.</div>
                         <div class="report-content">
-                            <a href="/required/files/<?php echo $report['file']; ?>" target="_blank"><?php echo $report['year']; ?> Report</a>
+                            <a href="/required/uploads/catergorypdf/<?php echo $report['file']; ?>" target="_blank"><?php echo $report['year']; ?> Report</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

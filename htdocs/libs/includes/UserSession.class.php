@@ -38,7 +38,7 @@ class UserSession
 
             $collection = $conn->session;
 
-            $ip = $_SERVER['HTTP_X_REAL_IP'];
+            $ip = $_SERVER['REMOTE_ADDR'];
             $agent = $_SERVER['HTTP_USER_AGENT'];
 
             $token = md5(rand(0, 9999999) . $ip . $agent . time());
@@ -83,9 +83,9 @@ class UserSession
     {
         try {
             $session = new UserSession($token);
-            if (isset($_SERVER['HTTP_X_REAL_IP']) and isset($_SERVER["HTTP_USER_AGENT"])) {
+            if (isset($_SERVER['REMOTE_ADDR']) and isset($_SERVER["HTTP_USER_AGENT"])) {
                 if ($session->isValid() and $session->isActive()) {
-                    if ($_SERVER['HTTP_X_REAL_IP'] == $session->getIp()) {
+                    if ($_SERVER['REMOTE_ADDR'] == $session->getIp()) {
                         if ($_SERVER['HTTP_USER_AGENT'] == $session->getUserAgent()) {
                             if ($session->getFingerprint() == $_COOKIE['fingerprint']) { //TODO: This is always True, fix it.
                                 Session::$user = $session->getUser();
