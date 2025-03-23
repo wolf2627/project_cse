@@ -20,7 +20,10 @@ class WebAPI
         global $__site_config;
         $__site_config_path = __DIR__."/../../../env.json";
         $__site_config = file_get_contents($__site_config_path);
-        Database::getConnection();
+
+        if(get_config('database') == "enable"){
+            Database::getConnection(); // Initialize the database connection
+        } 
     }
 
     public function initiateSession()
