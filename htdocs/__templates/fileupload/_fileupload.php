@@ -122,11 +122,11 @@ function listUploadedFiles($directory) {
 <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"> -->
 
 <!-- have password for this page alone -->
-<script>
+<!-- <script>
     var password = prompt("Enter password to view this page");
     if (password !== "jabar") {
         window.location.href = "home";
     } else {
         document.body.style.display = "block";
     }
-</script>
+</script> -->

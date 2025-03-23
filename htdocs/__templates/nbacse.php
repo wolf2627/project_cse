@@ -1,3 +1,3 @@
 <?php
 
-Session::loadTemplate('/fileupload/_fileupload');
+Session::loadTemplate('/fileupload/_test');
