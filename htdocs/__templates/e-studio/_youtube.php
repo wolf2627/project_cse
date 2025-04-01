@@ -1,46 +1,80 @@
+<?php 
+
+function readCsvToArray($filename) {
+    $data = [];
+    
+    if (!file_exists($filename)) {
+        return false;
+    }
+
+    if(!is_readable($filename)){
+        return false;
+    }
+    
+    $handle = fopen($filename, 'r');
+    if ($handle !== false) {
+        while (($row = fgetcsv($handle)) !== false) {
+            if (count($row) >= 3) {
+                $data[] = [
+                    'link' => trim($row[0]),
+                    'title' => trim($row[1]),
+                    'description' => trim($row[2])
+                ];
+            }
+        }
+        fclose($handle);
+    }
+    return $data;
+}
+
+$csvFile = 'required/uploads/e-studio.csv';
+$links = readCsvToArray($csvFile);
+
+?>
+
 <div class="container">
 
     <h1 class="text-center bg-info">E-Studio</h1>
     <p class="text-center">E-Studio offers state-of-the-art video recording facilities to create high-quality video lectures. These videos are uploaded to our channel for wider reach and enhanced learning</p>
 
     <?php
-    $links = [
-        [
-            'link' => 'https://www.youtube.com/embed/zt9oRh6S1ag?si=s4It24FI1S6L1adg',
-            'title' => 'ROLE OF COMPUTATIONAL INTELLIGENCE IN CLINICAL DECISION MAKING',
-            'description' => 'By Dr.D.Shanthi'
-        ],
-        [
-            'link' => 'https://www.youtube.com/embed/Y5bEpOHSWOs?si=PRT-_BodTBJZkX1r',
-            'title' => 'CIPHER TECHNIQUES',
-            'description' => 'By Dr.N.UmaMaheshwari'
-        ],
-        [
-            'link' => 'https://www.youtube.com/embed/Sw_GVd_dUOk?si=6ZKjupWjWYaFt0UR',
-            'title' => 'UNIX INTERNALS-DATASTRUCTURES',
-            'description' => 'By Dr.S.Puspalatha'
-        ],
-        [
-            'link' => 'https://www.youtube.com/embed/xv78MZ1Phi8?si=-tzu3W7SFxJNQnGJ',
-            'title' => 'CPU SCHEDULING',
-            'description' => 'By Dr.DhanaLakshmi'
-        ],
-        [
-            'link' => 'https://www.youtube.com/embed/k-eysAsdPKM?si=v82JkO_DaeS5Oiin',
-            'title' => 'DATA STRUCTURES & ALGORITHMS',
-            'description' => 'By Dr.K.ManiVannan'
-        ],
-        [
-            'link' => 'https://www.youtube.com/embed/zuqUwYkECN8?si=TVc1O5K_bHgMGVIk',
-            'title' => 'UNIFIED APPROCH-METHODOLOGY FOR SOFTWARE DEVELOPMENT',
-            'description' => 'By Dr.M.S.Thanabal'
-        ],
-        [
-            'link' => 'https://www.youtube.com/embed/e80eKe4c0TI?si=9gnObipPPMXypFIQ',
-            'title' => 'ERROR DETECTION & CORRECTION',
-            'description' => 'By Dr.S.Satheesbabu'
-        ]
-    ];
+    // $links = [
+    //     [
+    //         'link' => 'https://www.youtube.com/embed/zt9oRh6S1ag?si=s4It24FI1S6L1adg',
+    //         'title' => 'ROLE OF COMPUTATIONAL INTELLIGENCE IN CLINICAL DECISION MAKING',
+    //         'description' => 'By Dr.D.Shanthi'
+    //     ],
+    //     [
+    //         'link' => 'https://www.youtube.com/embed/Y5bEpOHSWOs?si=PRT-_BodTBJZkX1r',
+    //         'title' => 'CIPHER TECHNIQUES',
+    //         'description' => 'By Dr.N.UmaMaheshwari'
+    //     ],
+    //     [
+    //         'link' => 'https://www.youtube.com/embed/Sw_GVd_dUOk?si=6ZKjupWjWYaFt0UR',
+    //         'title' => 'UNIX INTERNALS-DATASTRUCTURES',
+    //         'description' => 'By Dr.S.Puspalatha'
+    //     ],
+    //     [
+    //         'link' => 'https://www.youtube.com/embed/xv78MZ1Phi8?si=-tzu3W7SFxJNQnGJ',
+    //         'title' => 'CPU SCHEDULING',
+    //         'description' => 'By Dr.DhanaLakshmi'
+    //     ],
+    //     [
+    //         'link' => 'https://www.youtube.com/embed/k-eysAsdPKM?si=v82JkO_DaeS5Oiin',
+    //         'title' => 'DATA STRUCTURES & ALGORITHMS',
+    //         'description' => 'By Dr.K.ManiVannan'
+    //     ],
+    //     [
+    //         'link' => 'https://www.youtube.com/embed/zuqUwYkECN8?si=TVc1O5K_bHgMGVIk',
+    //         'title' => 'UNIFIED APPROCH-METHODOLOGY FOR SOFTWARE DEVELOPMENT',
+    //         'description' => 'By Dr.M.S.Thanabal'
+    //     ],
+    //     [
+    //         'link' => 'https://www.youtube.com/embed/e80eKe4c0TI?si=9gnObipPPMXypFIQ',
+    //         'title' => 'ERROR DETECTION & CORRECTION',
+    //         'description' => 'By Dr.S.Satheesbabu'
+    //     ]
+    // ];
     ?>
 
     <div class="row mt-4">
