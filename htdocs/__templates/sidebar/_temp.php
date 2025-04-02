@@ -7,7 +7,7 @@ $listOfLinks_dept = [
     ],
     [
         'name' => 'E-Content',
-        'icon' => 'jorunal-plus',
+        'icon' => 'journal-plus',
         'href' => '/e-content'
     ]
 ];
