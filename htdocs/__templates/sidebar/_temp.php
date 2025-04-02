@@ -5,6 +5,11 @@ $listOfLinks_dept = [
         'icon' => 'play-circle-fill',
         'href' => '/e-studio'
     ],
+    [
+        'name' => 'E-Content',
+        'icon' => 'jorunal-plus',
+        'href' => '/e-content'
+    ]
 ];
 
 $listOfLinks_instructionalmethods = [
