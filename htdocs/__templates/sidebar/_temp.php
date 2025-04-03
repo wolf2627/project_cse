@@ -27,12 +27,13 @@ $listOfLinks_instructionalmethods = [
         'name' => 'Experimental Learning',
         'icon' => 'journal-plus',
         'href' => '/experimentallearning'
-    ],[
-        'name' => 'Train The Trainer',
-        'icon' => 'journal-plus',
-        'href' => '/industrytrainedfaculty'
-
     ],
+    // [
+    //     'name' => 'Train The Trainer',
+    //     'icon' => 'journal-plus',
+    //     'href' => '/industrytrainedfaculty'
+
+    // ],
     [
         'name' => 'Collabrative Learning',
         'icon' => 'journal-plus',

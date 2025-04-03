@@ -17,7 +17,7 @@ $role = Session::get('role');
         </li> -->
 
         <li>
-            <a href="/home" class="nav-link link-body-emphasis">
+            <a href="https://www.psnacet.edu.in/BE-CSE/CSE-About.php" class="nav-link link-body-emphasis">
                 <svg class="bi pe-none me-2" width="16" height="16">
                     <use xlink:href="#home"></use>
                 </svg>
