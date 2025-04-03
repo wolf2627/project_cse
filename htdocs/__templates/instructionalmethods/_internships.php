@@ -117,6 +117,7 @@
                 // Define report data for both students and teachers
                 $reports = [
                     'student' => [
+                        ['year' => '2024-25', 'file' => 'intern_student_2025.pdf'],
                         ['year' => '2023-24', 'file' => 'intern_student_2024.pdf'],
                         ['year' => '2022-23', 'file' => 'intern_student_2023.pdf'],
                         ['year' => '2021-22', 'file' => 'intern_student_2022.pdf'],
