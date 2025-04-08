@@ -2,4 +2,4 @@
 include 'libs/load.php';
 
 Session::ensureLogin();
-Session::renderPage();
+Session::renderPage(['title' => 'Dashboard']);

@@ -44,7 +44,7 @@ $listOfLinks = [
             [
                 'name' => 'Assign Role',
                 'icon' => 'file-earmark-text',
-                'href' => '/assignrole'
+                'href' => '/user-role-manage'
             ],
             [
                 'name' => 'Manage Role',
@@ -70,11 +70,6 @@ $listOfLinks = [
         'href' => '/role-permission-manage'
     ],
     [
-        'name' => 'Assign Role',
-        'icon' => 'file-earmark-text',
-        'href' => '/user-role-manage'
-    ],
-    [
         'name' => 'Time Table',
         'icon' => 'calendar3',
         'subLinks' => [
@@ -92,7 +87,7 @@ $listOfLinks = [
     ],
     [
         'name' => 'Year Incharge',
-        'icon' => 'file-earmark-text',
+        'icon' => 'new-folder',
         'subLinks' => [
             [
                 'name' => 'Assign',
@@ -105,7 +100,35 @@ $listOfLinks = [
                 'href' => '/manageyearincharge'
             ],
         ]
+    ],
+    [
+        'name' => 'Tutor',
+        'icon' => 'new-folder',
+        'subLinks' => [
+            [
+                'name' => 'Assign',
+                'icon' => 'file-earmark-text',
+                'href' => '/assigntutor'
+            ],
+            [
+                'name' => 'Manage',
+                'icon' => 'file-earmark-text',
+                'href' => '/managetutor'
+            ],
+        ]
+    ],
+    [
+        'name' => 'Department',
+        'icon' => 'new-folder',
+        'subLinks' => [
+            [
+                'name' => 'project based Learning',
+                'icon' => 'journal-plus',
+                'href' => '/projectbasedlearning'
+            ]
+        ]
     ]
+
 ];
 
 

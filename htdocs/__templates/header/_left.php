@@ -6,7 +6,8 @@
             </svg>
         </button>
     </div>
-    <?php $randomKural = Addons::getThirukkural(); ?>
+    <!-- <?php $randomKural = Addons::getThirukkural(); 
+            ?>
 
     <div class="kural-container" id="kural-container"
         data-bs-toggle="popover"
@@ -16,6 +17,8 @@
             <p class="line" id="line1"><?= $randomKural['Line1'] ?></p>
             <p class="line" id="line2"><?= $randomKural['Line2'] ?></p>
         </div>
+    </div> -->
+    <div class='fw-bold h5 d-none d-md-block'>
+        Department of Computer Science and Engineering
     </div>
-
 </div>

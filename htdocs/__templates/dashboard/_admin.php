@@ -3,13 +3,13 @@
     <div class="row">
         <div class="col-md-12">
             <!-- Marquee -->
-            <marquee behavior="scroll" direction="left" class="text-warning small p-2 border rounded">
+            <!-- <marquee behavior="scroll" direction="left" class="text-warning small p-2 border rounded">
                 <strong>Welcome to the site. This Site Is Under Development.</strong>
-            </marquee>
+            </marquee> -->
         </div>
     </div>
 
-    <div class="col-md-2">
+    <div class="col-md-3">
         <!-- Left edge box with title -->
         <div class="card border-primary">
             <div class="card-header text-white bg-primary">

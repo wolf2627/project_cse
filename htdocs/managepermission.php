@@ -6,4 +6,4 @@ Session::ensureLogin();
 
 Session::ensureRole('admin');
 
-Session::renderPage();
+Session::renderPage(['title' => 'Manage Permission']);

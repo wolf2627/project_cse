@@ -12,16 +12,18 @@ class Database
     {
         if (Database::$conn == null) {
 
-            $db_user = get_config('db_user');
-            $db_password = get_config('db_password');
-            $db_host = get_config('db_host');
-            $db_port = get_config('db_port');
-            $db_authSource = get_config('db_authSource');
+            // $db_user = get_config('db_user');
+            // $db_password = get_config('db_password');
+            // $db_host = get_config('db_host');
+            // $db_port = get_config('db_port');
+            // $db_authSource = get_config('db_authSource');
             $db_name = get_config('db_name');
+            $db_uri = get_config('db_uri');
 
             try {
                 // Establish a new Database Connection
-                $uri = "mongodb://$db_user:$db_password@$db_host:$db_port/?authSource=$db_authSource";
+                //$uri = "mongodb://$db_user:$db_password@$db_host:$db_port/?authSource=$db_authSource";
+                $uri = $db_uri;
                 Database::$mongoClient = new MongoDB\Client($uri);
                 Database::$conn = Database::$mongoClient->{$db_name};
 

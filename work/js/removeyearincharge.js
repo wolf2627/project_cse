@@ -14,6 +14,7 @@ $(document).ready(function () {
                     var yearincharge = data.yearincharges[i];
                     var tr = $('<tr></tr>');
                     tr.append('<td>' + yearincharge.faculty_id + '</td>');
+                    tr.append('<td>' + yearincharge.faculty_name + '</td>');
                     tr.append('<td>' + yearincharge.department + '</td>');
                     tr.append('<td>' + yearincharge.batch + '</td>');
                     tr.append('<td><button class="btn btn-danger remove-yearincharge-btn" data-yearincharge-id="' + yearincharge.faculty_id + '">Remove</button></td>');

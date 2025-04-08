@@ -40,6 +40,13 @@ include_once 'app/Addons.class.php';
 
 include_once 'app/Crons.class.php';
 
+include_once 'app/playground/Contest.class.php';
+include_once 'app/playground/Registration.class.php';
+include_once 'app/playground/Submissions.class.php';
+include_once 'app/playground/Questions.class.php';
+include_once 'app/playground/Participant.class.php';
+
+
 global $__site_config;
 
 $wapi = new WebAPI();

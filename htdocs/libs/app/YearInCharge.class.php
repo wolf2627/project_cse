@@ -60,6 +60,7 @@ class YearInCharge
         foreach ($yearInCharges as $yearInCharge) {
             $result[] = [
                 'faculty_id' => $yearInCharge['faculty_id'],
+                'faculty_name' => Faculty::getFacultyName($yearInCharge['faculty_id']),
                 'department' => $yearInCharge['department'],
                 'batch' => $yearInCharge['batch']
             ];
@@ -69,7 +70,7 @@ class YearInCharge
     }
 
 
-    public static function assignYearInCharge($faculty_id, $dapartment, $batch)
+    public static function assignYearInCharge($faculty_id, $dapartment, $batch, $status='active')
     {
         $yearInChargeCollection = Database::getConnection()->yearincharge;
 
@@ -90,7 +91,8 @@ class YearInCharge
         }
 
         $exisitingTutor = Database::getConnection()->tutors->findOne([
-            "faculty_id" => $faculty_id
+            "faculty_id" => $faculty_id,
+            "status" => $status
         ]);
 
         if ($exisitingTutor) {
@@ -100,6 +102,7 @@ class YearInCharge
 
         $existingYearInCharge = $yearInChargeCollection->findOne([
             "faculty_id" => $faculty_id,
+            'status' => $status
         ]);
 
         $exitingYearBatch = $yearInChargeCollection->findOne([
@@ -124,7 +127,7 @@ class YearInCharge
             }
         } else if ($exitingYearBatch) {
             $result = $yearInChargeCollection->updateOne(
-                ["department" => $dapartment, "batch" => $batch],
+                ["department" => $dapartment, "batch" => $batch, "status" => $status],
                 ['$set' => [
                     "faculty_id" => $faculty_id
                 ]]
@@ -139,7 +142,8 @@ class YearInCharge
             $result = $yearInChargeCollection->insertOne([
                 "faculty_id" => $faculty_id,
                 "department" => $dapartment,
-                "batch" => $batch
+                "batch" => $batch,
+                'status' => $status
             ]);
 
             $return = $result->getInsertedId();

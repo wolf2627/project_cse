@@ -1,12 +1,14 @@
-
+<h6 class="sidebar-heading justify-content-between align-items-center px-3 text-muted">
+    <span>Student</span>
+</h6>
 <?php
 
 $listOfLinks = [
-    [
-        'name' => 'View Test Marks',
-        'icon' => 'journal-plus',
-        'subLinks' => []
-    ],
+    // [
+    //     'name' => 'View Test Marks',
+    //     'icon' => 'journal-plus',
+    //     'subLinks' => []
+    // ],
     [
         'name' => 'Time Table',
         'icon' => 'calendar3',
@@ -27,7 +29,7 @@ $listOfLinks = [
                 'href' => '/attendance?atye=' . base64_encode('at')
             ]
         ]
-    ]
+    ],
 ];
 
 
@@ -45,7 +47,7 @@ foreach ($listOfLinks as $link) {
                     </svg>
                     <p>{$name}</p>
                 </a>
-                <div class='collapse' id='{$name}Collapse'>
+                <div class='collapse' id='{$name}Collapse' style='background-color:rgb(116, 116, 116, 0.1)'>
                     <ul class='list-unstyled ps-0'>";
         foreach ($subLinks as $subLink) {
             $subHref = $subLink['href'] ?? '#';

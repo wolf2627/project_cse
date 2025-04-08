@@ -5,4 +5,4 @@ include 'libs/load.php';
 Session::ensureLogin();
 Session::ensureRole('admin');
 
-Session::renderPage();
+Session::renderPage(['title' => 'User Role Manage']);

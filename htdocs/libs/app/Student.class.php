@@ -51,7 +51,7 @@ class Student
                 ['reg_no' => $search_param],
                 ['roll_no' => $search_param]
             ]
-        ], ['projection' => ['created_at' => 0]]);
+        ], ['projection' => ['created_at' => 0, '_id' => 0]]);
 
         if (!$student) {
             throw new Exception('Student not found.');

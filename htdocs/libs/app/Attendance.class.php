@@ -356,32 +356,6 @@ class Attendance
         return $pending;
     }
 
-    // Needs to updated as per the new schema
-    public function getOverallAttendancePercentage($studentId)
-    {
-
-        $individual_attendance = $this->conn->attendance;
-
-        $records = $individual_attendance->aggregate([
-            ['$match' => ['student_id' => $studentId]],
-            [
-                '$group' => [
-                    '_id' => null,
-                    'total_classes' => ['$sum' => 1],
-                    'attended' => ['$sum' => ['$cond' => [['$eq' => ['$status', 'Present']], 1, 0]]]
-                ]
-            ],
-            [
-                '$project' => [
-                    'overall_percentage' => ['$multiply' => [['$divide' => ['$attended', '$total_classes']], 100]]
-                ]
-            ]
-        ]);
-
-        $result = iterator_to_array($records);
-        return !empty($result) ? $result[0]['overall_percentage'] : 0;
-    }
-
 
     /**
      * Get marked attendance for a faculty.

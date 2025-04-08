@@ -1,4 +1,4 @@
-/* Processed on 22/1/2025 @ 3:1:19 */
+/* Processed on 16/2/2025 @ 4:44:12 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -132,6 +132,111 @@ function loadAssignRoleForms2(){
 }
 
 
+$(document).ready(function () {
+
+    console.log('assigntutor is ready');
+
+    $('#assign-tutor-btn').click(function (event) {
+
+        console.log('assign-tutor-btn clicked');
+        event.preventDefault();
+
+        var faculty_id = $('#assign-faculty_id').val();
+        var batch = $('#assign-batch').val();
+        var department = $('#assign-department').val();
+        var section = $('#assign-section').val();
+
+        $('#assign-faculty_id').css('border-color', '');
+        $('#assign-batch').css('border-color', '');
+        $('#assign-department').css('border-color', '');
+        $('#assign-section').css('border-color', '');
+
+        if (faculty_id === '') {
+            //highlight the field
+            $('#assign-faculty_id').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Faculty ID field');
+            errorToast.show();
+            return;
+        }
+        if (department === '') {
+            //highlight the field
+            $('#assign-department').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Department field');
+            errorToast.show();
+            return;
+        }
+        if (batch === '') {
+            //highlight the field
+            $('#assign-batch').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Batch field');
+            errorToast.show();
+            return;
+        } if (section === '') {
+            //highlight the field
+            $('#assign-section').css('border-color', 'red');
+            var errorToast = new Toast('now', 'error', 'Please fill the Section field');
+            errorToast.show();
+            return;
+        }
+
+        $('#assign-faculty_id').css('border-color', 'green');
+        $('#assign-batch').css('border-color', 'green');
+        $('#assign-department').css('border-color', 'green');
+        $('#assign-section').css('border-color', 'green');
+
+
+        console.log('faculty_id: ' + faculty_id);
+        console.log('batch: ' + batch);
+        console.log('department: ' + department);
+        console.log('section: ' + section);
+
+        var formdata = new FormData();
+
+        formdata.append('faculty_id', faculty_id);
+        formdata.append('batch', batch);
+        formdata.append('department', department);
+        formdata.append('section', section);
+
+        $.ajax({
+            url: '/api/app/tutor/assign',
+            type: 'POST',
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data);
+                if (data.success) {
+                    var successToast = new Toast('now', 'success', 'Tutor Assigned Successfully');
+                    successToast.show();
+                } else {
+                    var errorToast = new Toast('now', 'error', 'Tutor Assign Failed: ' + data.message);
+                    errorToast.show();
+                }
+
+                document.getElementById('assign-tutor-form').reset();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                var errorMessage = 'Tutor Assign Failed: ' + textStatus;
+                if (jqXHR.status === 500) {
+                    errorMessage += ' - ' + jqXHR.responseJSON.message;
+                    document.getElementById('assign-tutor-form').reset();
+                } else if (jqXHR.status === 404) {
+                    errorMessage += ' - Resource not found';
+                    document.getElementById('assign-tutor-form').reset();
+                }
+                var errorToast = new Toast('now', 'error', errorMessage);
+                errorToast.show();
+            }
+        });
+
+        $('#assign-faculty_id').css('border-color', '');
+        $('#assign-batch').css('border-color', '');
+        $('#assign-department').css('border-color', '');
+        $('#assign-section').css('border-color', '');
+
+    });
+
+});
 $(document).ready(function () {
 
     console.log('assignyearincharge is ready');
@@ -282,6 +387,82 @@ $('#class-wise-year-report-btn').click(function () {
 });
 
 
+
+$(document).ready(function () {
+    console.log("Approve script loaded [new loaded] ");
+
+    $(".approve-btn").click(function () {
+        console.log("Approve button clicked");
+        let button = $(this);
+        let contestId = button.data("contest-id");
+        let studentId = button.data("student-id");
+
+        let pendingCountElement = $("#pending-count");
+        let pendingCount = parseInt(pendingCountElement.data("pending-count"));
+
+        console.log("pendingCount: " + pendingCount);
+
+        console.log("Approving registration for student " + studentId + " in contest " + contestId);
+
+        // Show loading state
+        button.prop("disabled", true).html('<i class="fas fa-spinner fa-spin"></i> Approving...');
+
+        $.ajax({
+            url: "/api/contest/confirmregistration",
+            type: "POST",
+            data: { contestId: contestId, studentId: studentId },
+            success: function (response) {
+                $("#status-" + studentId)
+                    .removeClass("bg-secondary")
+                    .addClass("bg-success")
+                    .text("Approved");
+
+
+                button.replaceWith('<span class="text-success">Approved</span>');
+
+                // Show success message
+                var toast = new Toast("now", "success", "Registration approved successfully");
+                toast.show();
+                pendingCount = pendingCount - 1;
+                pendingCountElement.data("pending-count", pendingCount);
+                pendingCountElement.text(pendingCount + " Pending");
+
+
+            },
+            error: function () {
+                alert("An error occurred while processing the request.");
+                button.prop("disabled", false).html('<i class="fas fa-check"></i> Approve');
+            }
+        });
+    });
+});
+$(document).ready(function () {
+    console.log("Register script loaded successfully");
+    $(".register-btn").click(function () {
+        var contestId = $(this).data("contest-id");
+        var button = $(this);
+        button.prop("disabled", true);
+        button.html("Registering...");
+
+        $.ajax({
+            url: "/api/contest/register",
+            type: "POST",
+            data: { contestId: contestId },
+            success: function (response) {
+                var toast = new Toast("now", "success", "Registration successful");
+                toast.show();
+                button.html("Registered");
+            },
+            error: function (xhr, status, error) {
+                var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : "Registration failed";
+                var toast = new Toast("now", "error", errorMessage + " Please try again later.");
+                toast.show();
+                button.html("Failed");
+                button.prop("disabled", false);
+            }
+        });
+    });
+});
 
 $(document).ready(function () {
 
@@ -1469,6 +1650,77 @@ function manageRoleSubmitForm(operation) {
 
 
 
+$(document).ready(function () {
+
+    console.log('removetutor is ready');
+
+    function loadtutors() {
+        $.ajax({
+            url: '/api/app/tutor/get/tutors',
+            type: 'POST',
+            success: function (data) {
+                // console.log(data);
+                var tutorTableBody = $('#tutor-table tbody');
+                tutorTableBody.empty();
+                for (var i = 0; i < data.tutors.length; i++) {
+                    var tutor = data.tutors[i];
+                    var tr = $('<tr></tr>');
+                    tr.append('<td>' + tutor.faculty_id + '</td>');
+                    tr.append('<td>' + tutor.faculty_name + '</td>');
+                    tr.append('<td>' + tutor.department + '</td>');
+                    tr.append('<td>' + tutor.batch + '</td>');
+                    tr.append('<td>' + tutor.section + '</td>');
+                    tr.append('<td><button class="btn btn-danger remove-tutor-btn" data-tutor-id="' + tutor.faculty_id + '"> Unassign </button></td>');
+                    tutorTableBody.append(tr);
+                }
+            },
+            error: function (data) {
+                console.log(data);
+                var errorToast = new Toast('now', 'error', 'Error loading Tutors or no Tutors found');
+                errorToast.show();
+                $('#tutor-table').hide();
+                $('#remove-tutor').empty();
+                $('#remove-tutor').append('<p class="alert alert-warning text-center">No Tutors found</p>');
+            }
+        });
+    }
+
+
+    $(document).on('click', '.remove-tutor-btn', function () {
+        var tutor_id = $(this).data('tutor-id');
+        console.log('remove-tutor-btn clicked');
+        console.log('tutor_id: ' + tutor_id);
+
+        var formdata = new FormData();
+        formdata.append('faculty_id', tutor_id);
+
+        $.ajax({
+            url: '/api/app/tutor/unassign',
+            type: 'POST',
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data);
+                var successToast = new Toast('now', 'success', 'Tutor unassigned successfully');
+                successToast.show();
+                loadtutors();
+            },
+            error: function (data) {
+                console.log(data);
+                var errorToast = new Toast('now', 'error', 'Error unassigning Tutor');
+                errorToast.show();
+            }
+        });
+
+        loadtutors();
+    });
+
+    if ($('#remove-tutor-container').length) {
+        loadtutors();
+    }
+
+});
 
 $('#markAttendance-container').ready(function () {
     console.log('markAttendance-container ready');
@@ -1986,6 +2238,7 @@ $(document).ready(function () {
                     var yearincharge = data.yearincharges[i];
                     var tr = $('<tr></tr>');
                     tr.append('<td>' + yearincharge.faculty_id + '</td>');
+                    tr.append('<td>' + yearincharge.faculty_name + '</td>');
                     tr.append('<td>' + yearincharge.department + '</td>');
                     tr.append('<td>' + yearincharge.batch + '</td>');
                     tr.append('<td><button class="btn btn-danger remove-yearincharge-btn" data-yearincharge-id="' + yearincharge.faculty_id + '">Remove</button></td>');
@@ -2343,7 +2596,7 @@ $(document).ready(function () {
                 }
 
                 timetableContainer.innerHTML += `
-            <div class="col" data-order="${index}">
+            <div class="col mt-2" data-order="${index}">
                 <div class="card day-card shadow-sm ${day === today ? "current-day" : ""}" data-day="${day}">
                     <div class="day-header">
                         <i class="icon fa-solid fa-calendar-day"></i>
@@ -3785,4 +4038,74 @@ $(document).ready(function () {
     });
 
 });
+$(document).ready(function () {
+    console.log("viewstudentdetails-tutor.js loaded");
+
+    $('.view-student-detail-tutor').on('click', function () {
+        var studentId = $(this).data('student_id');
+        console.log("Student ID: " + studentId);
+
+        $.ajax({
+            url: '/api/app/student/details',
+            type: 'POST',
+            data: {
+                student_id: studentId
+            },
+            success: function (response) {
+                var studentDetails = response.studentDetails;
+                var enrolledClasses = response.enrolledClasses;
+
+                var detailsHtml = `
+    <div class="container">
+        <h3 class="mb-3 text-primary">Student Details</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Name:</strong> ${studentDetails.name}</p>
+                <p><strong>Registration No:</strong> ${studentDetails.reg_no}</p>
+                <p><strong>Email:</strong> ${studentDetails.email}</p>
+                <p><strong>Roll No:</strong> ${studentDetails.roll_no}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Semester:</strong> ${studentDetails.semester}</p>
+                <p><strong>Section:</strong> ${studentDetails.section}</p>
+            </div>
+        </div>
+
+        <h3 class="mt-4 mb-3 text-primary">Enrolled Classes</h3>
+        <div class="list-group">
+`;
+
+                enrolledClasses.forEach(function (classInfo) {
+                    detailsHtml += `
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Faculty:</strong> ${classInfo.faculty}</p>
+                    <p><strong>Department:</strong> ${classInfo.department}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Subject Code:</strong> ${classInfo.subject_code}</p>
+                    <p><strong>Semester:</strong> ${classInfo.semester}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Section:</strong> ${classInfo.section}</p>
+                     <p><strong>Batch:</strong> ${classInfo.batch}</p>
+                </div>
+            </div>
+        </div>
+    `;
+                });
+
+                detailsHtml += `</div></div>`;
+
+
+                var d = new Dialog("Student Details ("+ studentId + ")" , detailsHtml, {'size': 'large'});
+                d.show();
+            }
+        });
+
+
+    });
+});
+
 //# sourceMappingURL=app.js.map
