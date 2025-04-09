@@ -108,6 +108,42 @@
     <!-- Internships Title at the Top -->
     <h4 class="text-center mb-4 h4">Internships</h4>
 
+    <!-- Summary Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead class="thead-light">
+            <tr>
+                <th>S.No.</th>
+                <th>Academic Year</th>
+                <th>Number of students gone for Internship</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            $data = [
+                ['year' => '2024-25', 'students' => 333],
+                ['year' => '2023-24', 'students' => 303],
+                ['year' => '2022-23', 'students' => 64],
+                ['year' => '2021-22', 'students' => 100],
+            ];
+            $total = 0;
+            foreach ($data as $index => $row) {
+                $total += $row['students'];
+                echo "<tr>
+                    <td>" . ($index + 1) . "</td>
+                    <td>{$row['year']}</td>
+                    <td>{$row['students']}</td>
+                  </tr>";
+            }
+            ?>
+            <tr>
+                <th colspan="2">Total</th>
+                <th><?php echo $total; ?></th>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     <div class="d-flex justify-content-center">
         <!-- Students Section -->
         <div class="column">
