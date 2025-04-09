@@ -1,15 +1,15 @@
 <?
 $listOfLinks_dept = [
-    [
-        'name' => 'NewsLetter',
-        'icon' => 'journal-plus',
-        'href' => '/newsletter'
-    ],
-    [
-        'name' => 'Magazine',
-        'icon' => 'journal-plus',
-        'href' => '/magazine'
-    ],
+    // [
+    //     'name' => 'NewsLetter',
+    //     'icon' => 'journal-plus',
+    //     'href' => '/newsletter'
+    // ],
+    // [
+    //     'name' => 'Magazine',
+    //     'icon' => 'journal-plus',
+    //     'href' => '/magazine'
+    // ],
     [
         'name' => 'E-Studio',
         'icon' => 'play-circle-fill',
