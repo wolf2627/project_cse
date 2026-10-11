@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    console.log("viewattendance.js loaded edited");
+    console.log("viewattendance.js loaded edited --");
 
     const sessionSelect = $('#session-select');
     let attendanceData = []; // To store the entire API response for use

@@ -2,3 +2,4 @@ env.json
 old/
 logs/
 htdocs/required/uploads/
+htdocs/vendor

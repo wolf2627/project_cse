@@ -57,13 +57,15 @@ fetchNewKural();
 let isHovered = false;
 
 const kuralContainer = document.getElementById('kural-container');
-kuralContainer.addEventListener('mouseenter', () => {
-    isHovered = true;
-});
+if (kuralContainer) {
+    kuralContainer.onmouseenter = () => {
+        isHovered = true;
+    };
 
-kuralContainer.addEventListener('mouseleave', () => {
-    isHovered = false;
-});
+    kuralContainer.onmouseleave = () => {
+        isHovered = false;
+    };
+}
 
 // Fetch new Thirukkural only when not hovered
 setInterval(() => {

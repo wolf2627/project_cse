@@ -48,7 +48,7 @@
         </ul>
     </div>
 
-    <!-- <div class="dropdown text-end">
+    <div class="dropdown text-end">
         <a href="#" class="d-block link-body-emphasis text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
         </a>
@@ -60,17 +60,17 @@
             <?php 
             if(Session::isAuthenticated()){
                 ?>
-                    <li><a class="dropdown-item" href="/" id="signOutBtn">Sign in</a></li>
+                    <li><a class="dropdown-item" href="/" id="signOutBtn">Sign out</a></li>
                 <?
             } else {
                 ?>
-                    <li><a class="dropdown-item" href="?logout" id="signOutBtn">Sign out</a></li>
+                    <li><a class="dropdown-item" href="?logout" id="signOutBtn">Sign in</a></li>
                 <?
             }
             ?>
     
         </ul>
-    </div> -->
+    </div>
 
 
     <!-- <div>
@@ -81,4 +81,4 @@
                 </a>
             </div> -->
 
-</div>
+        </div>

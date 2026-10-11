@@ -27,7 +27,7 @@ $(document).ready(function () {
                     const li = document.createElement('li');
                     li.className = 'page-item';
                     li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-                    li.addEventListener('click', () => {
+                    li.on('click', () => {
                         renderTable(i);
                         pagination.querySelectorAll('.page-item').forEach(el => el.classList.remove('active'));
                         li.classList.add('active');

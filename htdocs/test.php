@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 
 include 'libs/load.php';
 
@@ -94,4 +94,4 @@ try {
 
 // Session::ensureRole('admin');
 
-// Session::renderPage();
+// Session::renderPage(); -->

@@ -1,4 +1,4 @@
-/* Processed on 16/2/2025 @ 4:44:12 */
+/* Processed on 27/11/2025 @ 23:59:42 */
 $(document).ready(function () {
     // Initialize Select2 on the subjects dropdown
     console.log('Assign Faculty js loaded');
@@ -2677,7 +2677,7 @@ $(document).ready(function () {
                     const li = document.createElement('li');
                     li.className = 'page-item';
                     li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-                    li.addEventListener('click', () => {
+                    li.on('click', () => {
                         renderTable(i);
                         pagination.querySelectorAll('.page-item').forEach(el => el.classList.remove('active'));
                         li.classList.add('active');
@@ -3165,13 +3165,15 @@ fetchNewKural();
 let isHovered = false;
 
 const kuralContainer = document.getElementById('kural-container');
-kuralContainer.addEventListener('mouseenter', () => {
-    isHovered = true;
-});
+if (kuralContainer) {
+    kuralContainer.onmouseenter = () => {
+        isHovered = true;
+    };
 
-kuralContainer.addEventListener('mouseleave', () => {
-    isHovered = false;
-});
+    kuralContainer.onmouseleave = () => {
+        isHovered = false;
+    };
+}
 
 // Fetch new Thirukkural only when not hovered
 setInterval(() => {
@@ -3778,7 +3780,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
 
-    console.log("viewattendance.js loaded edited");
+    console.log("viewattendance.js loaded edited --");
 
     const sessionSelect = $('#session-select');
     let attendanceData = []; // To store the entire API response for use

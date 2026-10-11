@@ -22,7 +22,7 @@ Session::loadTemplate('_head', ['title' => $data['title']]); // load head
             }
         </style>
     <?
-        //Session::loadTemplate('_otherheader'); // load signin header
+        //Session::loadTemplate('_otherheader'); // load signin header  
         Session::loadTemplate(Session::currentScript());
     } elseif (Session::$isError) {
         Session::loadTemplate('_error');

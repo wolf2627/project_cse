@@ -21,9 +21,9 @@
 
 /* CSS: Set a different image for dark mode */
 #psna-logo {
-  content: url("https://www.psnacet.edu.in/img-1/logo-clr.png"); /* Default for light mode */
+  content: url("https://devcse.zeal.lol/required/logos/psna-logo-blue.png"); /* Default for light mode */
 }
 
 [data-bs-theme="dark"] #psna-logo {
-  content: url("https://www.psnacet.edu.in/images/logo-white.png"); /* Image for dark mode */
+  content: url("https://devcse.zeal.lol/required/logos/psna-logo-white.png"); /* Image for dark mode */
 }

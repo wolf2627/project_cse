@@ -1,8 +1,8 @@
 <?php
 include 'libs/load.php';
 
-// Session::renderPage(['title' => 'Welcome']);
+Session::renderPage(['title' => 'Welcome']);
 ?>
-<script>
+<!-- <script>
 window.location.href = "<?= '/home' ?>";
-</script>
+</script> -->
